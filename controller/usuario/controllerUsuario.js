@@ -81,10 +81,10 @@ const atualizarUsuario = async function(usuario, id, contentType) {
                 usuario.senha       == undefined || usuario.senha       == ''|| usuario.senha    == null ||usuario.senha.length          > 30   ||
                 usuario.nome        == undefined || usuario.nome        == ''|| usuario.nome     == null ||usuario.nome.length           > 45   ||
                 usuario.nickname    == undefined || usuario.nickname    == ''|| usuario.nickname == null ||usuario.nickname.length       > 20   ||
-                usuario.peso        == undefined || usuario.peso.length        > 20   ||
-                usuario.altura      == undefined || usuario.altura.length      > 20   ||
-                usuario.foto        == undefined || usuario.foto.length        > 20   ||
-                usuario.descricao   == undefined || usuario.descricao.length   > 20   
+                usuario.peso.length        > 20  ||
+                usuario.altura.length      > 20  ||
+                usuario.foto.length        > 20  ||
+                usuario.descricao.length   > 20   
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
@@ -95,9 +95,13 @@ const atualizarUsuario = async function(usuario, id, contentType) {
             
             let buscarUsuario = await usuarioDAO.selectByUsuario(usuario.id)
 
+            console.log(buscarUsuario);
+            
+
             if(buscarUsuario){
 
-                let resultUsuario = await usuarioDAO.updateUser(usuario)
+                let resultUsuario = await usuarioDAO.atualizarUsuario(usuario)
+
 
                 if(resultUsuario){
                     
@@ -118,15 +122,14 @@ const atualizarUsuario = async function(usuario, id, contentType) {
             if(resultUsuario.status_code == 200){
                 usuario.id = id
 
-                let result = await usuarioDAO.updateUser(usuario)
+                let result = await usuarioDAO.atualizarUsuario(usuario)
 
 
                 if(result){
                     
                     return MESSAGE.SUCCES_UPDATED_ITEM //201
                 
-                }else{
-
+                }else{           
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
 
                 }
@@ -146,6 +149,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
     
 
     }catch(error){
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -158,12 +162,13 @@ const excluirUsuario = async function(id) {
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
-            let resultUsuario = await selectByUsuario(parseInt(id))
+            let resultUsuario = await buscarUsuario(parseInt(id))
 
             if(resultUsuario.status_code == 200){
 
-                let result = await usuarioDAO.deleteUser(id)
-
+                let result = await usuarioDAO.deleteUsuario(id)
+                console.log(result);
+                
                 if(result){
                     return MESSAGE.SUCCESS_DELETED_ITEM //200
                 }else{
@@ -173,6 +178,8 @@ const excluirUsuario = async function(id) {
             }else if (resultUsuario.status_code == 404){
                 return MESSAGE.ERROR_NOT_FOUND //404
             }else{
+                console.log(resultUsuario);
+                
                 return  MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
             }
 
