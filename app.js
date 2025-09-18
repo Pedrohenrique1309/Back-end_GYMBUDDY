@@ -27,23 +27,16 @@ const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 
+//Import das cotrollers para realizar o CRUD de dados
+const controllerUsuario = require('./controller/usuario/controllerUsuario')
+
+//Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
+const bodyParserJSON = bodyParser.json()
+
+//Cria o objeto app para criar a API
+const app = express()
 
 //************************************* USUARIO *******************************************//
-
-app.put('/v1/gymbuddy/usuario/senha', cors(), bodyParserJSON, async function(request, response){
-
-    let contentType = request.headers['content-type']
-
-    let dadosBody = request.body
-
-
-    console.log('entrei')
-    let result = await controllerUsuario.atualizarUsuarioSenha(dadosBody, contentType)
-
-    response.status(result.status_code)
-    response.json(result)
-
-})
 
 
 app.post('/v1/gymbuddy/usuario', cors(), bodyParserJSON, async function(request, response){
@@ -53,6 +46,21 @@ app.post('/v1/gymbuddy/usuario', cors(), bodyParserJSON, async function(request,
     let dadosBody = request.body
 
     let result = await controllerUsuario.inserirUsuario(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+
+app.put('/v1/gymbuddy/usuario/senha', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+
+    let dadosBody = request.body
+
+
+    let result = await controllerUsuario.atualizarUsuarioSenha(dadosBody, contentType)
 
     response.status(result.status_code)
     response.json(result)

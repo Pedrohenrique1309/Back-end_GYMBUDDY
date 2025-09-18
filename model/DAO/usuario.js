@@ -9,17 +9,17 @@
 
 //Import da biblioteca do prisma client para executar scripts no BD
 const {PrismaClient} = require('@prisma/client')
-const { log } = require('console')
 
 //Instancia da classe do prisma client, para gerar um objeto
 const prisma = new PrismaClient()
+
 
 //Função para inserir no Banco de Dados um novo usuário
 const insertUsuario = async function(usuario){
 
     try{
 
-        let sql = `insert into tbl_usuario(
+        let sql = `insert into tbl_user(
                                                 nome,
                                                 nickname,
                                                 email,
@@ -34,7 +34,7 @@ const insertUsuario = async function(usuario){
         let result = await prisma.$executeRawUnsafe(sql)
 
         if(result){
-            let sqlSelectId = `SELECTE * FROM tbl_usuario WHERE nome = '${usuario.nome}' ORDEM BY id DESC LIMIT 1`
+            let sqlSelectId = `SELECT * FROM tbl_user WHERE nome = '${usuario.nome}' ORDER BY id DESC LIMIT 1`
             let criar = await prisma.$queryRawUnsafe(sqlSelectId)
             return criar[0]
         }else{
@@ -52,7 +52,7 @@ const updateUsuario = async function(usuario){
 
     try{
 
-        let sql = `update tbl_usuario set   nome      =  '${usuario.nome}',
+        let sql = `update tbl_user set   nome      =  '${usuario.nome}',
                                             nickname  =  '${usuario.nickname}',
                                             email     =  '${usuario.email}',
                                             senha     =  '${usuario.senha}',
@@ -81,7 +81,7 @@ const deleteUsuario = async function(id){
 
     try{
 
-        let sql = `delete drom tbl_usuario where id = ${id}`
+        let sql = `delete drom tbl_user where id = ${id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -102,7 +102,7 @@ const selectAllUsuario = async function(){
 
     try{
 
-        let sql = 'SELECT * FROM tbl_usuario order by id desc'
+        let sql = 'SELECT * FROM tbl_user order by id desc'
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -119,11 +119,11 @@ const selectAllUsuario = async function(){
 }
 
 //Função para buscar no Banco de Dados um Jogo pelo ID
-const selectByIUsuario = async function(id){
+const selectByUsuario = async function(id){
 
     try{
 
-        let sql = `SELECT * FROM tbl_usuario where id=${id}`
+        let sql = `SELECT * FROM tbl_user where id=${id}`
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -142,7 +142,7 @@ const selectByIUsuario = async function(id){
 const updateUsuarioSenha = async function(usuario){
     try {
 
-        let sql = `UPDATE tbl_usuario SET senha = '${usuario.senha}' WHERE id = ${usuario.id}`
+        let sql = `UPDATE tbl_user SET senha = '${usuario.senha}' WHERE id = ${usuario.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
@@ -166,7 +166,7 @@ const loginUsuario = async function (usuario) {
     
     try{
 
-        let sql = `SELECT * FROM tbl_usuario where BINARY email = '${usuario.email}' and BINARY senha = '${usuario.senha}'`
+        let sql = `SELECT * FROM tbl_user where BINARY email = '${usuario.email}' and BINARY senha = '${usuario.senha}'`
 
 
         let result = await prisma.$queryRawUnsafe(sql)
@@ -188,7 +188,7 @@ const loginUsuario = async function (usuario) {
 const searchUsuarioByEmail = async function (email){
     try {
 
-        let sql = `select * from tbl_usuario where email = '${email}'`
+        let sql = `select * from tbl_user where email = '${email}'`
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -207,7 +207,7 @@ module.exports = {
     updateUsuario,
     deleteUsuario,
     selectAllUsuario,
-    selectByIUsuario,
+    selectByUsuario,
     loginUsuario,
     searchUsuarioByEmail,
     updateUsuarioSenha

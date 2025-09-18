@@ -10,7 +10,7 @@ const MESSAGE = require('../../modulo/config')
 
 //Import do DAO de usuário
 const usuarioDAO = require('../../model/DAO/usuario.js')
-const controllerFavoritos = require('../evento/controllerFavoritos.js')
+
 
 
 //Função para inserir usuário no Banco de dados 
@@ -40,7 +40,8 @@ const inserirUsuario = async function(usuario, contentType){
 
                 }else {
 
-                    let resultUsuario = await usuarioDAO.insertUser(usuario)
+                    let resultUsuario = await usuarioDAO.insertUsuario(usuario)
+                
 
                     if(resultUsuario){
                         return {
@@ -61,6 +62,8 @@ const inserirUsuario = async function(usuario, contentType){
         }
         
     }catch(error){
+        console.log(error);
+        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -90,7 +93,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
 
             usuario.id = parseInt(id)
             
-            let buscarUsuario = await usuarioDAO.searchUser(usuario.id)
+            let buscarUsuario = await usuarioDAO.selectByUsuario(usuario.id)
 
             if(buscarUsuario){
 
@@ -110,7 +113,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
 
             }else{
                 
-            let resultUsuario = await buscarUsuario(parseInt(id))
+            let resultUsuario = await usuarioDAO.selectByUsuario(parseInt(id))
 
             if(resultUsuario.status_code == 200){
                 usuario.id = id
@@ -155,7 +158,7 @@ const excluirUsuario = async function(id) {
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
-            let resultUsuario = await buscarUsuario(parseInt(id))
+            let resultUsuario = await selectByUsuario(parseInt(id))
 
             if(resultUsuario.status_code == 200){
 
@@ -187,11 +190,11 @@ const listarUsuario = async function () {
     
     try{
 
-        let arrayUsuarios = []
 
         let dadosUsuarios = {}
 
-        let resultUsuario = await usuarioDAO.selectUser()
+        let resultUsuario = await usuarioDAO.selectAllUsuario()
+        
 
         if(resultUsuario != false || typeof (resultUsuario) == 'object'){
 
@@ -200,18 +203,7 @@ const listarUsuario = async function () {
                 dadosUsuarios.status = true
                 dadosUsuarios.status_code = 200
                 dadosUsuarios.itens = resultUsuario.length
-                //dadosUsuarios.usuarios = resultUsuario
-
-                    for( itemUsuario of resultUsuario ){
-
-                        let dadosFavoritos = await controllerFavoritos.buscarFavoritos(itemUsuario.id)
-                        itemUsuario.favoritos = dadosFavoritos.evento
-
-                        arrayUsuarios.push(itemUsuario)
-
-                    }
-
-                    dadosUsuarios.usuarios = arrayUsuarios
+                dadosUsuarios.usuarios = resultUsuario
 
                 return dadosUsuarios //200
 
@@ -237,7 +229,7 @@ const buscarUsuario = async function (id) {
 
             let dadosUsuarios= {}
 
-            let resultUsuario = await usuarioDAO.searchUser(parseInt(id))
+            let resultUsuario = await usuarioDAO.selectByUsuario(parseInt(id))
 
             if(resultUsuario !== String(resultUsuario)){
                 
@@ -287,7 +279,7 @@ const logarUsuario = async function (user) {
 
         }else{
 
-            let result = await usuarioDAO.loginUser(user)
+            let result = await usuarioDAO.loginUsuario(user)
 
             if(result.length > 0){
 
@@ -365,7 +357,7 @@ const atualizarUsuarioSenha = async function(usuario, contentType) {
 
             if(usuarioExists.status_code == 200){
 
-                let resultUsuario = await usuarioDAO.updateUserSenha(usuario)
+                let resultUsuario = await usuarioDAO.updateUsuario(usuario)
 
                 if(resultUsuario){
                     
