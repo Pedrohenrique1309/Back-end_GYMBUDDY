@@ -81,11 +81,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
                 usuario.email       == undefined || usuario.email       == ''|| usuario.email    == null ||usuario.email.length          > 60   ||  
                 usuario.senha       == undefined || usuario.senha       == ''|| usuario.senha    == null ||usuario.senha.length          > 30   ||
                 usuario.nome        == undefined || usuario.nome        == ''|| usuario.nome     == null ||usuario.nome.length           > 45   ||
-                usuario.nickname    == undefined || usuario.nickname    == ''|| usuario.nickname == null ||usuario.nickname.length       > 20   ||
-                usuario.peso.length        > 20  ||
-                usuario.altura.length      > 20  ||
-                usuario.foto.length        > 20  ||
-                usuario.descricao.length   > 20   
+                usuario.nickname    == undefined || usuario.nickname    == ''|| usuario.nickname == null ||usuario.nickname.length       > 20  
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400

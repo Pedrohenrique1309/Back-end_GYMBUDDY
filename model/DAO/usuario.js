@@ -52,14 +52,15 @@ const updateUsuario = async function(usuario){
 
     try{
 
-        let sql = `update tbl_user set   nome      =  '${usuario.nome}',
-                                            nickname  =  '${usuario.nickname}',
-                                            email     =  '${usuario.email}',
-                                            senha     =  '${usuario.senha}',
-                                            peso      =  '${usuario.peso}',
-                                            altura    =  '${usuario.altura}',
-                                            foto      =  '${usuario.foto}',
-                                            descricao =  '${usuario.descricao}'
+        let sql = `update tbl_user set      nome        =  '${usuario.nome}',
+                                            nickname    =  '${usuario.nickname}',
+                                            email       =  '${usuario.email}',
+                                            senha       =  '${usuario.senha}',
+                                            peso        =  '${usuario.peso}',
+                                            altura      =  '${usuario.altura}',
+                                            foto        =  '${usuario.foto}',
+                                            descricao   =  '${usuario.descricao}',
+                                            localizacao =  '${usuario.localizacao}'
                                         where id = ${usuario.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
@@ -118,7 +119,7 @@ const selectAllUsuario = async function(){
 
 }
 
-//Função para buscar no Banco de Dados um Jogo pelo ID
+//Função para buscar no Banco de Dados um usuario pelo ID
 const selectByUsuario = async function(id){
 
     try{
