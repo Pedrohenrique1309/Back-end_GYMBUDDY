@@ -13,7 +13,7 @@ const usuarioDAO = require('../../model/DAO/usuario.js')
 
 
 
-//Função para inserir usuário no Banco de dados 
+//Função para inserir usuário no Banco de Dados 
 const inserirUsuario = async function(usuario, contentType){
 
     try{
@@ -70,7 +70,7 @@ const inserirUsuario = async function(usuario, contentType){
 
 }
 
-// //Função para atualizar um usuário no banco de dados
+// //Função para atualizar um usuário no Banco de Dados
 const atualizarUsuario = async function(usuario, id, contentType) {
     
     try{
@@ -78,6 +78,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
         if(contentType == 'application/json'){
 
             if(
+                id                  == undefined || id                  == ''|| id               == null || isNaN(id) || id              <= 0   ||
                 usuario.email       == undefined || usuario.email       == ''|| usuario.email    == null ||usuario.email.length          > 60   ||  
                 usuario.senha       == undefined || usuario.senha       == ''|| usuario.senha    == null ||usuario.senha.length          > 30   ||
                 usuario.nome        == undefined || usuario.nome        == ''|| usuario.nome     == null ||usuario.nome.length           > 45   ||
@@ -152,7 +153,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
 
 }
 
-//Função para excluir um usuário no banco de dados
+//Função para excluir um usuário no Banco de Dados
 const excluirUsuario = async function(id) {
     
     try{
@@ -190,6 +191,7 @@ const excluirUsuario = async function(id) {
 
 }
 
+//Função para listar todos usuários no Banco de Dados
 const listarUsuario = async function () {
     
     try{
@@ -225,6 +227,7 @@ const listarUsuario = async function () {
 
 }
 
+//Função para buscar um usuário no Banco de Dados pelo ID
 const buscarUsuario = async function (id) {
 
     try{
@@ -271,6 +274,7 @@ const buscarUsuario = async function (id) {
 
 }
 
+//Função para logar um usuário através do Banco de Dados
 const logarUsuario = async function (user) {
 
     try{
@@ -306,6 +310,7 @@ const logarUsuario = async function (user) {
 
 }
 
+//Função para bucar um usuário pelo email 
 const searchUsuarioByEmail = async function (email){
     try {
 
