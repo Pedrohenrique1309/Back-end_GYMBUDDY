@@ -244,7 +244,7 @@ const buscarUsuario = async function (id) {
 
                     if(resultUsuario.length > 0){
 
-                        //Cria um objeto Json para retornar a lista de Desenvolvedores
+                        //Cria um objeto Json para retornar a lista de Usuários
                         dadosUsuarios.status = true
                         dadosUsuarios.status_code = 200
                         dadosUsuarios.Itens = resultUsuario.length

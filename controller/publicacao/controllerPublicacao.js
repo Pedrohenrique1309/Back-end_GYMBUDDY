@@ -75,7 +75,7 @@ const atualizarPublicacao = async function(publicacao, id, contentType) {
 
             }
 
-            usuario.id = parseInt(id)
+            publicacao.id = parseInt(id)
             
             let buscarPublicacao = await publicacaoDAO.selectPublicacao(publicacao.id)
 
@@ -171,3 +171,92 @@ const excluirPublicacao = async function(id) {
 
 }
 
+//Função para listar todas as publicações salvas no Banco de Dados 
+const listarPublicaca = async function () {
+    
+    try{
+
+        let dadosPublicacoes = {}
+
+        let resultPublicacao = await publicacaoDAO.selectAllPublicacao()
+        
+
+        if(resultPublicacao != false || typeof (resultPublicacao) == 'object'){
+
+            if(resultPublicacao.length > 0 ){
+
+                dadosPublicacoes.status = true
+                dadosPublicacoes.status_code = 200
+                dadosPublicacoes.itens = resultUsuario.length
+                dadosPublicacoes.publicacoes = resultPublicacao
+
+                return dadosPublicacoes //200
+
+            }else{
+                return MESSAGE.ERROR_NOT_FOUND // 404
+            }
+
+        }else{
+            return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+        }
+
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }   
+
+}
+
+//Função para buscar uma publicação no Banco de Dados pelo ID
+const buscarPublicacao = async function (id) {
+
+    try{
+
+        if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
+
+            let dadosPublicao= {}
+
+            let resultPublicacao = await publicacaoDAO.selectPublicacao(parseInt(id))
+
+            if(resultPublicacao !== String(resultPublicacao)){
+                
+                if(resultPublicacao != false || typeof(resultPublicacao) == 'object'){
+
+                    if(resultPublicacao.length > 0){
+
+                        //Cria um objeto Json para retornar a lista de Publicações
+                        dadosPublicao.status = true
+                        dadosPublicao.status_code = 200
+                        dadosPublicao.Itens = resultPublicacao.length
+                       dadosPublicao.usuario = resultPublicacao
+        
+                        return dadosPublicao//200
+                    }else{
+            
+                        return MESSAGE.ERROR_NOT_FOUND //404
+                    }
+        
+                }else{
+                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+            }else{
+                return MESSAGE.ERROR_CONTENT_TYPE//415
+            }
+            
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
+        }
+
+
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
+}
+
+module.exports = {
+    inserirPublicacao,
+    atualizarPublicacao,
+    excluirPublicacao,
+    listarPublicaca,
+    buscarPublicacao
+}
