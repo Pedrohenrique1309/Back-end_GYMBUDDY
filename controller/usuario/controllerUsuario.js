@@ -42,7 +42,7 @@ const inserirUsuario = async function(usuario, contentType){
 
                     let resultUsuario = await usuarioDAO.insertUsuario(usuario)
 
-                    if(resultUsuario){
+                    if(!resultPublicacao.code){
                         return {
                             status_code: 200,
                             message: "usuário criado com sucesso",

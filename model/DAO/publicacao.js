@@ -150,12 +150,13 @@ const selectPublicacao = async function(id){
 
 //Função para buscar todas as publicações de um Usuário
 const selectPublicacaoByUser = async function(id_user){
-
     try{
 
-        let sql = `SELECT * FROM tbl_publicacao where id_user =${id_user}`
+        let sql = `SELECT * FROM tbl_publicacao where id_user = ${id_user} order by id desc`
 
         let result = await prisma.$queryRawUnsafe(sql)
+
+        
 
         if(result){
             return result

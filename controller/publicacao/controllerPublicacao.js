@@ -208,7 +208,7 @@ const listarPublicacao = async function () {
 
 //Função para buscar uma publicação no Banco de Dados pelo ID
 const buscarPublicacao = async function (id) {
-
+    console.log(id)
     try{
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
@@ -255,7 +255,7 @@ const buscarPublicacao = async function (id) {
 
 //Função para buscar as publicações de um usuário no Banco de Dados pelo ID
 const buscarPublicacaoPeloUsuario = async function (id_user) {
-
+    console.log(id_user)
     try{
 
         if(id_user != '' && id_user != undefined && id_user != null && !isNaN(id_user) && id_user > 0){
@@ -264,9 +264,12 @@ const buscarPublicacaoPeloUsuario = async function (id_user) {
 
             let resultPublicacao = await publicacaoDAO.selectPublicacaoByUser(parseInt(id_user))
 
+            console.log(resultPublicacao);
+
             if(resultPublicacao !== String(resultPublicacao)){
                 
                 if(resultPublicacao != false || typeof(resultPublicacao) == 'object'){
+
 
                     if(resultPublicacao.length > 0){
 
@@ -274,7 +277,7 @@ const buscarPublicacaoPeloUsuario = async function (id_user) {
                         dadosPublicao.status = true
                         dadosPublicao.status_code = 200
                         dadosPublicao.Itens = resultPublicacao.length
-                       dadosPublicao.usuario = resultPublicacao
+                        dadosPublicao.publicacao = resultPublicacao
         
                         return dadosPublicao//200
                     }else{

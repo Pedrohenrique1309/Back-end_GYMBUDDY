@@ -32,7 +32,7 @@ const inserirComentario = async function(comentario, contentType){
 
                 let resultComentiario = comentarioDAO.insertComentario(comentario)
                                
-                if(resultComentiario){
+                if(!resultPublicacao.code){
                     return {
                         status_code: 200,
                         message: "Comentário publicado com sucesso",
