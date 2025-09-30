@@ -184,6 +184,17 @@ app.get('/v1/gymbuddy/publicacao/:search_id', cors(), async function(request, re
 
 })
 
+app.get('/v1/gymbuddy/publicacao/:id_user', cors(), async function(request, response){
+
+    let id_user = request.params.id_user
+
+    let result = await controllerPublicacao.buscarPublicacaoPeloUsuario(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
 app.delete('/v1/gymbuddy/publicacao/:search_id', cors(), async function(request, response){
 
     let search_id = request.params.search_id

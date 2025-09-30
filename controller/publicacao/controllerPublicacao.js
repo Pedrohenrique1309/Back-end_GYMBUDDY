@@ -253,10 +253,58 @@ const buscarPublicacao = async function (id) {
 
 }
 
+//Função para buscar as publicações de um usuário no Banco de Dados pelo ID
+const buscarPublicacaoPeloUsuario = async function (id_user) {
+
+    try{
+
+        if(id_user != '' && id_user != undefined && id_user != null && !isNaN(id_user) && id_user > 0){
+
+            let dadosPublicao= {}
+
+            let resultPublicacao = await publicacaoDAO.selectPublicacaoByUser(parseInt(id_user))
+
+            if(resultPublicacao !== String(resultPublicacao)){
+                
+                if(resultPublicacao != false || typeof(resultPublicacao) == 'object'){
+
+                    if(resultPublicacao.length > 0){
+
+                        //Cria um objeto Json para retornar a lista de Publicações
+                        dadosPublicao.status = true
+                        dadosPublicao.status_code = 200
+                        dadosPublicao.Itens = resultPublicacao.length
+                       dadosPublicao.usuario = resultPublicacao
+        
+                        return dadosPublicao//200
+                    }else{
+            
+                        return MESSAGE.ERROR_NOT_FOUND //404
+                    }
+        
+                }else{
+                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+            }else{
+                return MESSAGE.ERROR_CONTENT_TYPE//415
+            }
+            
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
+        }
+
+
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
+}
+
 module.exports = {
     inserirPublicacao,
     atualizarPublicacao,
     excluirPublicacao,
     listarPublicaca,
-    buscarPublicacao
+    buscarPublicacao,
+    buscarPublicacaoPeloUsuario
 }

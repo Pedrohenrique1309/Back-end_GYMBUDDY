@@ -133,10 +133,32 @@ const selectPublicacao = async function(id){
 
 }
 
+//Função para buscar todas as publicações de um Usuário
+const selectPublicacaoByUser = async function(id_user){
+
+    try{
+
+        let sql = `SELECT * FROM tbl_publicacao where id_user =${id_user}`
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if(result){
+            return result
+        }else{
+            return false
+        }
+
+    }catch(error){
+        return error
+    }
+
+}
+
 module.exports = {
     insertPublicacao,
     updatePublicacao,
     deletePublicacao,
     selectAllPublicacao,
-    selectPublicacao
+    selectPublicacao,
+    selectPublicacaoByUser
 }
