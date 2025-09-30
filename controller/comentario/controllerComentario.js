@@ -13,15 +13,15 @@ const comentarioDAO = require('../../model/DAO/comentarios.js')
 
 //Função para inserir um novo comentario no Banco de dados 
 const inserirComentario = async function(comentario, contentType){
-
+console.log(comentario);
     try{
 
         if(contentType == 'application/json'){
 
 
             if(
-                comentario.comentario       == undefined || comentario.comentario        == ''||comentario.comentario          == null ||comentario.comentario.length        > 300   ||  
-                comentario.data_coementario == undefined || comentario.data_coementario  == ''|| comentario.data_coementario   == null ||comentario.data_coementario.length  != 10   ||
+                comentario.conteudo       == undefined || comentario.conteudo        == ''||comentario.conteudo          == null ||comentario.conteudo.length        > 300   ||  
+                comentario.data_comentario  == undefined || comentario.data_comentario   == ''|| comentario.data_comentario    == null ||comentario.data_comentario.length  != 10   ||
                 comentario.id_publicacao    == undefined || comentario.id_publicacao     == ''|| isNaN(comentario.id_publicacao)       ||
                 comentario.id_user          == undefined || comentario.id_user           == ''|| isNaN(comentario.id_user)  
             ){
@@ -30,13 +30,14 @@ const inserirComentario = async function(comentario, contentType){
 
             }else{
 
-                let resultComentiario = comentarioDAO.insertComentario(comentario)
-                               
-                if(!resultPublicacao.code){
+                let resultComentario = await comentarioDAO.insertComentario(comentario)
+                console.log(resultComentario);               
+
+                if(!resultComentario.code){
                     return {
                         status_code: 200,
                         message: "Comentário publicado com sucesso",
-                        usuario: resultComentiario
+                        comentario: resultComentario
                     }
 
                 }else{
@@ -49,6 +50,7 @@ const inserirComentario = async function(comentario, contentType){
         }
         
     }catch(error){
+        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 

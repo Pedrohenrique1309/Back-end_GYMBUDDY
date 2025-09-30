@@ -42,7 +42,8 @@ const inserirUsuario = async function(usuario, contentType){
 
                     let resultUsuario = await usuarioDAO.insertUsuario(usuario)
 
-                    if(!resultPublicacao.code){
+
+                    if(!resultUsuario.code){
                         return {
                             status_code: 200,
                             message: "usuário criado com sucesso",
@@ -90,16 +91,14 @@ const atualizarUsuario = async function(usuario, id, contentType) {
             usuario.id = parseInt(id)
             
             let buscarUsuario = await usuarioDAO.selectByUsuario(usuario.id)
-
-            console.log(buscarUsuario);
             
 
             if(buscarUsuario){
 
-                let resultUsuario = await usuarioDAO.atualizarUsuario(usuario)
+                let resultUsuario = await usuarioDAO.updateUsuario(usuario)
 
-
-                if(resultUsuario){
+                console.log(resultUsuario);
+                if(!resultUsuario.code){
                     
                     return {
                         status_code: 200,
@@ -198,7 +197,7 @@ const listarUsuario = async function () {
         let dadosUsuarios = {}
 
         let resultUsuario = await usuarioDAO.selectAllUsuario()
-        
+ 
 
         if(resultUsuario != false || typeof (resultUsuario) == 'object'){
 

@@ -19,12 +19,12 @@
      try{
  
          let sql = `insert into tbl_comentario(
-                                                 comentario,
-                                                 data,
+                                                 conteudo,
+                                                 data_comentario,
                                                  id_publicacao,
-                                                 id_usuario
+                                                 id_user
                                              )values(
-                                                 '${comentario.comentario}',
+                                                 '${comentario.conteudo}',
                                                  '${comentario.data_comentario}',
                                                  '${comentario.id_publicao}',
                                                  '${comentario.id_user}'
@@ -33,7 +33,7 @@
          let result = await prisma.$executeRawUnsafe(sql)
  
          if(result){
-             let sqlSelectId = `SELECT * FROM tbl_comentario WHERE id_usuario = '${comentario.id_user}' ORDER BY id DESC LIMIT 1`
+             let sqlSelectId = `SELECT * FROM tbl_comentario WHERE id_user = '${comentario.id_user}' ORDER BY id DESC LIMIT 1`
              let criar = await prisma.$queryRawUnsafe(sqlSelectId)
              return criar[0]
          }else{
@@ -41,6 +41,7 @@
          }
  
      }catch(error){
+        console.log(error);
          return error
      }
  
@@ -51,10 +52,10 @@
  
      try{
  
-         let sql = `update tbl_publicacao set    comentario      = '${publicacao.foto}',
-                                                 data           = '${publicacao.descricao}',
-                                                 id_publicacao  = '${publicacao.localizacao}',
-                                                 id_usuario     = '${publicacao.id_usuario}'
+         let sql = `update tbl_publicacao set    comentario      = '${comentario.comentario}',
+                                                 data_comentario = '${comentario.data_comentario}',
+                                                 id_publicacao   = '${comentario.id_publicacao}',
+                                                 id_usuario      = '${comentario.id_usuario}'
                                          where id = ${publicacao.id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
