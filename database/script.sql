@@ -26,7 +26,7 @@ CREATE TABLE tbl_user (
     senha VARCHAR(100) NOT NULL,
     peso DECIMAL(5, 2),
     altura DECIMAL(3, 2),
-    mmc DECIMAL(5,2),
+    imc DECIMAL(5,2),
     nickname VARCHAR(150) NOT NULL,
     data_nascimento DATE,
     foto_perfil VARCHAR(255),

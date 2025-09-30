@@ -19,28 +19,43 @@ const insertPublicacao = async function(publicacao){
     try{
 
         let sql = `insert into tbl_publicacao(
-                                                foto,
+                                                imagem,
                                                 descricao,
+                                                data_publicacao,
                                                 localizacao,
-                                                id_usuario
+                                                id_user
                                             )values(
-                                                '${publicacao.foto}',
+                                                '${publicacao.imagem}',
                                                 '${publicacao.descricao}',
+                                                '${publicacao.data}',
                                                 '${publicacao.localizacao}',
-                                                '${publicacao.id_usuario}'
+                                                '${publicacao.id_user}'
                                             );`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
-        if(result){
-            let sqlSelectId = `SELECT * FROM tbl_publicacao WHERE id_usuario = '${publicacao.id_usuario}' ORDER BY id DESC LIMIT 1`
-            let criar = await prisma.$queryRawUnsafe(sqlSelectId)
-            return criar[0]
-        }else{
-            return false
-        }
+        if (result) {
+            let sqlSelectId = `SELECT * 
+                               FROM tbl_publicacao 
+                               WHERE id_user = '${publicacao.id_user}' 
+                               ORDER BY id DESC 
+                               LIMIT 1`;
+            
+            let criar = await prisma.$queryRawUnsafe(sqlSelectId);
+      
+            // corrigido lentgth -> length
+            if (criar.length > 0 ){
+                return criar[0]
+            }else{
+                return false
+            }
+            
+          } else {
+            return false;
+          }
 
     }catch(error){
+        console.log(error);
         return error
     }
 
@@ -51,10 +66,10 @@ const updatePublicacao = async function(publicacao){
 
     try{
 
-        let sql = `update tbl_publicacao set     foto       = '${publicacao.foto}',
+        let sql = `update tbl_publicacao set    imagem      = '${publicacao.imagem}',
                                                 descricao   = '${publicacao.descricao}',
                                                 localizacao = '${publicacao.localizacao}',
-                                                id_usuario  = '${publicacao.id_usuario}'
+                                                id_user  = '${publicacao.id_user}'
                                         where id = ${publicacao.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)

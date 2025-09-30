@@ -31,13 +31,13 @@ const inserirPublicacao = async function(publicacao, contentType){
 
             }else{
 
-                let resultPublicacao = publicacaoDAO.insertPublicacao(publicacao)
-                    
-                if(resultPublicacao){
+                let resultPublicacao = await publicacaoDAO.insertPublicacao(publicacao)
+
+                if(!resultPublicacao.code){
                     return {
                         status_code: 200,
                         message: "publicacao publicada com sucesso",
-                        usuario: resultPublicacao
+                        publicacao: resultPublicacao
                     }
 
                 }else{
@@ -81,7 +81,7 @@ const atualizarPublicacao = async function(publicacao, id, contentType) {
 
             if(buscarPublicacao){
 
-                let resultPublicacao = await publicacaoDAO.atualizarPublicacao(publicacao)
+                let resultPublicacao = await publicacaoDAO.updatePublicacao(publicacao)
 
 
                 if(resultPublicacao){
@@ -172,14 +172,14 @@ const excluirPublicacao = async function(id) {
 }
 
 //Função para listar todas as publicações salvas no Banco de Dados 
-const listarPublicaca = async function () {
+const listarPublicacao = async function () {
     
     try{
 
         let dadosPublicacoes = {}
 
         let resultPublicacao = await publicacaoDAO.selectAllPublicacao()
-        
+    
 
         if(resultPublicacao != false || typeof (resultPublicacao) == 'object'){
 
@@ -187,7 +187,7 @@ const listarPublicaca = async function () {
 
                 dadosPublicacoes.status = true
                 dadosPublicacoes.status_code = 200
-                dadosPublicacoes.itens = resultUsuario.length
+                dadosPublicacoes.itens = resultPublicacao.length
                 dadosPublicacoes.publicacoes = resultPublicacao
 
                 return dadosPublicacoes //200
@@ -304,7 +304,7 @@ module.exports = {
     inserirPublicacao,
     atualizarPublicacao,
     excluirPublicacao,
-    listarPublicaca,
+    listarPublicacao,
     buscarPublicacao,
     buscarPublicacaoPeloUsuario
 }

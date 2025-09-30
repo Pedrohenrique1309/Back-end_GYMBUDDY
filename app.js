@@ -166,7 +166,7 @@ app.put('/v1/gymbuddy/publicacao/:search_id', cors(), bodyParserJSON, async func
 
 app.get('/v1/gymbuddy/publicacao', cors(), async function(request, response){
 
-    let result = await controllerPublicacao.listarPublicaca()
+    let result = await controllerPublicacao.listarPublicacao()
 
     response.status(result.status_code)
     response.json(result)

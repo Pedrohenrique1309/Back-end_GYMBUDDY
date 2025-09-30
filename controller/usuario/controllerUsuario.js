@@ -41,8 +41,6 @@ const inserirUsuario = async function(usuario, contentType){
                 }else {
 
                     let resultUsuario = await usuarioDAO.insertUsuario(usuario)
-                    
-                    console.log(resultUsuario);
 
                     if(resultUsuario){
                         return {
