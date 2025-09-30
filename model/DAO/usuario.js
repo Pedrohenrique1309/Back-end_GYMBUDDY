@@ -58,6 +58,7 @@ const updateUsuario = async function(usuario){
                                             senha       =  '${usuario.senha}',
                                             peso        =  '${usuario.peso}',
                                             altura      =  '${usuario.altura}',
+                                            mmc         =  '${usuario.mmc}',
                                             foto        =  '${usuario.foto}',
                                             descricao   =  '${usuario.descricao}',
                                             localizacao =  '${usuario.localizacao}'
