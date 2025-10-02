@@ -13,11 +13,10 @@ const comentarioDAO = require('../../model/DAO/comentarios.js')
 
 //Função para inserir um novo comentario no Banco de dados 
 const inserirComentario = async function(comentario, contentType){
-console.log(comentario);
+
     try{
 
         if(contentType == 'application/json'){
-
 
             if(
                 comentario.conteudo       == undefined || comentario.conteudo        == ''||comentario.conteudo          == null ||comentario.conteudo.length        > 300   ||  
@@ -31,7 +30,7 @@ console.log(comentario);
             }else{
 
                 let resultComentario = await comentarioDAO.insertComentario(comentario)
-                console.log(resultComentario);               
+                           
 
                 if(!resultComentario.code){
                     return {
@@ -66,8 +65,8 @@ const atualizarComentario = async function(comentario, id, contentType) {
             
             if(
                 id                          == undefined || id                           == ''|| id                              == null || isNaN(id) ||id                     <= 0    ||
-                comentario.comentario       == undefined || comentario.comentario        == ''||comentario.comentario            == null ||comentario.comentario.length        > 300   ||  
-                comentario.data_coementario == undefined || comentario.data_coementario  == ''|| comentario.data_coementario     == null ||comentario.data_coementario.length  != 10   ||
+                comentario.conteudo         == undefined || comentario.conteudo          == ''|| comentario.conteudo             == null ||comentario.conteudo .length        > 300   ||  
+                comentario.data_comentario  == undefined || comentario.data_comentario   == ''|| comentario.data_comentario      == null ||comentario.data_comentario.length  != 10   ||
                 comentario.id_publicacao    == undefined || comentario.id_publicacao     == ''|| isNaN(comentario.id_publicacao)         ||
                 comentario.id_user          == undefined || comentario.id_user           == ''|| isNaN(comentario.id_user)
             ){
@@ -82,10 +81,9 @@ const atualizarComentario = async function(comentario, id, contentType) {
 
             if(buscarComentario){
 
-                let resultComentario = await comentarioDAO.atualizarComentario(comentario)
+                let resultComentario = await comentarioDAO.updateComentario(comentario)
 
-
-                if(resultComentario){
+                if(!resultComentario.code){
                     
                     return {
                         status_code: 200,
@@ -188,7 +186,7 @@ const listarComentarios = async function () {
 
                 dadosComentarios.status = true
                 dadosComentarios.status_code = 200
-                dadosComentarios.itens = resultUsuario.length
+                dadosComentarios.itens = resultComentario.length
                 dadosComentarios.comentarios = resultComentario
 
                 return dadosComentarios //200

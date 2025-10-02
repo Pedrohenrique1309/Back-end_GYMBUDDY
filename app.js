@@ -215,6 +215,10 @@ app.post('/v1/gymbuddy/comentario', cors(), bodyParserJSON, async function(reque
     
     let dadosBody = request.body
 
+    console.log(dadosBody)
+
+
+
     let result = await controllerComentario.inserirComentario(dadosBody, contentType)
 
     response.status(result.status_code)

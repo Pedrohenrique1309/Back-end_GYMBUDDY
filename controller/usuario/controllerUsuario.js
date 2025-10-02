@@ -97,7 +97,7 @@ const atualizarUsuario = async function(usuario, id, contentType) {
 
                 let resultUsuario = await usuarioDAO.updateUsuario(usuario)
 
-                console.log(resultUsuario);
+
                 if(!resultUsuario.code){
                     
                     return {

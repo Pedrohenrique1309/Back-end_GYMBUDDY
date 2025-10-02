@@ -15,10 +15,8 @@
 
  //Função para inserir no Banco de Dados uma nova comentario
  const insertComentario = async function(comentario){
- 
+    
      try{
-        console.log(comentario);
-        
  
          let sql = `insert into tbl_comentario(
                                                  conteudo,
@@ -28,7 +26,7 @@
                                              )values(
                                                  '${comentario.conteudo}',
                                                  '${comentario.data_comentario}',
-                                                 '${comentario.id_publicao}',
+                                                 '${comentario.id_publicacao}',
                                                  '${comentario.id_user}'
                                              );`
  
@@ -53,20 +51,23 @@
  const updateComentario = async function(comentario){
  
      try{
- 
-         let sql = `update tbl_publicacao set    comentario      = '${comentario.comentario}',
+       
+         let sql = `update tbl_comentario set    conteudo        = '${comentario.conteudo}',
                                                  data_comentario = '${comentario.data_comentario}',
                                                  id_publicacao   = '${comentario.id_publicacao}',
-                                                 id_usuario      = '${comentario.id_usuario}'
-                                         where id = ${publicacao.id}`
+                                                 id_user         = '${comentario.id_user}'
+                                         where id = ${comentario.id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
-         
-         if(result){
-             return true 
-         }else{
-             return false
-         }
+
+        if(result){
+            let sqlSelectId = `SELECT * FROM tbl_comentario WHERE id = '${comentario.id}' `
+            let criar = await prisma.$queryRawUnsafe(sqlSelectId)
+            return criar[0]
+        }else{
+            return false
+        }
+
  
      }catch(error){
          return error

@@ -84,7 +84,7 @@ const atualizarPublicacao = async function(publicacao, id, contentType) {
                 let resultPublicacao = await publicacaoDAO.updatePublicacao(publicacao)
 
 
-                if(resultPublicacao){
+                if(!resultPublicacao.code){
                     
                     return {
                         status_code: 200,
