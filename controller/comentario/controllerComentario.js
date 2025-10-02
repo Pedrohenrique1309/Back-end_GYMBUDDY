@@ -62,7 +62,8 @@ const atualizarComentario = async function(comentario, id, contentType) {
     try{
         
         if(contentType == 'application/json'){
-
+            
+            
             if(
                 id                          == undefined || id                           == ''|| id                              == null || isNaN(id) ||id                     <= 0    ||
                 comentario.comentario       == undefined || comentario.comentario        == ''||comentario.comentario            == null ||comentario.comentario.length        > 300   ||  

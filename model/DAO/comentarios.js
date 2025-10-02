@@ -17,6 +17,8 @@
  const insertComentario = async function(comentario){
  
      try{
+        console.log(comentario);
+        
  
          let sql = `insert into tbl_comentario(
                                                  conteudo,

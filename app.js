@@ -212,7 +212,7 @@ app.get('/v1/gymbuddy/publicacao/usuario/:id_user', cors(), async function(reque
 app.post('/v1/gymbuddy/comentario', cors(), bodyParserJSON, async function(request, response){
 
     let contentType = request.headers['content-type']
-
+    
     let dadosBody = request.body
 
     let result = await controllerComentario.inserirComentario(dadosBody, contentType)
@@ -225,7 +225,7 @@ app.post('/v1/gymbuddy/comentario', cors(), bodyParserJSON, async function(reque
 app.put('/v1/gymbuddy/comentario/:search_id', cors(), bodyParserJSON, async function(request, response){
 
     let contentType = request.headers['content-type']
-
+ 
     let dadosBody = request.body
 
     let search_id = request.params.search_id
