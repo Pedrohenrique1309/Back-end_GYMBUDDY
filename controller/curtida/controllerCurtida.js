@@ -72,8 +72,8 @@ const atualizarCurtida = async function(curtida, id, contentType) {
             
             
             if(
-                id                       == undefined || id                        == ''|| id                          == null ||isNaN(id)                       ||id                        <= 0 ||
-                curtida.id_publicacao    == undefined || curtida.id_publicacao     == ''|| curtida.id_publicacao    == null ||isNaN(curtida.id_publicacao) || curtida.id_publicacao <= 0 ||
+                id                       == undefined || id                        == ''|| id                    == null ||isNaN(id)                    ||id                     <= 0 ||
+                curtida.id_publicacao    == undefined || curtida.id_publicacao     == ''|| curtida.id_publicacao == null ||isNaN(curtida.id_publicacao) || curtida.id_publicacao <= 0 ||
                 curtida.id_user          == undefined || curtida.id_user           == ''|| curtida.id_user       == null ||isNaN(curtida.id_user)       || curtida.id_user       <= 0
             ){
 
@@ -83,7 +83,7 @@ const atualizarCurtida = async function(curtida, id, contentType) {
 
             curtida.id = parseInt(id)
             
-            let buscarCurtida = await curtidaDAO.sele(curtida.id)
+            let buscarCurtida = await curtidaDAO.selectCurtida(curtida.id)
 
             if(buscarCurtida){
 

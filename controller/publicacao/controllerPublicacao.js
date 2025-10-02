@@ -9,7 +9,10 @@
 const MESSAGE = require('../../modulo/config')
 
 //Import da DAO de publicacao
-const publicacaoDAO = require('../../model/DAO/publicacao')
+const publicacaoDAO = require('../../model/DAO/publicacao.js')
+
+//import de comtrollers para fazer os relacionamentos
+const controllerUsuario = require('../usuario/controllerUsuario.js')
 
 //Função para inserir uma nova publicacao no Banco de dados 
 const inserirPublicacao = async function(publicacao, contentType){
@@ -176,20 +179,36 @@ const listarPublicacao = async function () {
     
     try{
 
+        let arrayPublicacoes = []
         let dadosPublicacoes = {}
 
         let resultPublicacao = await publicacaoDAO.selectAllPublicacao()
-    
 
+        
+        
         if(resultPublicacao != false || typeof (resultPublicacao) == 'object'){
-
+           
             if(resultPublicacao.length > 0 ){
-
+                
                 dadosPublicacoes.status = true
                 dadosPublicacoes.status_code = 200
                 dadosPublicacoes.itens = resultPublicacao.length
-                dadosPublicacoes.publicacoes = resultPublicacao
 
+                for(itemPublicacao of resultPublicacao){
+
+                        let dadosUsuario= await controllerUsuario.buscarUsuario(itemPublicacao.id_user)
+                    
+                        itemPublicacao.user = dadosUsuario.usuario
+                       
+                        delete itemPublicacao.id_user
+
+                    
+                    arrayPublicacoes.push(itemPublicacao)
+                    
+                    
+                }
+                dadosPublicacoes.publicacoes = arrayPublicacoes
+                
                 return dadosPublicacoes //200
 
             }else{
@@ -208,12 +227,14 @@ const listarPublicacao = async function () {
 
 //Função para buscar uma publicação no Banco de Dados pelo ID
 const buscarPublicacao = async function (id) {
-    console.log(id)
+   
     try{
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
-            let dadosPublicao= {}
+            
+            let arrayPublicacoes = []
+            let dadosPublicacoes= {}
 
             let resultPublicacao = await publicacaoDAO.selectPublicacao(parseInt(id))
 
@@ -223,13 +244,27 @@ const buscarPublicacao = async function (id) {
 
                     if(resultPublicacao.length > 0){
 
-                        //Cria um objeto Json para retornar a lista de Publicações
-                        dadosPublicao.status = true
-                        dadosPublicao.status_code = 200
-                        dadosPublicao.Itens = resultPublicacao.length
-                       dadosPublicao.usuario = resultPublicacao
-        
-                        return dadosPublicao//200
+                        dadosPublicacoes.status = true
+                        dadosPublicacoes.status_code = 200
+                        dadosPublicacoes.itens = resultPublicacao.length
+
+                        for(itemPublicacao of resultPublicacao){
+
+                                let dadosUsuario= await controllerUsuario.buscarUsuario(itemPublicacao.id_user)
+                            
+                                itemPublicacao.user = dadosUsuario.usuario
+                            
+                                delete itemPublicacao.id_user
+
+                            
+                            arrayPublicacoes.push(itemPublicacao)
+                            
+                            
+                        }
+                        dadosPublicacoes.publicacoes = arrayPublicacoes
+                        
+                        return dadosPublicacoes //200
+                        
                     }else{
             
                         return MESSAGE.ERROR_NOT_FOUND //404

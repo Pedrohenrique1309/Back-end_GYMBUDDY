@@ -11,6 +11,10 @@ const MESSAGE = require('../../modulo/config')
 //Import da DAO de publicacao
 const comentarioDAO = require('../../model/DAO/comentarios.js')
 
+//import de comtrollers para fazer os relacionamentos
+const controllerUsuario = require('../usuario/controllerUsuario.js')
+const controllerPublicacao = require('../publicacao/controllerPublicacao.js')
+
 //Função para inserir um novo comentario no Banco de dados 
 const inserirComentario = async function(comentario, contentType){
 
@@ -175,6 +179,7 @@ const listarComentarios = async function () {
     
     try{
 
+        let arrayComentarios = []
         let dadosComentarios = {}
 
         let resultComentario = await comentarioDAO.selectAllComentario()
@@ -187,9 +192,30 @@ const listarComentarios = async function () {
                 dadosComentarios.status = true
                 dadosComentarios.status_code = 200
                 dadosComentarios.itens = resultComentario.length
-                dadosComentarios.comentarios = resultComentario
 
-                return dadosComentarios //200
+                for(itemComentario of resultComentario){
+                
+                    let dadosUsuario= await controllerUsuario.buscarUsuario(itemComentario.id_user)
+                                    
+                    itemComentario.user = dadosUsuario.usuario
+                                   
+                    delete itemComentario.id_user
+                
+
+                    let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemComentario.id_publicacao) 
+
+                    itemComentario.publicacao = dadosPublicacao.publicacoes
+
+                    delete itemComentario.id_publicacao
+
+                                    
+                    arrayComentarios.push(itemComentario)
+
+               }
+
+             dadosComentarios.comentarios = arrayComentarios
+                                
+             return dadosComentarios //200
 
             }else{
                 return MESSAGE.ERROR_NOT_FOUND // 404
@@ -212,7 +238,8 @@ const buscarComentario = async function (id) {
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
-            let dadosComentario= {}
+            let arrayComentarios= []
+            let dadosComentarios= {}
 
             let resultComentario = await comentarioDAO.selectComentario(parseInt(id))
 
@@ -222,14 +249,34 @@ const buscarComentario = async function (id) {
 
                     if(resultComentario.length > 0){
 
-                        //Cria um objeto Json para retornar a lista de comentarios
-                        dadosComentario.status = true
-                        dadosComentario.status_code = 200
-                        dadosComentario.Itens = resultComentario.length
-                       dadosComentario.comentario = resultComentario
+                        dadosComentarios.status = true
+                        dadosComentarios.status_code = 200
+                        dadosComentarios.itens = resultComentario.length
         
-                        return dadosComentario//200
-                    }else{
+                        for(itemComentario of resultComentario){
+                        
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemComentario.id_user)
+                                            
+                            itemComentario.user = dadosUsuario.usuario
+                                           
+                            delete itemComentario.id_user
+                        
+        
+                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemComentario.id_publicacao) 
+        
+                            itemComentario.publicacao = dadosPublicacao.publicacoes
+        
+                            delete itemComentario.id_publicacao
+        
+                                            
+                            arrayComentarios.push(itemComentario)
+        
+                       }
+        
+                     dadosComentarios.comentarios = arrayComentarios
+                                        
+                     return dadosComentarios //200
+        
             
                         return MESSAGE.ERROR_NOT_FOUND //404
                     }
