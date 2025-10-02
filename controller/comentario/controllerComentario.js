@@ -19,10 +19,10 @@ const inserirComentario = async function(comentario, contentType){
         if(contentType == 'application/json'){
 
             if(
-                comentario.conteudo       == undefined || comentario.conteudo        == ''||comentario.conteudo          == null ||comentario.conteudo.length        > 300   ||  
-                comentario.data_comentario  == undefined || comentario.data_comentario   == ''|| comentario.data_comentario    == null ||comentario.data_comentario.length  != 10   ||
-                comentario.id_publicacao    == undefined || comentario.id_publicacao     == ''|| isNaN(comentario.id_publicacao)       ||
-                comentario.id_user          == undefined || comentario.id_user           == ''|| isNaN(comentario.id_user)  
+                comentario.conteudo         == undefined || comentario.conteudo          == ''||comentario.conteudo          == null ||comentario.conteudo.length         > 300   ||  
+                comentario.data_comentario  == undefined || comentario.data_comentario   == ''|| comentario.data_comentario  == null ||comentario.data_comentario.length  != 10   ||
+                comentario.id_publicacao    == undefined || comentario.id_publicacao     == ''|| comentario.id_publicacao    == null ||isNaN(comentario.id_publicacao) || comentario.id_publicacao <= 0 ||
+                comentario.id_user          == undefined || comentario.id_user           == ''|| comentario.id_user          == null ||isNaN(comentario.id_user)       || comentario.id_user       <= 0
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
@@ -64,11 +64,11 @@ const atualizarComentario = async function(comentario, id, contentType) {
             
             
             if(
-                id                          == undefined || id                           == ''|| id                              == null || isNaN(id) ||id                     <= 0    ||
-                comentario.conteudo         == undefined || comentario.conteudo          == ''|| comentario.conteudo             == null ||comentario.conteudo .length        > 300   ||  
-                comentario.data_comentario  == undefined || comentario.data_comentario   == ''|| comentario.data_comentario      == null ||comentario.data_comentario.length  != 10   ||
-                comentario.id_publicacao    == undefined || comentario.id_publicacao     == ''|| isNaN(comentario.id_publicacao)         ||
-                comentario.id_user          == undefined || comentario.id_user           == ''|| isNaN(comentario.id_user)
+                id                          == undefined || id                           == ''|| id                          == null || isNaN(id) ||id                     <= 0   ||
+                comentario.conteudo         == undefined || comentario.conteudo          == ''||comentario.conteudo          == null ||comentario.conteudo.length         > 300   ||  
+                comentario.data_comentario  == undefined || comentario.data_comentario   == ''|| comentario.data_comentario  == null ||comentario.data_comentario.length  != 10   ||
+                comentario.id_publicacao    == undefined || comentario.id_publicacao     == ''|| comentario.id_publicacao    == null ||isNaN(comentario.id_publicacao) || comentario.id_publicacao <= 0 ||
+                comentario.id_user          == undefined || comentario.id_user           == ''|| comentario.id_user          == null ||isNaN(comentario.id_user)       || comentario.id_user       <= 0
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
