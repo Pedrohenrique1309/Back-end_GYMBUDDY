@@ -11,6 +11,10 @@ const MESSAGE = require('../../modulo/config.js')
 //Import da DAO de curtida
 const curtidaDAO = require('../../model/DAO/curtida.js')
 
+//import de comtrollers para fazer os relacionamentos
+const controllerUsuario = require('../usuario/controllerUsuario.js')
+const controllerPublicacao = require('../publicacao/controllerPublicacao.js')
+
 //Função para inserir uma nova curtida no Banco de dados 
 const inserirCurtida = async function(curtida, contentType){
 
@@ -181,22 +185,42 @@ const listarCurtida = async function () {
     
     try{
 
+        let arrayCurtidas = []
         let dadosCurtidas = {}
 
-        let resultCurtida = await curtidaDAO.selectAllCurtida()
+        let resultCurtidas = await curtidaDAO.selectAllCurtida()
         
 
-        if(resultCurtida != false || typeof (resultCurtida) == 'object'){
+        if(resultCurtidas != false || typeof (resultCurtidas) == 'object'){
 
-            if(resultCurtida.length > 0 ){
+          if(resultCurtidas.length > 0){
 
-                dadosCurtidas.status = true
-                dadosCurtidas.status_code = 200
-                dadosCurtidas.itens = resultCurtida.length
-                dadosCurtidas.curtidas= resultCurtida
-
-                return dadosCurtidas //200
-
+                        dadosCurtidas.status = true
+                        dadosCurtidas.status_code = 200
+                        dadosCurtidas.itens = resultCurtidas.length
+        
+                        for(itemCurtidas of resultCurtidas){
+                        
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                                            
+                            itemCurtidas.user = dadosUsuario.usuario
+                                           
+                            delete itemCurtidas.id_user
+                        
+        
+                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
+        
+                            itemCurtidas.publicacao = dadosPublicacao.publicacao
+        
+                            delete itemCurtidas.id_publicacao
+        
+                                            
+                            arrayCurtidas.push(itemCurtidas)
+        
+                       }
+        
+                     dadosCurtidas.curtidas = arrayCurtidas
+                                        
             }else{
                 return MESSAGE.ERROR_NOT_FOUND // 404
             }
@@ -218,23 +242,43 @@ const buscarCurtida = async function (id) {
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
+            let arrayCurtidas = []
             let dadosCurtidas = {}
 
-            let resultCurtida = await curtidaDAO.selectCurtida(parseInt(id))
+            let resultCurtidas = await curtidaDAO.selectCurtida(parseInt(id))
 
-            if(resultCurtida !== String(resultCurtida)){
+            if(resultCurtidas !== String(resultCurtidas)){
                 
-                if(resultCurtida != false || typeof(resultCurtida) == 'object'){
+                if(resultCurtidas != false || typeof(resultCurtidas) == 'object'){
 
-                    if(resultCurtida.length > 0){
+                    if(resultCurtidas.length > 0){
 
-                        //Cria um objeto Json para retornar a lista de curtidas
                         dadosCurtidas.status = true
                         dadosCurtidas.status_code = 200
-                        dadosCurtidas.Itens = resultCurtida.length
-                        dadosCurtidas.curtida = resultCurtida
+                        dadosCurtidas.itens = resultCurtidas.length
         
-                        return dadosCurtidas//200
+                        for(itemCurtidas of resultCurtidas){
+                        
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                                            
+                            itemCurtidas.user = dadosUsuario.usuario
+                                           
+                            delete itemCurtidas.id_user
+                        
+        
+                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
+        
+                            itemCurtidas.publicacao = dadosPublicacao.public
+        
+                            delete itemCurtidas.id_publicacao
+        
+                                            
+                            arrayCurtidas.push(itemCurtidas)
+        
+                       }
+        
+                     dadosCurtidas.curtidas = arrayCurtidas
+
                     }else{
             
                         return MESSAGE.ERROR_NOT_FOUND //404
@@ -272,23 +316,42 @@ const buscarCurtidaPeloUsuario = async function (curtida) {
             
         }else{
             
+            let arrayCurtidas = []
             let dadosCurtidas = {}
 
-            let resultCurtida = await curtidaDAO.selectCurtidaByUser(curtida)
+            let resultCurtidas = await curtidaDAO.selectCurtidaByUser(curtida)
 
-            if(resultCurtida !== String(resultCurtida)){
+            if(resultCurtidas !== String(resultCurtidas)){
                 
-                if(resultCurtida != false || typeof(resultCurtida) == 'object'){
+                if(resultCurtidas != false || typeof(resultCurtidas) == 'object'){
 
-                    if(resultCurtida.length > 0){
+                    if(resultCurtidas.length > 0){
 
-                        //Cria um objeto Json para retornar a lista de curtidas
                         dadosCurtidas.status = true
                         dadosCurtidas.status_code = 200
-                        dadosCurtidas.Itens = resultCurtida.length
-                        dadosCurtidas.curtida = resultCurtida
+                        dadosCurtidas.itens = resultCurtidas.length
         
-                        return dadosCurtidas//200
+                        for(itemCurtidas of resultCurtidas){
+                        
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                                            
+                            itemCurtidas.user = dadosUsuario.usuario
+                                           
+                            delete itemCurtidas.id_user
+                        
+        
+                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
+        
+                            itemCurtidas.publicacao = dadosPublicacao.public
+        
+                            delete itemCurtidas.id_publicacao
+        
+                                            
+                            arrayCurtidas.push(itemCurtidas)
+        
+                       }
+        
+                     dadosCurtidas.curtidas = arrayCurtidas
                     }else{
             
                         return MESSAGE.ERROR_NOT_FOUND //404

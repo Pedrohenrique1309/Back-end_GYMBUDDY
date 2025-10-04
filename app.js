@@ -32,6 +32,7 @@ const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
 const controllerPublicacao = require('./controller/publicacao/controllerPublicacao.js')
 const controllerComentario = require('./controller/comentario/controllerComentario.js')
 const controllerCurtida = require('./controller/curtida/controllerCurtida.js')
+const controllerCurtidaComentario = require('./controller/curtida_comentario/curtida_comentario.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -329,6 +330,67 @@ app.delete('/v1/gymbuddy/curtida/:search_id', cors(), async function(request, re
     let search_id = request.params.search_id
 
     let result = await controllerCurtida.excluirCurtida(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//************************************* CURTIDA COMENTARIO *******************************************//
+
+app.post('/v1/gymbuddy/curtida_comentario', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let result = await controllerCurtidaComentario.inserirCurtidaComentario(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.put('/v1/gymbuddy/curtida_comentario/:search_id', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+ 
+    let dadosBody = request.body
+
+    let search_id = request.params.search_id
+
+    let result = await controllerCurtidaComentario.atualizarCurtidaComentario(dadosBody, search_id, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
+app.get('/v1/gymbuddy/curtida_comentario', cors(), async function(request, response){
+
+    let result = await controllerCurtidaComentario.listarCurtidaComentario()
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/curtida_comentario/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerCurtidaComentario.buscarCurtidaComentario(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.delete('/v1/gymbuddy/curtida_comentario/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerCurtidaComentario.excluirCurtidaComentario(search_id)
 
     response.status(result.status_code)
     response.json(result)
