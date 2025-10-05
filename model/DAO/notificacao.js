@@ -21,18 +21,26 @@
          let sql = `insert into tbl_notificacao(
                                                  id_usuario,
                                                  id_publicacao,
-                                                 id_comentario
+                                                 id_comentario,
+                                                 tipo,
+                                                 mensagem,
+                                                 data_criacao,
+                                                 is_lida
                                              )values(
-                                                 '${comentario.conteudo}',
-                                                 '${comentario.data_comentario}',
-                                                 '${comentario.id_publicacao}',
-                                                 '${comentario.id_user}'
+                                                 '${notificacao.id_user}',
+                                                 '${notificacao.id_publicacao}',
+                                                 '${notificacao.id_comentario}',
+                                                 '${notificacao.tipo}',
+                                                 '${notificacao.mensagem}',
+                                                 '${notificacao.data_criacao}',
+                                                 '${notificacao.is_lida}',
+
                                              );`
  
          let result = await prisma.$executeRawUnsafe(sql)
  
          if(result){
-             let sqlSelectId = `SELECT * FROM tbl_comentario WHERE id_user = '${comentario.id_user}' ORDER BY id DESC LIMIT 1`
+             let sqlSelectId = `SELECT * FROM tbl_notificacao WHERE id_usuario = '${notificacao.id_user}' ORDER BY id DESC LIMIT 1`
              let criar = await prisma.$queryRawUnsafe(sqlSelectId)
              return criar[0]
          }else{
@@ -46,21 +54,24 @@
  
  }
  
- //Função para atualizar no Banco de Dados um comentário existente
- const updateComentario = async function(comentario){
+ //Função para atualizar no Banco de Dados uma notificacao existente
+ const updateNotificacao = async function(notificacao){
  
      try{
        
-         let sql = `update tbl_comentario set    conteudo        = '${comentario.conteudo}',
-                                                 data_comentario = '${comentario.data_comentario}',
-                                                 id_publicacao   = '${comentario.id_publicacao}',
-                                                 id_user         = '${comentario.id_user}'
-                                         where id = ${comentario.id}`
+         let sql = `update tbl_notificacao set   id_usuario    = '${notificacao.id_user}',
+                                                 id_publicacao = '${notificacao.id_publicacao}',
+                                                 id_comentario = '${notificacao.id_comentario}',
+                                                 tipo          = '${notificacao.tipo}',
+                                                 mensagem      = '${notificacao.mensagem}',
+                                                 data_criacao  = '${notificacao.data_criacao}',
+                                                 is_lida       = '${notificacao.is_lida}',
+                                         where id = ${notificacao .id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
 
         if(result){
-            let sqlSelectId = `SELECT * FROM tbl_comentario WHERE id = '${comentario.id}' `
+            let sqlSelectId = `SELECT * FROM tbl_notificacao WHERE id = '${notificacao.id}' `
             let criar = await prisma.$queryRawUnsafe(sqlSelectId)
             return criar[0]
         }else{
@@ -74,12 +85,12 @@
  
  }
  
- //Função para excluir no Banco de Dados um comentario existente 
- const deleteComentario = async function(id){
+ //Função para excluir no Banco de Dados uma notificacao existente 
+ const deleteNotificacao = async function(id){
  
      try{
  
-         let sql = `delete from tbl_comentario where id = ${id}`
+         let sql = `delete from tbl_notificacao where id = ${id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
  
@@ -95,8 +106,8 @@
  
  }
  
- //Função para retornar do Banco de Dados todos os comentarios existente
- const selectAllComentario = async function(){
+ //Função para retornar do Banco de Dados todas as notificacoes existente
+ const selectAllNotificacao = async function(){
  
      try{
  
@@ -115,12 +126,12 @@
      }
  }
  
- //Função para buscar no Banco de Dados um comentario pelo ID
- const selectComentario = async function(id){
+ //Função para buscar no Banco de Dados uma notificacao pelo ID
+ const selectNotificacao = async function(id){
  
      try{
  
-         let sql = `SELECT * FROM tbl_comentario where id=${id}`
+         let sql = `SELECT * FROM tbl_notificacao where id=${id}`
  
          let result = await prisma.$queryRawUnsafe(sql)
  
@@ -136,10 +147,33 @@
  
 }
 
+ //Função para buscar no Banco de Dados uma notificacao pelo ID do usuario
+ const selectNotificacaoByUser = async function(id){
+ 
+     try{
+ 
+         let sql = `SELECT * FROM tbl_notificacao where id_usuario =${id_user}`
+ 
+         let result = await prisma.$queryRawUnsafe(sql)
+ 
+         if(result){
+             return result
+         }else{
+             return false
+         }
+ 
+     }catch(error){
+         return error
+     }
+ 
+}
+
+
 module.exports = {
-    insertComentario,
-    updateComentario,
-    deleteComentario,
-    selectAllComentario,
-    selectComentario
+    insertNotificacao,
+    updateNotificacao,
+    deleteNotificacao,
+    selectAllNotificacao,
+    selectNotificacao,
+    selectNotificacaoByUser
 }

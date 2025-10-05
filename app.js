@@ -33,6 +33,7 @@ const controllerPublicacao = require('./controller/publicacao/controllerPublicac
 const controllerComentario = require('./controller/comentario/controllerComentario.js')
 const controllerCurtida = require('./controller/curtida/controllerCurtida.js')
 const controllerCurtidaComentario = require('./controller/curtida_comentario/curtida_comentario.js')
+const controllerNotificacao = require('./controller/notificacao/controllerNotificacao.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -391,6 +392,67 @@ app.delete('/v1/gymbuddy/curtida_comentario/:search_id', cors(), async function(
     let search_id = request.params.search_id
 
     let result = await controllerCurtidaComentario.excluirCurtidaComentario(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//************************************* NOTIFICACOES *******************************************//
+
+app.post('/v1/gymbuddy/curtida_notificacao', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let result = await controllerNotificacao.inserirNotificacao(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.put('/v1/gymbuddy/notificacao/:search_id', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+ 
+    let dadosBody = request.body
+
+    let search_id = request.params.search_id
+
+    let result = await controllerNotificacao.atualizarNotificacao(dadosBody, search_id, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
+app.get('/v1/gymbuddy/notificacao', cors(), async function(request, response){
+
+    let result = await controllerNotificacao.listarNotificacao()
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/notificacao/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerNotificacao.buscarNotificacao(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.delete('/v1/gymbuddy/notificacao/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerNotificacao.excluirNotificacao(search_id)
 
     response.status(result.status_code)
     response.json(result)
