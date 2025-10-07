@@ -35,10 +35,11 @@ const inserirNotificacao = async function(notificacao, contentType){
             }else{
 
                  if(
-                    notificacao.id_user          == undefined || notificacao.id_user        == ''|| notificacao.id_user        == null ||isNaN(notificacao.id_user)               || notificacao.id_user       <= 0 ||
-                    notificacao.tipo             == undefined || notificacao.tipo           == ''|| notificacao.tipo           == null || notificacao.id_user.length        > 50  ||
-                    notificacao.mensagem         == undefined || notificacao.mensagem       == ''|| notificacao.mensagem       == null || notificacao.mensagem.length       > 255 ||
-                    notificacao.data_criacao     == undefined || notificacao.data_criacao   == ''|| notificacao.data_criacao   == null || notificacao.data_criacao.length  != 255 
+                    notificacao.id_usuario_origem  == undefined || notificacao.id_usuario_origem  == ''|| notificacao.id_usuario_origem  == null ||isNaN(notificacao.id_usuario_origem)       || notificacao.id_usuario_origem  <= 0 ||
+                    notificacao.id_usuario_destino == undefined || notificacao.id_usuario_destino == ''|| notificacao.id_usuario_destino == null ||isNaN(notificacao.id_usuario_destino)      || notificacao.id_usuario_destino <= 0 ||
+                    notificacao.tipo               == undefined || notificacao.tipo               == ''|| notificacao.tipo               == null || notificacao.tipo.length           > 50 ||
+                    notificacao.mensagem           == undefined || notificacao.mensagem           == ''|| notificacao.mensagem           == null || notificacao.mensagem.length         > 255 ||
+                    notificacao.data_criacao       == undefined || notificacao.data_criacao       == ''|| notificacao.data_criacao       == null || notificacao.data_criacao.length    != 10 
                 ){
             
                     return MESSAGE.ERROR_REQUIRED_FIELDS //400
@@ -91,10 +92,11 @@ const atualizarNotificacao = async function(notificacao, id, contentType) {
             
                 if(
                     id                           == undefined || id                         == ''|| id                         == null ||isNaN(id)                                ||id                     <= 0 ||
-                    notificacao.id_user          == undefined || notificacao.id_user        == ''|| notificacao.id_user        == null ||isNaN(notificacao.id_user)               || notificacao.id_user   <= 0 ||
-                    notificacao.tipo             == undefined || notificacao.tipo           == ''|| notificacao.tipo           == null || notificacao.id_user.length        > 50  ||
-                    notificacao.mensagem         == undefined || notificacao.mensagem       == ''|| notificacao.mensagem       == null || notificacao.mensagem.length       > 255 ||
-                    notificacao.data_criacao     == undefined || notificacao.data_criacao   == ''|| notificacao.data_criacao   == null || notificacao.data_criacao.length  != 255 
+                    notificacao.id_usuario_origem  == undefined || notificacao.id_usuario_origem  == ''|| notificacao.id_usuario_origem  == null ||isNaN(notificacao.id_usuario_origem)       || notificacao.id_usuario_origem  <= 0 ||
+                    notificacao.id_usuario_destino == undefined || notificacao.id_usuario_destino == ''|| notificacao.id_usuario_destino == null ||isNaN(notificacao.id_usuario_destino)      || notificacao.id_usuario_destino <= 0 ||
+                    notificacao.tipo               == undefined || notificacao.tipo               == ''|| notificacao.tipo               == null || notificacao.tipo.length           > 50 ||
+                    notificacao.mensagem           == undefined || notificacao.mensagem           == ''|| notificacao.mensagem           == null || notificacao.mensagem.length         > 255 ||
+                    notificacao.data_criacao       == undefined || notificacao.data_criacao       == ''|| notificacao.data_criacao       == null || notificacao.data_criacao.length    != 10 
                 ){
                     }
 
@@ -218,11 +220,17 @@ const listarNotificacao = async function () {
         
                         for(itemNotificacao of resultNotificacao){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_user)
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_destino)
                                             
-                            itemNotificacao.user = dadosUsuario.usuario
+                            itemNotificacao.usuario_destino = dadosUsuario.usuarios
                                            
-                            delete itemNotificacao.id_user
+                            delete itemNotificacao.id_usuario_destino
+
+                            let dadosUsuarioOrigem= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_origem)
+                                            
+                            itemNotificacao.usuario_origem = dadosUsuarioOrigem.usuarios
+                                           
+                            delete itemNotificacao.id_usuario_origem
                         
         
                             let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemNotificacao.id_publicacao) 
@@ -234,7 +242,7 @@ const listarNotificacao = async function () {
 
                             let dadosComentario = await controllerComentario.buscarComentario(itemNotificacao.id_comentario) 
         
-                            itemNotificacao.comentario = dadosComentario.comentario
+                            itemNotificacao.comentario = dadosComentario.comentarios
         
                             delete itemNotificacao.id_publicacao        
 
@@ -244,7 +252,8 @@ const listarNotificacao = async function () {
                        }
         
                      dadosNotificacoes.notificacoes = arrayNotificacoes
-                                        
+                             
+                     return dadosNotificacoes
             }else{
                 return MESSAGE.ERROR_NOT_FOUND // 404
             }
@@ -277,117 +286,47 @@ const buscarNotificacao = async function (id) {
 
                     if(resultNotificacao.length > 0){
 
-                                    dadosNotificacoes.status = true
-                                    dadosNotificacoes.status_code = 200
-                                    dadosNotificacoes.itens = resultNotificacao.length
-                    
-                                    for(itemNotificacao of resultNotificacao){
-                                    
-                                        let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_user)
-                                                        
-                                        itemNotificacao.user = dadosUsuario.usuario
-                                                    
-                                        delete itemNotificacao.id_user
-                                    
-                    
-                                        let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemNotificacao.id_publicacao) 
-                    
-                                        itemNotificacao.publicacao = dadosPublicacao.publicacao
-                    
-                                        delete itemNotificacao.id_publicacao
-                    
-
-                                        let dadosComentario = await controllerComentario.buscarComentario(itemNotificacao.id_comentario) 
-                    
-                                        itemNotificacao.comentario = dadosComentario.comentario
-                    
-                                        delete itemNotificacao.id_publicacao        
-
-
-                                        arrayNotificacoes.push(itemNotificacao)
-                    
-                                }
-                    
-                                dadosNotificacoes.notificacoes = arrayNotificacoes
-                                                    
-                        }else{
-                            return MESSAGE.ERROR_NOT_FOUND // 404
-                        }
+                        dadosNotificacoes.status = true
+                        dadosNotificacoes.status_code = 200
+                        dadosNotificacoes.itens = resultNotificacao.length
         
-                }else{
-                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
-                }
-            }else{
-                return MESSAGE.ERROR_CONTENT_TYPE//415
-            }
+                        for(itemNotificacao of resultNotificacao){
+                        
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_destino)
+                                            
+                            itemNotificacao.usuario_destino = dadosUsuario.usuarios
+                                           
+                            delete itemNotificacao.id_usuario_destino
+
+                            let dadosUsuarioOrigem= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_origem)
+                                            
+                            itemNotificacao.usuario_origem = dadosUsuarioOrigem.usuarios
+                                           
+                            delete itemNotificacao.id_usuario_origem
+                        
+        
+                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemNotificacao.id_publicacao) 
+        
+                            itemNotificacao.publicacao = dadosPublicacao.publicacao
+        
+                            delete itemNotificacao.id_publicacao
+        
+
+                            let dadosComentario = await controllerComentario.buscarComentario(itemNotificacao.id_comentario) 
+        
+                            itemNotificacao.comentario = dadosComentario.comentarios
+        
+                            delete itemNotificacao.id_publicacao        
+
+
+                            arrayNotificacoes.push(itemNotificacao)
+        
+                        }
             
-        }else{
-            return MESSAGE.ERROR_REQUIRED_FIELDS //400
-        }
+                        dadosNotificacoes.notificacoes = arrayNotificacoes
+                                
+                        return dadosNotificacoes
 
-
-    }catch(error){
-        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
-    }
-
-}
-
-//Função para buscar uma notificacao no Banco de Dados pelo usuario
-const buscarNotificacaoPeloUsuario = async function (curtida) {
-
-    try{
-
-        if(
-           notificacao.id_user == undefined || notificacao.id_user == ''|| notificacao.id_user == null ||isNaN(notificacao.id_user) || notificacao.id_user   <= 0 
-        ){
-            return MESSAGE.ERROR_REQUIRED_FIELDS //400
-            
-        }else{
-            
-            let arrayNotificacoes = []
-            let dadosNotificacoes = {}
-
-            let resultNotificacao = await notificacaoDAO.selectNotificacaoByUser()
-
-             if(resultNotificacao !== String(resultNotificacaos)){
-                
-                if(resultNotificacao != false || typeof (resultNotificacao) == 'object'){
-
-                    if(resultNotificacao.length > 0){
-
-                                dadosNotificacoes.status = true
-                                dadosNotificacoes.status_code = 200
-                                dadosNotificacoes.itens = resultNotificacao.length
-                    
-                                for(itemNotificacao of resultNotificacao){
-                                    
-                                    let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_user)
-                                                        
-                                    itemNotificacao.user = dadosUsuario.usuario
-                                                    
-                                    delete itemNotificacao.id_user
-                                    
-                    
-                                    let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemNotificacao.id_publicacao) 
-                    
-                                    itemNotificacao.publicacao = dadosPublicacao.publicacao
-                    
-                                    delete itemNotificacao.id_publicacao
-                    
-
-                                    let dadosComentario = await controllerComentario.buscarComentario(itemNotificacao.id_comentario) 
-                    
-                                    itemNotificacao.comentario = dadosComentario.comentario
-                    
-                                    delete itemNotificacao.id_publicacao        
-
-
-                                    arrayNotificacoes.push(itemNotificacao)
-                    
-                                }
-                    
-                                dadosNotificacoes.notificacoes = arrayNotificacoes
-                                                    
                         }else{
                             return MESSAGE.ERROR_NOT_FOUND // 404
                         }
@@ -403,6 +342,90 @@ const buscarNotificacaoPeloUsuario = async function (curtida) {
 
     }catch(error){
         console.log(error);
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
+}
+
+//Função para buscar as notificacao de um usuário no Banco de Dados pelo ID
+const buscarNotificacaoPeloUsuario = async function (id_usuario_destino) {
+
+    try{
+
+        if(id_usuario_destino != '' && id_usuario_destino != undefined && id_usuario_destino != null && !isNaN(id_usuario_destino) && id_usuario_destino > 0){
+
+            let arrayNotificacoes = []
+            let dadosNotificacoes = {}
+
+            let resultNotificacao = await notificacaoDAO.selectNotificacaoByUser(parseInt(id_usuario_destino))
+
+
+            if(resultNotificacao !== String(resultNotificacao)){
+                
+                if(resultNotificacao != false || typeof(resultNotificacao) == 'object'){
+
+
+                    if(resultNotificacao.length > 0){
+
+                        dadosNotificacoes.status = true
+                        dadosNotificacoes.status_code = 200
+                        dadosNotificacoes.itens = resultNotificacao.length
+        
+                        for(itemNotificacao of resultNotificacao){
+                        
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_destino)
+                                            
+                            itemNotificacao.usuario_destino = dadosUsuario.usuarios
+                                           
+                            delete itemNotificacao.id_usuario_destino
+
+                            let dadosUsuarioOrigem= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_origem)
+                                            
+                            itemNotificacao.usuario_origem = dadosUsuarioOrigem.usuarios
+                                           
+                            delete itemNotificacao.id_usuario_origem
+                        
+        
+                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemNotificacao.id_publicacao) 
+        
+                            itemNotificacao.publicacao = dadosPublicacao.publicacao
+        
+                            delete itemNotificacao.id_publicacao
+        
+
+                            let dadosComentario = await controllerComentario.buscarComentario(itemNotificacao.id_comentario) 
+        
+                            itemNotificacao.comentario = dadosComentario.comentarios
+        
+                            delete itemNotificacao.id_publicacao        
+
+
+                            arrayNotificacoes.push(itemNotificacao)
+        
+                       }
+        
+                     dadosNotificacoes.notificacoes = arrayNotificacoes
+                             
+                     return dadosNotificacoes
+                     
+                    }else{
+            
+                        return MESSAGE.ERROR_NOT_FOUND //404
+                    }
+        
+                }else{
+                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+            }else{
+                return MESSAGE.ERROR_CONTENT_TYPE//415
+            }
+            
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
+        }
+
+
+    }catch(error){
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

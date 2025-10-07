@@ -6,7 +6,7 @@ CREATE DATABASE db_gymbuddytcc;
 USE db_gymbuddytcc;
 
 -- #######################################################################
--- # 1. DDL (CRIAÇÃO DE TABELAS)
+-- # 1. DDL (CRIAÇÃO DE TABELAS) - ESTRUTURA REVISADA
 -- #######################################################################
 
 CREATE TABLE tbl_user (
@@ -22,7 +22,7 @@ CREATE TABLE tbl_user (
     foto VARCHAR(255),
     descricao TEXT,
     localizacao TEXT,
-    is_bloqueado BOOLEAN DEFAULT FALSE -- NOVIDADE: Coluna para status de bloqueio
+    is_bloqueado BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE tbl_treino (
@@ -77,7 +77,7 @@ CREATE TABLE tbl_curtida (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_publicacao INT NOT NULL,
     id_user INT NOT NULL,
-    UNIQUE KEY uk_curtida (id_publicacao, id_user), 
+    UNIQUE KEY uk_curtida (id_publicacao, id_user),
     FOREIGN KEY (id_publicacao) REFERENCES tbl_publicacao(id),
     FOREIGN KEY (id_user) REFERENCES tbl_user(id)
 );
@@ -98,20 +98,32 @@ CREATE TABLE tbl_ia (
     FOREIGN KEY (id_treino) REFERENCES tbl_treino(id)
 );
 
-CREATE TABLE tbl_notificacoes (
+CREATE TABLE tbl_notificacao (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario_destino INT NOT NULL,
+    id_usuario_origem INT NOT NULL,
     id_publicacao INT NULL,
     id_comentario INT NULL,
     tipo VARCHAR(50) NOT NULL,
     mensagem VARCHAR(255) NOT NULL,
     data_criacao DATETIME NOT NULL,
     is_lida BOOLEAN DEFAULT FALSE,
+    
     FOREIGN KEY (id_usuario_destino) REFERENCES tbl_user(id),
+    FOREIGN KEY (id_usuario_origem) REFERENCES tbl_user(id),
     FOREIGN KEY (id_publicacao) REFERENCES tbl_publicacao(id),
-    FOREIGN KEY (id_comentario) REFERENCES tbl_comentarios(id)
+    FOREIGN KEY (id_comentario) REFERENCES tbl_comentario(id)
 );
 
+
+CREATE TABLE tbl_curtida_comentario (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_comentario INT NOT NULL,
+    id_user INT NOT NULL,
+    UNIQUE KEY uk_curtida_comentario (id_comentario, id_user),
+    FOREIGN KEY (id_comentario) REFERENCES tbl_comentario(id),
+    FOREIGN KEY (id_user) REFERENCES tbl_user(id)
+);
 
 -- #######################################################################
 -- # 2. TRIGGERS (LÓGICA AUTOMÁTICA DE VALIDAÇÃO E CÁLCULO)
@@ -120,13 +132,13 @@ CREATE TABLE tbl_notificacoes (
 DELIMITER $$
 
 -- Triggers para Validação de Email e Cálculo de IMC (tbl_user)
-CREATE TRIGGER trg_validar_email_user_insert
+CREATE OR REPLACE TRIGGER trg_validar_email_user_insert
 BEFORE INSERT ON tbl_user
 FOR EACH ROW
 BEGIN
     -- Validação de Email
     IF (NEW.email NOT LIKE '%@%') OR (NEW.email NOT LIKE '%.%') OR (LOCATE('.', NEW.email) < LOCATE('@', NEW.email)) THEN
-        SIGNAL SQLSTATE '45000' 
+        SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Erro: O formato do e-mail é inválido. Ele deve conter "@" e "." após o "@".';
     END IF;
 
@@ -138,14 +150,14 @@ BEGIN
     END IF;
 END$$
 
-CREATE TRIGGER trg_validar_email_user_update
+CREATE OR REPLACE TRIGGER trg_validar_email_user_update
 BEFORE UPDATE ON tbl_user
 FOR EACH ROW
 BEGIN
     -- Validação de Email
     IF NEW.email <> OLD.email THEN
         IF (NEW.email NOT LIKE '%@%') OR (NEW.email NOT LIKE '%.%') OR (LOCATE('.', NEW.email) < LOCATE('@', NEW.email)) THEN
-            SIGNAL SQLSTATE '45000' 
+            SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Erro: O formato do e-mail é inválido na atualização. Ele deve conter "@" e "." após o "@".';
         END IF;
     END IF;
@@ -160,9 +172,9 @@ BEGIN
     END IF;
 END$$
 
--- Triggers para Contagem de Comentários (tbl_publicacao)
-CREATE TRIGGER trg_novo_comentario
-AFTER INSERT ON tbl_comentarios
+-- Triggers para Contagem de Comentários (tbl_publicacao) - CORRIGIDO: usa tbl_comentario
+CREATE OR REPLACE TRIGGER trg_novo_comentario
+AFTER INSERT ON tbl_comentario -- CORRIGIDO: Nome da tabela
 FOR EACH ROW
 BEGIN
     UPDATE tbl_publicacao
@@ -170,8 +182,8 @@ BEGIN
     WHERE id = NEW.id_publicacao;
 END$$
 
-CREATE TRIGGER trg_comentario_removido
-AFTER DELETE ON tbl_comentarios
+CREATE OR REPLACE TRIGGER trg_comentario_removido
+AFTER DELETE ON tbl_comentario -- CORRIGIDO: Nome da tabela
 FOR EACH ROW
 BEGIN
     UPDATE tbl_publicacao
@@ -179,8 +191,7 @@ BEGIN
     WHERE id = OLD.id_publicacao;
 END$$
 
-DELIMITER ; 
-
+DELIMITER ;
 
 -- #######################################################################
 -- # 3. FUNCTIONS (LÓGICA DE CÁLCULO REUTILIZÁVEL)
@@ -188,7 +199,7 @@ DELIMITER ;
 
 DELIMITER $$
 
--- Function para classificar o IMC
+-- Function para classificar o IMC (Útil para o backend consultar)
 CREATE FUNCTION fn_classificar_imc(p_imc DECIMAL(5,2))
 RETURNS VARCHAR(50)
 DETERMINISTIC
@@ -222,34 +233,53 @@ DELIMITER ;
 
 
 -- #######################################################################
--- # 4. VIEWS (CONSULTAS SIMPLIFICADAS)
+-- # 4. VIEWS (CONSULTAS SIMPLIFICADAS) - CORRIGIDAS: Nomenclatura de Colunas e Tabelas
 -- #######################################################################
 
 -- View para exibir o feed principal (Publicação + Dados do Usuário)
-CREATE VIEW vw_feed_publicacoes AS
+CREATE OR REPLACE VIEW vw_feed_publicacoes AS
 SELECT
     p.id AS id_publicacao,
     p.descricao,
     p.imagem,
     p.data_publicacao,
+    p.localizacao,
     p.curtidas_count,
     p.comentarios_count,
     u.id AS id_user,
     u.nome AS nome_usuario,
-    u.foto_perfil
+    u.foto AS foto_perfil -- CORRIGIDO: usa 'u.foto'
 FROM
     tbl_publicacao p
 JOIN
     tbl_user u ON p.id_user = u.id;
 
+-- View para carregar os comentários
+CREATE OR REPLACE VIEW vw_comentarios_publicacao AS
+SELECT
+    c.id AS id_comentarios, -- CORRIGIDO: usa 'c.id'
+    c.id_publicacao,
+    c.conteudo AS conteudo_comentario, -- CORRIGIDO: usa 'c.conteudo'
+    c.data_comentario,
+    u.id AS id_user,
+    u.nome AS nome_usuario,
+    u.foto AS foto_perfil -- CORRIGIDO: usa 'u.foto'
+FROM
+    tbl_comentario c -- CORRIGIDO: Nome da tabela
+JOIN
+    tbl_user u ON c.id_user = u.id
+ORDER BY
+    c.data_comentario DESC;
+
 -- View para resumo de treinos (Treino + Exercícios + Séries + Usuário)
-CREATE VIEW vw_treinos_detalhados AS
+CREATE OR REPLACE VIEW vw_treinos_detalhados AS
 SELECT
     t.id AS id_treino,
     t.nome AS nome_treino,
     t.data_treino,
     u.nome AS nome_usuario,
     e.nome AS nome_exercicio,
+    e.grupo_muscular, -- Adicionado grupo muscular para detalhe
     s.nome AS nome_serie,
     s.peso AS peso_serie,
     s.repeticoes
@@ -264,23 +294,47 @@ LEFT JOIN
 LEFT JOIN
     tbl_serie s ON e.id_serie = s.id;
 
+-- View para exibir o perfil completo do usuário e todas as suas publicações
+CREATE OR REPLACE VIEW vw_perfil_publicacoes AS
+SELECT
+    u.id AS id_user,
+    u.nome AS nome_usuario,
+    u.nickname,
+    u.foto, -- CORRIGIDO: usa 'u.foto'
+    u.descricao, -- CORRIGIDO: usa 'u.descricao'
+    u.data_nascimento,
+    u.localizacao,
+    u.imc,
+    u.is_bloqueado,
+    p.id AS id_publicacao,
+    p.imagem AS foto_publicada,
+    p.descricao AS descricao_publicacao,
+    p.data_publicacao,
+    p.curtidas_count,
+    p.comentarios_count
+FROM
+    tbl_user u
+LEFT JOIN
+    tbl_publicacao p ON u.id = p.id_user
+ORDER BY
+    u.id, p.data_publicacao DESC;
 
 -- #######################################################################
 -- # 5. DML (INSERÇÃO DE DADOS INICIAIS)
 -- #######################################################################
 
-INSERT INTO tbl_user (nome, email, senha, peso, altura, nickname, data_nascimento, foto_perfil)
+INSERT INTO tbl_user (nome, email, senha, peso, altura, nickname, data_nascimento, foto)
 VALUES
 ('João da Silva', 'joao.silva@email.com', 'senha123', 80.5, 1.80, 'joaozera', '1990-05-15', NULL),
 ('Maria Oliveira', 'maria.oliveria@email.com', 'senha456', 65.0, 1.65, 'maria_fit', '1995-08-22', NULL);
 
 
 -- #######################################################################
--- # 6. COMANDOS DE BLOQUEIO (SELECT e UPDATE)
+-- # 6. COMANDOS DE BLOQUEIO (SELECT e UPDATE) - COMENTADOS PARA EXECUÇÃO SEGURA
 -- #######################################################################
 
+/*
 -- SELECT: Consulta de verificação do status de bloqueio
--- Uso: Antes de realizar o bloqueio ou em uma tela de administração
 SELECT
     id,
     nome,
@@ -289,7 +343,7 @@ SELECT
 FROM
     tbl_user
 WHERE
-    id = 1; -- Exemplo de consulta para o usuário ID 1
+    id = 1;
 
 -- UPDATE: Comando para BLOQUEAR um usuário
 -- UPDATE tbl_user
@@ -300,3 +354,4 @@ WHERE
 -- UPDATE tbl_user
 -- SET is_bloqueado = FALSE
 -- WHERE id = 1;
+*/

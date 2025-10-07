@@ -19,7 +19,8 @@
      try{
  
          let sql = `insert into tbl_notificacao(
-                                                 id_usuario,
+                                                 id_usuario_destino,
+                                                 id_usuario_origem,
                                                  id_publicacao,
                                                  id_comentario,
                                                  tipo,
@@ -27,20 +28,21 @@
                                                  data_criacao,
                                                  is_lida
                                              )values(
-                                                 '${notificacao.id_user}',
+                                                 '${notificacao.id_usuario_destino}',
+                                                 '${notificacao.id_usuario_origem}',
                                                  '${notificacao.id_publicacao}',
                                                  '${notificacao.id_comentario}',
                                                  '${notificacao.tipo}',
                                                  '${notificacao.mensagem}',
                                                  '${notificacao.data_criacao}',
-                                                 '${notificacao.is_lida}',
+                                                 '${notificacao.is_lida}'
 
                                              );`
  
          let result = await prisma.$executeRawUnsafe(sql)
  
          if(result){
-             let sqlSelectId = `SELECT * FROM tbl_notificacao WHERE id_usuario = '${notificacao.id_user}' ORDER BY id DESC LIMIT 1`
+             let sqlSelectId = `SELECT * FROM tbl_notificacao WHERE id_usuario_destino = '${notificacao.id_usuario_destino}' ORDER BY id DESC LIMIT 1`
              let criar = await prisma.$queryRawUnsafe(sqlSelectId)
              return criar[0]
          }else{
@@ -59,13 +61,14 @@
  
      try{
        
-         let sql = `update tbl_notificacao set   id_usuario    = '${notificacao.id_user}',
-                                                 id_publicacao = '${notificacao.id_publicacao}',
-                                                 id_comentario = '${notificacao.id_comentario}',
-                                                 tipo          = '${notificacao.tipo}',
-                                                 mensagem      = '${notificacao.mensagem}',
-                                                 data_criacao  = '${notificacao.data_criacao}',
-                                                 is_lida       = '${notificacao.is_lida}',
+         let sql = `update tbl_notificacao set   id_usuario_destino = '${notificacao.id_usuario_destino}',
+                                                 id_usuario_origem  = '${notificacao.id_usuario_origem}',
+                                                 id_publicacao      = '${notificacao.id_publicacao}',
+                                                 id_comentario      = '${notificacao.id_comentario}',
+                                                 tipo               = '${notificacao.tipo}',
+                                                 mensagem           = '${notificacao.mensagem}',
+                                                 data_criacao       = '${notificacao.data_criacao}',
+                                                 is_lida            = '${notificacao.is_lida}',
                                          where id = ${notificacao .id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
@@ -152,7 +155,7 @@
  
      try{
  
-         let sql = `SELECT * FROM tbl_notificacao where id_usuario =${id_user}`
+         let sql = `SELECT * FROM tbl_notificacao where id_usuario_destino =${id_usuario_destino}`
  
          let result = await prisma.$queryRawUnsafe(sql)
  

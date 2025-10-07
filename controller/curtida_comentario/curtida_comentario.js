@@ -31,7 +31,7 @@ const inserirCurtidaComentario = async function(curtidaComentario, contentType){
 
             }else{
 
-                let searchCurtidaComentario = await buscarCurtidaComentarioPeloUsuario(curtida)
+                let searchCurtidaComentario = await buscarCurtidaComentario(curtidaComentario)
 
                 if (searchCurtidaComentario.status_code == 200){
 
@@ -76,7 +76,7 @@ const atualizarCurtidaComentario = async function(curtidaComentario, id, content
             
             
             if(
-                id                       == undefined || id                        == ''|| id                    == null ||isNaN(id)                    ||id                     <= 0 ||
+                id                                 == undefined || id                                 == ''|| id                                == null ||isNaN(id)                              ||id                               <= 0 ||
                 curtidaComentario.id_comentario    == undefined ||curtidaComentario.id_comentario     == ''||curtidaComentario.id_comentario    == null ||isNaN(curtidaComentario.id_comentario) || curtidaComentario.id_comentario <= 0 ||
                 curtidaComentario.id_user          == undefined ||curtidaComentario.id_user           == ''||curtidaComentario.id_user          == null ||isNaN(curtidaComentario.id_user)       || curtidaComentario.id_user       <= 0
             ){
@@ -93,7 +93,8 @@ const atualizarCurtidaComentario = async function(curtidaComentario, id, content
 
                 let resultCurtidaComentario = await curtidaComentarioDAO.updateCurtidaComentario(curtidaComentario)
 
-                if(!resultCurtidaComentario.code){
+                
+                if(!resultCurtidaComentario.code && resultCurtidaComentario != false){
                     
                     return {
                         status_code: 200,
@@ -201,16 +202,16 @@ const listarCurtidaComentario = async function () {
         
                         for(itemCurtidaComentario of resultCurtidaComentario){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidaComentario.id_user)
                                             
                             itemCurtidaComentario.user = dadosUsuario.usuario
                                            
                             delete itemCurtidaComentario.id_user
                         
         
-                            let dadosComentario = await controllerComentario.buscarComentario(itemCurtidas.id_comentario) 
+                            let dadosComentario = await controllerComentario.buscarComentario(itemCurtidaComentario.id_comentario) 
         
-                            itemCurtidaComentario.comentario = dadosComentario.comentario
+                            itemCurtidaComentario.comentario = dadosComentario.comentarios
         
                             delete itemCurtidaComentario.id_comentario
         
@@ -220,7 +221,9 @@ const listarCurtidaComentario = async function () {
                        }
         
                      dadosCurtidaComentario.curtidaComentario = arrayCurtidaComentario
-                                        
+                     
+                     return dadosCurtidaComentario
+
             }else{
                 return MESSAGE.ERROR_NOT_FOUND // 404
             }
@@ -230,6 +233,8 @@ const listarCurtidaComentario = async function () {
         }
 
     }catch(error){
+        console.log(error);
+        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }   
 
@@ -259,16 +264,16 @@ const buscarCurtidaComentario = async function (id) {
         
                         for(itemCurtidaComentario of resultCurtidaComentario){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidaComentario.id_user)
                                             
                             itemCurtidaComentario.user = dadosUsuario.usuario
                                            
                             delete itemCurtidaComentario.id_user
                         
         
-                            let dadosComentario = await controllerComentario.buscarComentario(itemCurtidas.id_comentario) 
+                            let dadosComentario = await controllerComentario.buscarComentario(itemCurtidaComentario.id_comentario) 
         
-                            itemCurtidaComentario.comentario = dadosComentario.comentario
+                            itemCurtidaComentario.comentario = dadosComentario.comentarios
         
                             delete itemCurtidaComentario.id_comentario
         
@@ -279,6 +284,7 @@ const buscarCurtidaComentario = async function (id) {
         
                      dadosCurtidaComentario.curtidaComentario = arrayCurtidaComentario
                                         
+                       return dadosCurtidaComentario
 
                     }else{
             
@@ -298,6 +304,8 @@ const buscarCurtidaComentario = async function (id) {
 
 
     }catch(error){
+        console.log(error);
+        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

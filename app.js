@@ -399,7 +399,7 @@ app.delete('/v1/gymbuddy/curtida_comentario/:search_id', cors(), async function(
 
 //************************************* NOTIFICACOES *******************************************//
 
-app.post('/v1/gymbuddy/curtida_notificacao', cors(), bodyParserJSON, async function(request, response){
+app.post('/v1/gymbuddy/notificacao', cors(), bodyParserJSON, async function(request, response){
 
     let contentType = request.headers['content-type']
     

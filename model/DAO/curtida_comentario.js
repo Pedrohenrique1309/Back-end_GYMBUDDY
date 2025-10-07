@@ -55,7 +55,7 @@ const updateCurtidaComentario = async function (curtidaComentario){
                                             id_user       = ${curtidaComentario.id_user},
                                             id_comentario = ${curtidaComentario.id_comentario}
 
-                                        where id = ${curtida.id}`
+                                        where id = ${curtidaComentario.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
 
