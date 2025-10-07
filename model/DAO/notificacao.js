@@ -68,7 +68,7 @@
                                                  tipo               = '${notificacao.tipo}',
                                                  mensagem           = '${notificacao.mensagem}',
                                                  data_criacao       = '${notificacao.data_criacao}',
-                                                 is_lida            = '${notificacao.is_lida}',
+                                                 is_lida            =  ${notificacao.is_lida}
                                          where id = ${notificacao .id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
@@ -114,7 +114,7 @@
  
      try{
  
-         let sql = 'SELECT * FROM tbl_comentario order by id desc'
+         let sql = 'SELECT * FROM tbl_notificacao order by id desc'
  
          let result = await prisma.$queryRawUnsafe(sql)
  
