@@ -34,6 +34,7 @@ const controllerComentario = require('./controller/comentario/controllerComentar
 const controllerCurtida = require('./controller/curtida/controllerCurtida.js')
 const controllerCurtidaComentario = require('./controller/curtida_comentario/curtida_comentario.js')
 const controllerNotificacao = require('./controller/notificacao/controllerNotificacao.js')
+const controllerView= require('./controller/views/controllerViews.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -456,6 +457,17 @@ app.delete('/v1/gymbuddy/notificacao/:search_id', cors(), async function(request
 
     response.status(result.status_code)
     response.json(result)
+})
+
+//************************************* VIEWS *******************************************//
+
+app.get('/v1/gymbuddy/view', cors(), async function(request, response){
+
+    let result = await controllerView.viewPublicacoes()
+
+    response.status(result.status_code)
+    response.json(result)
+
 })
 
 

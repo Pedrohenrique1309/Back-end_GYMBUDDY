@@ -290,7 +290,7 @@ const buscarPublicacao = async function (id) {
 
 //Função para buscar as publicações de um usuário no Banco de Dados pelo ID
 const buscarPublicacaoPeloUsuario = async function (id_user) {
-    console.log(id_user)
+
     try{
 
         if(id_user != '' && id_user != undefined && id_user != null && !isNaN(id_user) && id_user > 0){
@@ -337,6 +337,8 @@ const buscarPublicacaoPeloUsuario = async function (id_user) {
     }
 
 }
+
+
 
 module.exports = {
     inserirPublicacao,

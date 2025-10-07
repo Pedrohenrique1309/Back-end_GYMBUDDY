@@ -210,7 +210,7 @@ const listarCurtida = async function () {
         
                             let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
         
-                            itemCurtidas.publicacao = dadosPublicacao.publicacao
+                            itemCurtidas.publicacao = dadosPublicacao.publicacoes
         
                             delete itemCurtidas.id_publicacao
         
@@ -220,6 +220,8 @@ const listarCurtida = async function () {
                        }
         
                      dadosCurtidas.curtidas = arrayCurtidas
+
+                     return dadosCurtidas
                                         
             }else{
                 return MESSAGE.ERROR_NOT_FOUND // 404
@@ -268,7 +270,7 @@ const buscarCurtida = async function (id) {
         
                             let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
         
-                            itemCurtidas.publicacao = dadosPublicacao.public
+                            itemCurtidas.publicacao = dadosPublicacao.publicacoes
         
                             delete itemCurtidas.id_publicacao
         
@@ -278,6 +280,8 @@ const buscarCurtida = async function (id) {
                        }
         
                      dadosCurtidas.curtidas = arrayCurtidas
+
+                     return dadosCurtidas
 
                     }else{
             
