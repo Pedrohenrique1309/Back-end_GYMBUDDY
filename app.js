@@ -461,9 +461,18 @@ app.delete('/v1/gymbuddy/notificacao/:search_id', cors(), async function(request
 
 //************************************* VIEWS *******************************************//
 
-app.get('/v1/gymbuddy/view', cors(), async function(request, response){
+app.get('/v1/gymbuddy/view/feed', cors(), async function(request, response){
 
     let result = await controllerView.viewPublicacoes()
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/view/notificacoes', cors(), async function(request, response){
+
+    let result = await controllerView.viewNotificacoes()
 
     response.status(result.status_code)
     response.json(result)

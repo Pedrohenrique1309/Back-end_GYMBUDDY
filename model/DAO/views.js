@@ -34,6 +34,28 @@ const viewPublicacoes = async function(){
 
 }
 
+//Função para retornar o view do Banco de Dados
+const viewNotificacoes = async function(){
+
+    try{
+
+        let sql = 'SELECT * FROM vw_notificacoes_detalhadas'
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if(result){
+            return result
+        }else{
+            return false
+        }
+
+    }catch(error){
+        return error
+    }
+
+}
+
 module.exports = {
-    viewPublicacoes
+    viewPublicacoes,
+    viewNotificacoes
 }

@@ -1,12 +1,42 @@
 -- #######################################################################
--- # 0. SETUP INICIAL
+-- # 0. SETUP INICIAL E DROPS DE ROTINAS
 -- #######################################################################
 DROP DATABASE IF EXISTS db_gymbuddytcc;
 CREATE DATABASE db_gymbuddytcc;
 USE db_gymbuddytcc;
 
+-- 0.1. DROPS DE FUNCTIONS, TRIGGERS E PROCEDURES (Para Garantir a Recompilação)
+
+-- Funções
+DROP FUNCTION IF EXISTS fn_classificar_imc;
+
+-- Triggers (Necessário definir o delimitador temporariamente para os DROPs)
+DELIMITER $$
+DROP TRIGGER IF EXISTS trg_validar_email_user_insert$$
+DROP TRIGGER IF EXISTS trg_validar_email_user_update$$
+DROP TRIGGER IF EXISTS trg_novo_comentario$$
+DROP TRIGGER IF EXISTS trg_comentario_removido$$
+DROP TRIGGER IF EXISTS trg_notificar_novo_comentario$$
+DROP TRIGGER IF EXISTS trg_notificar_curtida_publicacao$$
+DROP TRIGGER IF EXISTS trg_notificar_curtida_comentario$$
+DELIMITER ;
+
+-- Procedures
+DROP PROCEDURE IF EXISTS sp_adicionar_curtida_publicacao;
+DROP PROCEDURE IF EXISTS sp_remover_curtida_publicacao;
+DROP PROCEDURE IF EXISTS sp_adicionar_curtida_comentario;
+DROP PROCEDURE IF EXISTS sp_remover_curtida_comentario;
+
+-- Views
+DROP VIEW IF EXISTS vw_feed_publicacoes;
+DROP VIEW IF EXISTS vw_comentarios_publicacao;
+DROP VIEW IF EXISTS vw_treinos_detalhados;
+DROP VIEW IF EXISTS vw_perfil_publicacoes;
+DROP VIEW IF EXISTS vw_notificacoes_detalhadas;
+
+
 -- #######################################################################
--- # 1. DDL (CRIAÇÃO DE TABELAS) - ESTRUTURA REVISADA
+-- # 1. DDL (CRIAÇÃO DE TABELAS)
 -- #######################################################################
 
 CREATE TABLE tbl_user (
@@ -30,6 +60,7 @@ CREATE TABLE tbl_treino (
     nome VARCHAR(45) NOT NULL,
     data_treino DATETIME NOT NULL,
     id_user INT NOT NULL,
+    is_ai_generated BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (id_user) REFERENCES tbl_user(id)
 );
 
@@ -69,6 +100,7 @@ CREATE TABLE tbl_comentario (
     data_comentario DATETIME NOT NULL,
     id_publicacao INT NOT NULL,
     id_user INT NOT NULL,
+    curtidas_count INT DEFAULT 0,
     FOREIGN KEY (id_publicacao) REFERENCES tbl_publicacao(id),
     FOREIGN KEY (id_user) REFERENCES tbl_user(id)
 );
@@ -82,40 +114,6 @@ CREATE TABLE tbl_curtida (
     FOREIGN KEY (id_user) REFERENCES tbl_user(id)
 );
 
-CREATE TABLE tbl_treino_exercicio (
-    id_treino INT NOT NULL,
-    id_exercicio INT NOT NULL,
-    PRIMARY KEY (id_treino, id_exercicio),
-    FOREIGN KEY (id_treino) REFERENCES tbl_treino(id),
-    FOREIGN KEY (id_exercicio) REFERENCES tbl_exercicio(id)
-);
-
-CREATE TABLE tbl_ia (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    id_user INT NOT NULL,
-    id_treino INT NOT NULL,
-    FOREIGN KEY (id_user) REFERENCES tbl_user(id),
-    FOREIGN KEY (id_treino) REFERENCES tbl_treino(id)
-);
-
-CREATE TABLE tbl_notificacao (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    id_usuario_destino INT NOT NULL,
-    id_usuario_origem INT NOT NULL,
-    id_publicacao INT NULL,
-    id_comentario INT NULL,
-    tipo VARCHAR(50) NOT NULL,
-    mensagem VARCHAR(255) NOT NULL,
-    data_criacao DATETIME NOT NULL,
-    is_lida BOOLEAN DEFAULT FALSE,
-    
-    FOREIGN KEY (id_usuario_destino) REFERENCES tbl_user(id),
-    FOREIGN KEY (id_usuario_origem) REFERENCES tbl_user(id),
-    FOREIGN KEY (id_publicacao) REFERENCES tbl_publicacao(id),
-    FOREIGN KEY (id_comentario) REFERENCES tbl_comentario(id)
-);
-
-
 CREATE TABLE tbl_curtida_comentario (
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_comentario INT NOT NULL,
@@ -125,24 +123,91 @@ CREATE TABLE tbl_curtida_comentario (
     FOREIGN KEY (id_user) REFERENCES tbl_user(id)
 );
 
+CREATE TABLE tbl_treino_exercicio (
+    id_treino INT NOT NULL,
+    id_exercicio INT NOT NULL,
+    PRIMARY KEY (id_treino, id_exercicio),
+    FOREIGN KEY (id_treino) REFERENCES tbl_treino(id),
+    FOREIGN KEY (id_exercicio) REFERENCES tbl_exercicio(id)
+);
+
+CREATE TABLE tbl_notificacao (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario_destino INT NOT NULL,
+    id_usuario_origem INT NOT NULL,
+    
+    id_publicacao INT NULL,
+    id_comentario INT NULL,
+    id_curtida INT NULL,
+    id_curtida_comentario INT NULL,
+    
+    tipo_notificacao VARCHAR(50) NOT NULL,
+    data_criacao DATETIME NOT NULL,
+    is_lida BOOLEAN DEFAULT FALSE,
+
+    FOREIGN KEY (id_usuario_destino) REFERENCES tbl_user(id),
+    FOREIGN KEY (id_usuario_origem) REFERENCES tbl_user(id),
+    FOREIGN KEY (id_publicacao) REFERENCES tbl_publicacao(id),
+    FOREIGN KEY (id_comentario) REFERENCES tbl_comentario(id),
+    
+    FOREIGN KEY (id_curtida) REFERENCES tbl_curtida(id),
+    FOREIGN KEY (id_curtida_comentario) REFERENCES tbl_curtida_comentario(id)
+);
+
+CREATE TABLE tbl_recuperacao_senha (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    id_user INT NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    FOREIGN KEY (id_user) REFERENCES tbl_user(id),
+    INDEX idx_token (token),
+    INDEX idx_expiracao (data_expiracao)
+);
+
+
 -- #######################################################################
--- # 2. TRIGGERS (LÓGICA AUTOMÁTICA DE VALIDAÇÃO E CÁLCULO)
+-- # 2. FUNCTIONS (LÓGICA DE CÁLCULO REUTILIZÁVEL)
+-- #######################################################################
+
+DELIMITER $$
+CREATE FUNCTION fn_classificar_imc(p_imc DECIMAL(5,2))
+RETURNS VARCHAR(50)
+DETERMINISTIC
+BEGIN
+    DECLARE classificacao VARCHAR(50);
+
+    IF p_imc IS NULL THEN
+        SET classificacao = 'Dados Insuficientes';
+    ELSEIF p_imc < 18.5 THEN
+        SET classificacao = 'Abaixo do Peso';
+    ELSEIF p_imc >= 18.5 AND p_imc < 25.0 THEN
+        SET classificacao = 'Peso Normal';
+    ELSEIF p_imc >= 25.0 AND p_imc < 30.0 THEN
+        SET classificacao = 'Sobrepeso';
+    ELSE
+        SET classificacao = 'Obesidade';
+    END IF;
+
+    RETURN classificacao;
+END$$
+DELIMITER ;
+
+
+-- #######################################################################
+-- # 3. TRIGGERS (LÓGICA AUTOMÁTICA DE VALIDAÇÃO, CÁLCULO E NOTIFICAÇÃO)
 -- #######################################################################
 
 DELIMITER $$
 
--- Triggers para Validação de Email e Cálculo de IMC (tbl_user)
-CREATE OR REPLACE TRIGGER trg_validar_email_user_insert
+-- 3.1. Validação de Email e Cálculo de IMC (tbl_user)
+CREATE TRIGGER trg_validar_email_user_insert
 BEFORE INSERT ON tbl_user
 FOR EACH ROW
 BEGIN
-    -- Validação de Email
-    IF (NEW.email NOT LIKE '%@%') OR (NEW.email NOT LIKE '%.%') OR (LOCATE('.', NEW.email) < LOCATE('@', NEW.email)) THEN
+    IF (NEW.email NOT LIKE '%@%') OR (NEW.email NOT LIKE '%.%') THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Erro: O formato do e-mail é inválido. Ele deve conter "@" e "." após o "@".';
+        SET MESSAGE_TEXT = 'Erro: O formato do e-mail é inválido.';
     END IF;
 
-    -- Cálculo de IMC
     IF NEW.peso IS NOT NULL AND NEW.altura IS NOT NULL AND NEW.altura > 0 THEN
         SET NEW.imc = NEW.peso / (NEW.altura * NEW.altura);
     ELSE
@@ -150,19 +215,17 @@ BEGIN
     END IF;
 END$$
 
-CREATE OR REPLACE TRIGGER trg_validar_email_user_update
+CREATE TRIGGER trg_validar_email_user_update
 BEFORE UPDATE ON tbl_user
 FOR EACH ROW
 BEGIN
-    -- Validação de Email
     IF NEW.email <> OLD.email THEN
-        IF (NEW.email NOT LIKE '%@%') OR (NEW.email NOT LIKE '%.%') OR (LOCATE('.', NEW.email) < LOCATE('@', NEW.email)) THEN
+        IF (NEW.email NOT LIKE '%@%') OR (NEW.email NOT LIKE '%.%') THEN
             SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Erro: O formato do e-mail é inválido na atualização. Ele deve conter "@" e "." após o "@".';
+            SET MESSAGE_TEXT = 'Erro: O formato do e-mail é inválido na atualização.';
         END IF;
     END IF;
 
-    -- Cálculo de IMC
     IF NEW.peso <> OLD.peso OR NEW.altura <> OLD.altura THEN
         IF NEW.peso IS NOT NULL AND NEW.altura IS NOT NULL AND NEW.altura > 0 THEN
             SET NEW.imc = NEW.peso / (NEW.altura * NEW.altura);
@@ -172,9 +235,9 @@ BEGIN
     END IF;
 END$$
 
--- Triggers para Contagem de Comentários (tbl_publicacao) - CORRIGIDO: usa tbl_comentario
-CREATE OR REPLACE TRIGGER trg_novo_comentario
-AFTER INSERT ON tbl_comentario -- CORRIGIDO: Nome da tabela
+-- 3.2. Contagem de Comentários (tbl_publicacao)
+CREATE TRIGGER trg_novo_comentario
+AFTER INSERT ON tbl_comentario
 FOR EACH ROW
 BEGIN
     UPDATE tbl_publicacao
@@ -182,8 +245,8 @@ BEGIN
     WHERE id = NEW.id_publicacao;
 END$$
 
-CREATE OR REPLACE TRIGGER trg_comentario_removido
-AFTER DELETE ON tbl_comentario -- CORRIGIDO: Nome da tabela
+CREATE TRIGGER trg_comentario_removido
+AFTER DELETE ON tbl_comentario
 FOR EACH ROW
 BEGIN
     UPDATE tbl_publicacao
@@ -191,53 +254,144 @@ BEGIN
     WHERE id = OLD.id_publicacao;
 END$$
 
-DELIMITER ;
+-- 3.3. Notificações
 
--- #######################################################################
--- # 3. FUNCTIONS (LÓGICA DE CÁLCULO REUTILIZÁVEL)
--- #######################################################################
-
-DELIMITER $$
-
--- Function para classificar o IMC (Útil para o backend consultar)
-CREATE FUNCTION fn_classificar_imc(p_imc DECIMAL(5,2))
-RETURNS VARCHAR(50)
-DETERMINISTIC
+-- Notificação em caso de novo comentário
+CREATE TRIGGER trg_notificar_novo_comentario
+AFTER INSERT ON tbl_comentario
+FOR EACH ROW
 BEGIN
-    DECLARE classificacao VARCHAR(50);
+    DECLARE v_id_destino INT;
 
-    IF p_imc IS NULL THEN
-        SET classificacao = 'Dados Insuficientes';
-    ELSEIF p_imc < 16.0 THEN
-        SET classificacao = 'Magreza Grave';
-    ELSEIF p_imc >= 16.0 AND p_imc < 17.0 THEN
-        SET classificacao = 'Magreza Moderada';
-    ELSEIF p_imc >= 17.0 AND p_imc < 18.5 THEN
-        SET classificacao = 'Magreza Leve';
-    ELSEIF p_imc >= 18.5 AND p_imc < 25.0 THEN
-        SET classificacao = 'Peso Normal';
-    ELSEIF p_imc >= 25.0 AND p_imc < 30.0 THEN
-        SET classificacao = 'Sobrepeso';
-    ELSEIF p_imc >= 30.0 AND p_imc < 35.0 THEN
-        SET classificacao = 'Obesidade Grau I';
-    ELSEIF p_imc >= 35.0 AND p_imc < 40.0 THEN
-        SET classificacao = 'Obesidade Grau II (Severa)';
-    ELSE
-        SET classificacao = 'Obesidade Grau III (Mórbida)';
+    SELECT id_user INTO v_id_destino
+    FROM tbl_publicacao
+    WHERE id = NEW.id_publicacao;
+
+    IF v_id_destino <> NEW.id_user THEN
+        INSERT INTO tbl_notificacao (
+            id_usuario_destino, id_usuario_origem, id_publicacao, id_comentario, tipo_notificacao, data_criacao
+        )
+        VALUES (
+            v_id_destino, NEW.id_user, NEW.id_publicacao, NEW.id, 'COMENTARIO', NOW()
+        );
     END IF;
+END$$
 
-    RETURN classificacao;
+-- Notificação em caso de nova curtida em Publicação
+CREATE TRIGGER trg_notificar_curtida_publicacao
+AFTER INSERT ON tbl_curtida
+FOR EACH ROW
+BEGIN
+    DECLARE v_id_destino INT;
+
+    SELECT id_user INTO v_id_destino
+    FROM tbl_publicacao
+    WHERE id = NEW.id_publicacao;
+
+    IF v_id_destino <> NEW.id_user THEN
+        INSERT INTO tbl_notificacao (
+            id_usuario_destino, id_usuario_origem, id_publicacao, tipo_notificacao, data_criacao, id_curtida
+        )
+        VALUES (
+            v_id_destino, NEW.id_user, NEW.id_publicacao, 'CURTIDA_PUBLI', NOW(), NEW.id
+        );
+    END IF;
+END$$
+
+-- Notificar em curtida de comentário
+CREATE TRIGGER trg_notificar_curtida_comentario
+AFTER INSERT ON tbl_curtida_comentario
+FOR EACH ROW
+BEGIN
+    DECLARE v_id_destino INT;
+    DECLARE v_id_publicacao INT;
+
+    SELECT id_user, id_publicacao INTO v_id_destino, v_id_publicacao
+    FROM tbl_comentario
+    WHERE id = NEW.id_comentario;
+
+    IF v_id_destino <> NEW.id_user THEN
+        INSERT INTO tbl_notificacao (
+            id_usuario_destino, id_usuario_origem, id_publicacao, id_comentario, tipo_notificacao, data_criacao, id_curtida_comentario
+        )
+        VALUES (
+            v_id_destino, NEW.id_user, v_id_publicacao, NEW.id_comentario, 'CURTIDA_COMEN', NOW(), NEW.id
+        );
+    END IF;
 END$$
 
 DELIMITER ;
 
 
 -- #######################################################################
--- # 4. VIEWS (CONSULTAS SIMPLIFICADAS) - CORRIGIDAS: Nomenclatura de Colunas e Tabelas
+-- # 4. PROCEDURES (LÓGICA TRANSACIONAL: CURTIDAS)
+-- #######################################################################
+
+DELIMITER $$
+
+-- 4.1. Curtidas em Publicação
+CREATE PROCEDURE sp_adicionar_curtida_publicacao(
+    IN p_id_publicacao INT,
+    IN p_id_user INT
+)
+BEGIN
+    INSERT INTO tbl_curtida (id_publicacao, id_user)
+    VALUES (p_id_publicacao, p_id_user);
+
+    UPDATE tbl_publicacao
+    SET curtidas_count = curtidas_count + 1
+    WHERE id = p_id_publicacao;
+END$$
+
+CREATE PROCEDURE sp_remover_curtida_publicacao(
+    IN p_id_publicacao INT,
+    IN p_id_user INT
+)
+BEGIN
+    DELETE FROM tbl_curtida
+    WHERE id_publicacao = p_id_publicacao AND id_user = p_id_user;
+
+    UPDATE tbl_publicacao
+    SET curtidas_count = curtidas_count - 1
+    WHERE id = p_id_publicacao;
+END$$
+
+-- 4.2. Curtidas em Comentário
+CREATE PROCEDURE sp_adicionar_curtida_comentario(
+    IN p_id_comentario INT,
+    IN p_id_user INT
+)
+BEGIN
+    INSERT INTO tbl_curtida_comentario (id_comentario, id_user)
+    VALUES (p_id_comentario, p_id_user);
+
+    UPDATE tbl_comentario
+    SET curtidas_count = curtidas_count + 1
+    WHERE id = p_id_comentario;
+END$$
+
+CREATE PROCEDURE sp_remover_curtida_comentario(
+    IN p_id_comentario INT,
+    IN p_id_user INT
+)
+BEGIN
+    DELETE FROM tbl_curtida_comentario
+    WHERE id_comentario = p_id_comentario AND id_user = p_id_user;
+
+    UPDATE tbl_comentario
+    SET curtidas_count = curtidas_count - 1
+    WHERE id = p_id_comentario;
+END$$
+
+DELIMITER ;
+
+
+-- #######################################################################
+-- # 5. VIEWS (CONSULTAS SIMPLIFICADAS E OTIMIZADAS)
 -- #######################################################################
 
 -- View para exibir o feed principal (Publicação + Dados do Usuário)
-CREATE OR REPLACE VIEW vw_feed_publicacoes AS
+CREATE VIEW vw_feed_publicacoes AS
 SELECT
     p.id AS id_publicacao,
     p.descricao,
@@ -248,38 +402,39 @@ SELECT
     p.comentarios_count,
     u.id AS id_user,
     u.nome AS nome_usuario,
-    u.foto AS foto_perfil -- CORRIGIDO: usa 'u.foto'
+    u.foto AS foto_perfil
 FROM
     tbl_publicacao p
 JOIN
     tbl_user u ON p.id_user = u.id;
 
--- View para carregar os comentários
-CREATE OR REPLACE VIEW vw_comentarios_publicacao AS
+-- View para carregar os comentários de uma publicação específica
+CREATE VIEW vw_comentarios_publicacao AS
 SELECT
-    c.id AS id_comentarios, -- CORRIGIDO: usa 'c.id'
+    c.id AS id_comentarios,
     c.id_publicacao,
-    c.conteudo AS conteudo_comentario, -- CORRIGIDO: usa 'c.conteudo'
+    c.conteudo AS conteudo_comentario,
     c.data_comentario,
+    c.curtidas_count,
     u.id AS id_user,
     u.nome AS nome_usuario,
-    u.foto AS foto_perfil -- CORRIGIDO: usa 'u.foto'
+    u.foto AS foto_perfil
 FROM
-    tbl_comentario c -- CORRIGIDO: Nome da tabela
+    tbl_comentario c
 JOIN
     tbl_user u ON c.id_user = u.id
 ORDER BY
     c.data_comentario DESC;
 
 -- View para resumo de treinos (Treino + Exercícios + Séries + Usuário)
-CREATE OR REPLACE VIEW vw_treinos_detalhados AS
+CREATE VIEW vw_treinos_detalhados AS
 SELECT
     t.id AS id_treino,
     t.nome AS nome_treino,
     t.data_treino,
     u.nome AS nome_usuario,
     e.nome AS nome_exercicio,
-    e.grupo_muscular, -- Adicionado grupo muscular para detalhe
+    e.grupo_muscular,
     s.nome AS nome_serie,
     s.peso AS peso_serie,
     s.repeticoes
@@ -295,13 +450,13 @@ LEFT JOIN
     tbl_serie s ON e.id_serie = s.id;
 
 -- View para exibir o perfil completo do usuário e todas as suas publicações
-CREATE OR REPLACE VIEW vw_perfil_publicacoes AS
+CREATE VIEW vw_perfil_publicacoes AS
 SELECT
     u.id AS id_user,
     u.nome AS nome_usuario,
     u.nickname,
-    u.foto, -- CORRIGIDO: usa 'u.foto'
-    u.descricao, -- CORRIGIDO: usa 'u.descricao'
+    u.foto,
+    u.descricao,
     u.data_nascimento,
     u.localizacao,
     u.imc,
@@ -319,39 +474,39 @@ LEFT JOIN
 ORDER BY
     u.id, p.data_publicacao DESC;
 
+-- View para as notificações
+CREATE VIEW vw_notificacoes_detalhadas AS
+SELECT
+    n.id,
+    n.id_usuario_destino,
+    n.id_usuario_origem,
+    u.nickname AS nickname_origem,
+    n.tipo_notificacao,
+    n.data_criacao,
+    n.is_lida,
+    n.id_publicacao,
+    n.id_comentario,
+    
+    CASE n.tipo_notificacao
+        WHEN 'COMENTARIO' THEN CONCAT(u.nickname, ' comentou na sua publicação.')
+        WHEN 'CURTIDA_PUBLI' THEN CONCAT(u.nickname, ' curtiu sua publicação.')
+        WHEN 'CURTIDA_COMEN' THEN CONCAT(u.nickname, ' curtiu seu comentário.')
+        
+        ELSE 'Você tem uma nova notificação.'
+    END AS texto_notificacao
+    
+FROM
+    tbl_notificacao n
+JOIN
+    tbl_user u ON n.id_usuario_origem = u.id
+ORDER BY
+    n.data_criacao DESC;
+
 -- #######################################################################
--- # 5. DML (INSERÇÃO DE DADOS INICIAIS)
+-- # 6. DML (INSERÇÃO DE DADOS INICIAIS)
 -- #######################################################################
 
 INSERT INTO tbl_user (nome, email, senha, peso, altura, nickname, data_nascimento, foto)
 VALUES
 ('João da Silva', 'joao.silva@email.com', 'senha123', 80.5, 1.80, 'joaozera', '1990-05-15', NULL),
 ('Maria Oliveira', 'maria.oliveria@email.com', 'senha456', 65.0, 1.65, 'maria_fit', '1995-08-22', NULL);
-
-
--- #######################################################################
--- # 6. COMANDOS DE BLOQUEIO (SELECT e UPDATE) - COMENTADOS PARA EXECUÇÃO SEGURA
--- #######################################################################
-
-/*
--- SELECT: Consulta de verificação do status de bloqueio
-SELECT
-    id,
-    nome,
-    email,
-    is_bloqueado
-FROM
-    tbl_user
-WHERE
-    id = 1;
-
--- UPDATE: Comando para BLOQUEAR um usuário
--- UPDATE tbl_user
--- SET is_bloqueado = TRUE
--- WHERE id = 1;
-
--- UPDATE: Comando para DESBLOQUEAR um usuário
--- UPDATE tbl_user
--- SET is_bloqueado = FALSE
--- WHERE id = 1;
-*/
