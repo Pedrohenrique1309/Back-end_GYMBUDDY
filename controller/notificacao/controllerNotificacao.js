@@ -15,6 +15,7 @@ const notificacaoDAO = require('../../model/DAO/notificacao.js')
 const controllerUsuario = require('../usuario/controllerUsuario.js')
 const controllerPublicacao = require('../publicacao/controllerPublicacao.js')
 const controllerComentario = require('../comentario/controllerComentario.js')
+const controllerCurtidaComentario = require('../curtida_comentario/curtida_comentario.js')
 const { insertComentario } = require('../../model/DAO/comentarios.js')
 
 //Função para inserir uma nova notificacao no Banco de dados 
@@ -26,6 +27,7 @@ const inserirNotificacao = async function(notificacao, contentType){
 
             if( 
                 notificacao.id_publicacao == undefined && notificacao.id_publicacao == '' && notificacao.id_publicacao  == null && 
+                notificacao.id_comentario == undefined && notificacao.id_comentario == '' && notificacao.id_comentario  == null &&
                 notificacao.id_comentario == undefined && notificacao.id_comentario == '' && notificacao.id_comentario  == null 
             ){
 
@@ -246,8 +248,14 @@ const listarNotificacao = async function () {
         
                             itemNotificacao.comentario = dadosComentario.comentarios
         
-                            delete itemNotificacao.id_comentario        
+                            delete itemNotificacao.id_comentario   
+                            
 
+                            let dadosCurtidaComentario = await controllerCurtidaComentario.buscarCurtidaComentario(itemNotificacao.id_curtida_comentario)
+
+                            itemNotificacao.id_curtida_comentario = dadosCurtidaComentario.curtidaComentario
+
+                            delete itemNotificacao.id_curtida_comentario
 
                             arrayNotificacoes.push(itemNotificacao)
         
@@ -318,8 +326,14 @@ const buscarNotificacao = async function (id) {
         
                             itemNotificacao.comentario = dadosComentario.comentarios
         
-                            delete itemNotificacao.id_comentario       
+                            delete itemNotificacao.id_comentario   
+                            
 
+                            let dadosCurtidaComentario = await controllerCurtidaComentario.buscarCurtidaComentario(itemNotificacao.id_curtida_comentario)
+
+                            itemNotificacao.id_curtida_comentario = dadosCurtidaComentario.curtidaComentario
+
+                            delete itemNotificacao.id_curtida_comentario
 
                             arrayNotificacoes.push(itemNotificacao)
         
@@ -379,20 +393,20 @@ const buscarNotificacaoPeloUsuario = async function (id_usuario_destino) {
                         
                             let dadosUsuario= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_destino)
                                             
-                            itemNotificacao.usuario_destino = dadosUsuario.usuarios
+                            itemNotificacao.usuario_destino = dadosUsuario.usuario
                                            
                             delete itemNotificacao.id_usuario_destino
 
                             let dadosUsuarioOrigem= await controllerUsuario.buscarUsuario(itemNotificacao.id_usuario_origem)
                                             
-                            itemNotificacao.usuario_origem = dadosUsuarioOrigem.usuarios
+                            itemNotificacao.usuario_origem = dadosUsuarioOrigem.usuario
                                            
                             delete itemNotificacao.id_usuario_origem
                         
         
                             let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemNotificacao.id_publicacao) 
         
-                            itemNotificacao.publicacao = dadosPublicacao.publicacao
+                            itemNotificacao.publicacao = dadosPublicacao.publicacoes
         
                             delete itemNotificacao.id_publicacao
         
@@ -401,8 +415,14 @@ const buscarNotificacaoPeloUsuario = async function (id_usuario_destino) {
         
                             itemNotificacao.comentario = dadosComentario.comentarios
         
-                            delete itemNotificacao.id_publicacao        
+                            delete itemNotificacao.id_comentario   
+                            
 
+                            let dadosCurtidaComentario = await controllerCurtidaComentario.buscarCurtidaComentario(itemNotificacao.id_curtida_comentario)
+
+                            itemNotificacao.id_curtida_comentario = dadosCurtidaComentario.curtidaComentario
+
+                            delete itemNotificacao.id_curtida_comentario
 
                             arrayNotificacoes.push(itemNotificacao)
         

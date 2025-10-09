@@ -23,6 +23,7 @@
                                                  id_usuario_origem,
                                                  id_publicacao,
                                                  id_comentario,
+                                                 id_curtida_comentario,
                                                  tipo,
                                                  mensagem,
                                                  data_criacao,
@@ -32,6 +33,7 @@
                                                  '${notificacao.id_usuario_origem}',
                                                  '${notificacao.id_publicacao}',
                                                  '${notificacao.id_comentario}',
+                                                 '${notificacao.id_curtida_comentario}',
                                                  '${notificacao.tipo}',
                                                  '${notificacao.mensagem}',
                                                  '${notificacao.data_criacao}',
@@ -61,14 +63,15 @@
  
      try{
        
-         let sql = `update tbl_notificacao set   id_usuario_destino = '${notificacao.id_usuario_destino}',
-                                                 id_usuario_origem  = '${notificacao.id_usuario_origem}',
-                                                 id_publicacao      = '${notificacao.id_publicacao}',
-                                                 id_comentario      = '${notificacao.id_comentario}',
-                                                 tipo               = '${notificacao.tipo}',
-                                                 mensagem           = '${notificacao.mensagem}',
-                                                 data_criacao       = '${notificacao.data_criacao}',
-                                                 is_lida            =  ${notificacao.is_lida}
+         let sql = `update tbl_notificacao set   id_usuario_destino    = '${notificacao.id_usuario_destino}',
+                                                 id_usuario_origem     = '${notificacao.id_usuario_origem}',
+                                                 id_publicacao         = '${notificacao.id_publicacao}',
+                                                 id_comentario         = '${notificacao.id_comentario}',
+                                                 id_curtida_comentario = '${notificacao.id_curtida_comentario}',
+                                                 tipo                  = '${notificacao.tipo}',
+                                                 mensagem              = '${notificacao.mensagem}',
+                                                 data_criacao          = '${notificacao.data_criacao}',
+                                                 is_lida               =  ${notificacao.is_lida}
                                          where id = ${notificacao .id}`
  
          let result = await prisma.$executeRawUnsafe(sql)
