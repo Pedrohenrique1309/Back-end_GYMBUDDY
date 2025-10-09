@@ -17,6 +17,9 @@
         *********** Após a instalação do prisma e do prisma client, devemos:
                 npx prisma init (Inicializar o prisma no projeto)
 
+        ***********  Comando para instalar o nodemailer para enviar email da recuperação de senha:
+            npm install nodemailer
+
         Para realizar o sincronismo do prisma com o banco de dados, devemos executar o seguinte comando:
                 npx prisma migrate dev     
 
@@ -26,6 +29,7 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+
 
 //Import das cotrollers para realizar o CRUD de dados
 const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
