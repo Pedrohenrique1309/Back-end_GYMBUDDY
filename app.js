@@ -39,6 +39,7 @@ const controllerCurtida = require('./controller/curtida/controllerCurtida.js')
 const controllerCurtidaComentario = require('./controller/curtida_comentario/curtida_comentario.js')
 const controllerNotificacao = require('./controller/notificacao/controllerNotificacao.js')
 const controllerView= require('./controller/views/controllerViews.js')
+const controllerRecuperacaoSenha = require('./controller/recuperacaoSenha/controllerRecuperacaoSenha.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -91,6 +92,17 @@ app.get('/v1/gymbuddy/usuario/:search_id', cors(), async function(request, respo
     let search_id = request.params.search_id
 
     let result = await controllerUsuario.buscarUsuario(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/usuario-email/:email', cors(), async function(request, response){
+
+    let email = request.params.email
+
+    let result = await controllerUsuario.buscarUsuarioPeloEmail(email)
 
     response.status(result.status_code)
     response.json(result)
@@ -483,6 +495,28 @@ app.get('/v1/gymbuddy/view/notificacoes', cors(), async function(request, respon
 
 })
 
+//************************************* RECUPERAÇÃO DE SENHA *******************************************//
+
+app.post('/v1/gymbuddy/recuperar-senha/:email', cors(), bodyParserJSON, async function(request, response){
+
+    let email = request.params.email
+
+    let result = await controllerRecuperacaoSenha.enviarEmail(email)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/gymbuddy/recuperar-senha/:token', cors(), async function(request, response){
+
+    let token = request.params.token
+
+    let result = await controllerRecuperacaoSenha.buscarRecuperacaoSenhaPeloToken(token)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
 
 app.listen('3030', function(){
     console.log('API GYTMBUDDY aguardando requisições...')

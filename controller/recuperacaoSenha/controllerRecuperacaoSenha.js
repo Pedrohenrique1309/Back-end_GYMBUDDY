@@ -13,37 +13,28 @@ const recuperacaoSenhaDAO = require('../../model/DAO/recuperacaoSenha.js')
 
 const controllerUsuario = require('../usuario/controllerUsuario.js')
 
-
 //Importe do nodemailer
 const nodemailer = require('nodemailer')
+
+const path = require('path');
+const dotenv = require('dotenv');
+const { log } = require('console');
+
+// Carregar o .env
+const envPath = path.resolve(__dirname, '../.env');
+dotenv.config({ path: envPath });
 
 const smtp = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: true,
+    secure: false,
     auth:{
-        user: "email@gmail.com",
-        pass: "12345678"
+        user: "gymbuddyseuparceiro@gmail.com",
+        pass: process.env.EMAIL_PASSWORD
     }
 })
 
-const configEmail = {
-    from: "email@gmail.com",
-    to: `${user.email}`,
-    subject: "GYMBUDDY - Recupere sua senha",
-    text: `Esse é seu código de recuperação de senha: ${token}`, 
-}
 
-new Promise((resolve, reject) =>{
-    smtp.sendMail(configEmail)
-    .then(res => {
-        smtp.close()
-        return resolve(res)
-    }).catch(error => {
-        console.log(error)
-    })
-
-})
 
 const enviarEmail = async function(email) {
  
@@ -54,9 +45,9 @@ const enviarEmail = async function(email) {
         }else{
 
             let resultUsuario = await controllerUsuario.buscarUsuarioPeloEmail(email)
-
+            
             if(resultUsuario.status_code == 200 ){
-
+               
                 //gerar token
                 const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
                 let token = '';
@@ -66,32 +57,41 @@ const enviarEmail = async function(email) {
                     token += caracteres[indice];
                 }
 
+
                 let id_user = resultUsuario.item[0].id
+
                 let recuperacaoSenhaJSON = {
                     id_user: id_user,
                     token: token
                 }
-
+                
+                
                 let resultRecSenha = await buscarRecuperacaoSenhaPeloUser(id_user)
-
+                
+                
                 if(resultRecSenha.status_code == 404){
 
                     let resultInsert = await inserirRecuperacaoSenha(recuperacaoSenhaJSON)
+                    
 
                     if(resultInsert.status ==  true){
 
                         const enviar = await smtp.sendMail({
                             from: "email@gmail.com",
-                            to: `${user.email}`,
+                            to: `${email}`,
                             subject: "GYMBUDDY - Recupere sua senha",
                             text: `Esse é seu código de recuperação de senha: ${token}`, 
                             })
+
+                            console.log(enviar);
+                            
                         
                         return MESSAGE.SUCCESS_EMAIL
 
                     }else{
-                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL 
                     }
+
                 }else if(resultRecSenha.status_code == 200){
                     
                     recuperacaoSenhaJSON.id = resultRecSenha.item[0].id
@@ -102,7 +102,7 @@ const enviarEmail = async function(email) {
                         
                         const enviar = await smtp.sendMail({
                             from: "email@gmail.com",
-                            to: `${user.email}`,
+                            to: `${email}`,
                             subject: "GYMBUDDY - Recupere sua senha",
                             text: `Esse é seu código de recuperação de senha: ${token}`,
                         })
@@ -136,7 +136,8 @@ const inserirRecuperacaoSenha = async function (recuperacaoSenhaJSON){
 
 
             let result = await recuperacaoSenhaDAO.insertRecuperacaoSenha(recuperacaoSenhaJSON)
-
+                
+                
             if(result){
                 return MESSAGE.SUCCESS_CREATED_ITEM
             }else{
@@ -154,7 +155,7 @@ const atualizarRecuperacaoSenha = async function (recuperacaoSenhaJSON){
 
         //nao preciso criar verificacao pois o JSON já chegará formatado pelo próprio código
 
-        let result = await recuperacaoSenhaDAO.updateRecSenha(recuperacaoSenhaJSON)
+        let result = await recuperacaoSenhaDAO.updateRecuperacaoSenha(recuperacaoSenhaJSON)
 
         if(result){
             return MESSAGE.SUCCES_UPDATED_ITEM
@@ -173,7 +174,7 @@ const buscarRecuperacaoSenhaPeloUser = async function (id_user){
 
         let dadosRecuperacaoSenha = {}
 
-        let result = await recuperacaoSenhaDAO.searchRecSenhaByID(id_user)
+        let result = await recuperacaoSenhaDAO.searchRecuperacaoSenhaByID(id_user)
 
         if(result){
 
@@ -236,5 +237,5 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
 
 module.exports = {
     enviarEmail,
-    searchRecuperacaoSenhaByCodigo
+    buscarRecuperacaoSenhaPeloToken
 }

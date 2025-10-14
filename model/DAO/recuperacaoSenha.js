@@ -18,17 +18,16 @@ const insertRecuperacaoSenha = async function(recuperacaoSenha){
     try {
 
         let sql = `insert into tbl_recuperacao_senha (
-                                                        token,
-     ]                                                  id_user
+                                                        id_user,
+                                                        token
                                                        )
                                                          values
                                                         (
-                                                         '${recuperacaoSenha.token}',
-                                                         ${recuperacaoSenha.id_user}
+                                                         '${recuperacaoSenha.id_user}',
+                                                         '${recuperacaoSenha.token}'
                                                         )`
 
         let result = await prisma.$executeRawUnsafe(sql)
-
         if(result)
             return true
         else
@@ -62,7 +61,7 @@ const updateRecuperacaoSenha = async function(recuperacaoSenha){
 const searchRecuperacaoSenhaByID = async function(id){
     try {
         
-        let sql = `select * from tbl_recuperacao_senha where id_usuario = ${id}`
+        let sql = `select * from tbl_recuperacao_senha where id_user = ${id}`
 
         let result = await prisma.$queryRawUnsafe(sql)
 
@@ -76,7 +75,7 @@ const searchRecuperacaoSenhaByID = async function(id){
     }
 }
 
-const searchRecuperacaoSenhaByToken = async function(code){
+const searchRecuperacaoSenhaByToken = async function(token){
     try {
         
         let sql = `select * fromtbl_recuperacao_senha where binary token = '${token}'` // binary deixa o sql case-sensitive

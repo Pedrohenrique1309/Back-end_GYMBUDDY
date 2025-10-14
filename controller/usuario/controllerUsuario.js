@@ -32,7 +32,7 @@ const inserirUsuario = async function(usuario, contentType){
 
             }else{
 
-                let searchEmail = await searchUsuarioByEmail(usuario.email)
+                let searchEmail = await buscarUsuarioPeloEmail(usuario.email)
 
                 if (searchEmail.status_code == 200){
 
@@ -311,8 +311,9 @@ const logarUsuario = async function (user) {
 
 //Função para bucar um usuário pelo email 
 const buscarUsuarioPeloEmail = async function (email){
+    console.log(email);
     try {
-
+       
         if(email == undefined || email == '' || email == null || email.length < 1){
             return MESSAGE.ERROR_REQUIRED_FIELDS
         }else{

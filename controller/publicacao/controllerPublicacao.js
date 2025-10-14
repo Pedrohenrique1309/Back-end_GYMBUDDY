@@ -24,8 +24,6 @@ const inserirPublicacao = async function(publicacao, contentType){
 
             if(
                 publicacao.imagem       == undefined || publicacao.imagem      == ''|| publicacao.imagem      == null ||publicacao.imagem.length       > 255   ||  
-                publicacao.descricao    == undefined || publicacao.descricao   == ''|| publicacao.descricao   == null ||publicacao.descricao.length    > 300   ||
-                publicacao.localizacao  == undefined || publicacao.localizacao == ''|| publicacao.localizacao == null ||publicacao.localizacao.length  > 200   ||
                 publicacao.data         == undefined || publicacao.data        == ''|| publicacao.data        == null ||publicacao.data.length         !== 10  ||
                 publicacao.id_user      == undefined || publicacao.id_user     == ''|| publicacao.id_user     == null ||isNaN(publicacao.id_user)      || publicacao.id_user <= 0
             ){
@@ -67,9 +65,7 @@ const atualizarPublicacao = async function(publicacao, id, contentType) {
 
             if(
                 id                      == undefined || id                     == ''|| id                     == null || isNaN(id) ||id                <= 0    ||
-                publicacao.imagem       == undefined || publicacao.imagem      == ''|| publicacao.imagem      == null ||publicacao.imagem.length       > 255   ||  
-                publicacao.descricao    == undefined || publicacao.descricao   == ''|| publicacao.descricao   == null ||publicacao.descricao.length    > 300   ||
-                publicacao.localizacao  == undefined || publicacao.localizacao == ''|| publicacao.localizacao == null ||publicacao.localizacao.length  > 200   ||
+                publicacao.imagem       == undefined || publicacao.imagem      == ''|| publicacao.imagem      == null ||publicacao.imagem.length       > 255   ||
                 publicacao.data         == undefined || publicacao.data        == ''|| publicacao.data        == null ||publicacao.data.length         !== 10  ||
                 publicacao.id_user      == undefined || publicacao.id_user     == ''|| publicacao.id_user     == null ||isNaN(publicacao.id_user)      || publicacao.id_user <= 0
             ){
