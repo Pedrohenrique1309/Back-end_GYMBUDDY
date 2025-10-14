@@ -484,6 +484,6 @@ app.get('/v1/gymbuddy/view/notificacoes', cors(), async function(request, respon
 })
 
 
-app.listen('8080', function(){
+app.listen('3030', function(){
     console.log('API GYTMBUDDY aguardando requisições...')
 })

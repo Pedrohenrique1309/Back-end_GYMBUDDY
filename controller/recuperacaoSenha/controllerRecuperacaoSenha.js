@@ -11,6 +11,7 @@ const MESSAGE = require('../../modulo/config.js')
 //Import da DAO de recuperação de senha
 const recuperacaoSenhaDAO = require('../../model/DAO/recuperacaoSenha.js')
 
+const controllerUsuario = require('../usuario/controllerUsuario.js')
 
 
 //Importe do nodemailer
@@ -44,8 +45,88 @@ new Promise((resolve, reject) =>{
 
 })
 
-const envairEmail = async function() {
-    
+const enviarEmail = async function(email) {
+ 
+    try {
+
+        if(email == undefined || email == '' || email == null){
+            return MESSAGE.ERROR_REQUIRED_FIELDS
+        }else{
+
+            let resultUsuario = await controllerUsuario.buscarUsuarioPeloEmail(email)
+
+            if(resultUsuario.status_code == 200 ){
+
+                //gerar token
+                const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let token = '';
+
+                for (let i = 0; i < 20; i++) {
+                    const indice = Math.floor(Math.random() * caracteres.length);
+                    token += caracteres[indice];
+                }
+
+                let id_user = resultUsuario.item[0].id
+                let recuperacaoSenhaJSON = {
+                    id_user: id_user,
+                    token: token
+                }
+
+                let resultRecSenha = await buscarRecuperacaoSenhaPeloUser(id_user)
+
+                if(resultRecSenha.status_code == 404){
+
+                    let resultInsert = await inserirRecuperacaoSenha(recuperacaoSenhaJSON)
+
+                    if(resultInsert.status ==  true){
+
+                        const enviar = await smtp.sendMail({
+                            from: "email@gmail.com",
+                            to: `${user.email}`,
+                            subject: "GYMBUDDY - Recupere sua senha",
+                            text: `Esse é seu código de recuperação de senha: ${token}`, 
+                            })
+                        
+                        return MESSAGE.SUCCESS_EMAIL
+
+                    }else{
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+                    }
+                }else if(resultRecSenha.status_code == 200){
+                    
+                    recuperacaoSenhaJSON.id = resultRecSenha.item[0].id
+
+                    let resultUpdate = await atualizarRecuperacaoSenha(recuperacaoSenhaJSON)
+
+                    if(resultUpdate.status == true){
+                        
+                        const enviar = await smtp.sendMail({
+                            from: "email@gmail.com",
+                            to: `${user.email}`,
+                            subject: "GYMBUDDY - Recupere sua senha",
+                            text: `Esse é seu código de recuperação de senha: ${token}`,
+                        })
+
+                        return MESSAGE.SUCCESS_EMAIL
+                        
+                    }else{
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+                    }
+
+                }else if(resultRecSenha.status_code == 404){
+                    return MESSAGE.ERROR_NOT_FOUND
+                }
+
+            } else {
+                return resultUsuario
+            }
+
+        }
+
+    }catch (error) {
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
 }
 
 const inserirRecuperacaoSenha = async function (recuperacaoSenhaJSON){
@@ -100,7 +181,7 @@ const buscarRecuperacaoSenhaPeloUser = async function (id_user){
                 return MESSAGE.ERROR_NOT_FOUND
             }else{
 
-                                dadosRecuperacaoSenha.status = true
+                dadosRecuperacaoSenha.status = true
                 dadosRecuperacaoSenha.status_code = 200
                 dadosRecuperacaoSenha.item = result
 

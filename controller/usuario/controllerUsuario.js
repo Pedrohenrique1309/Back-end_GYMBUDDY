@@ -310,7 +310,7 @@ const logarUsuario = async function (user) {
 }
 
 //Função para bucar um usuário pelo email 
-const searchUsuarioByEmail = async function (email){
+const buscarUsuarioPeloEmail = async function (email){
     try {
 
         if(email == undefined || email == '' || email == null || email.length < 1){
@@ -404,6 +404,6 @@ module.exports = {
     listarUsuario,
     buscarUsuario,
     logarUsuario,
-    searchUsuarioByEmail,
+    buscarUsuarioPeloEmail,
     atualizarUsuarioSenha
 }

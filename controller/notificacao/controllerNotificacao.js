@@ -455,6 +455,7 @@ const buscarNotificacaoPeloUsuario = async function (id_usuario_destino) {
 
 }
 
+
 module.exports = {
     inserirNotificacao,
     atualizarNotificacao,
