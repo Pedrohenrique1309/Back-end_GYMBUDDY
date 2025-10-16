@@ -11,161 +11,74 @@ const MESSAGE = require('../../modulo/config.js')
 //Import da DAO de recuperação de senha
 const recuperacaoSenhaDAO = require('../../model/DAO/recuperacaoSenha.js')
 
-const controllerUsuario = require('../usuario/controllerUsuario.js')
+//Import do serviço de email
+const emailService = require('../../src/services/emailService')
 
-//Importe do nodemailer
-const nodemailer = require('nodemailer')
+const { PrismaClient } = require('@prisma/client')
 
-const path = require('path');
-const dotenv = require('dotenv');
-const { log } = require('console');
-
-// Carregar o .env
-const envPath = path.resolve(__dirname, '../.env');
-dotenv.config({ path: envPath });
-
-const smtp = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    auth:{
-        user: "gymbuddyseuparceiro@gmail.com",
-        pass: process.env.EMAIL_PASSWORD
-    }
-})
-
-
+// Inicializa o Prisma Client
+const prisma = new PrismaClient();
 
 const enviarEmail = async function(email) {
- 
     try {
+        console.log('🔄 Iniciando processo de recuperação para:', email)
 
-        if(email == undefined || email == '' || email == null){
-            return MESSAGE.ERROR_REQUIRED_FIELDS
-        }else{
+        const usuario = await prisma.tbl_user.findUnique({
+            where: { email }
+        })
 
-            let resultUsuario = await controllerUsuario.buscarUsuarioPeloEmail(email)
-            
-            if(resultUsuario.status_code == 200 ){
-               
-                //gerar token
-                const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                let token = '';
-
-                for (let i = 0; i < 20; i++) {
-                    const indice = Math.floor(Math.random() * caracteres.length);
-                    token += caracteres[indice];
-                }
-
-
-                let id_user = resultUsuario.item[0].id
-
-                let recuperacaoSenhaJSON = {
-                    id_user: id_user,
-                    token: token
-                }
-                
-                
-                let resultRecSenha = await buscarRecuperacaoSenhaPeloUser(id_user)
-                
-                
-                if(resultRecSenha.status_code == 404){
-
-                    let resultInsert = await inserirRecuperacaoSenha(recuperacaoSenhaJSON)
-                    
-
-                    if(resultInsert.status ==  true){
-
-                        const enviar = await smtp.sendMail({
-                            from: "email@gmail.com",
-                            to: `${email}`,
-                            subject: "GYMBUDDY - Recupere sua senha",
-                            text: `Esse é seu código de recuperação de senha: ${token}`, 
-                            })
-
-                            console.log(enviar);
-                            
-                        
-                        return MESSAGE.SUCCESS_EMAIL
-
-                    }else{
-                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL 
-                    }
-
-                }else if(resultRecSenha.status_code == 200){
-                    
-                    recuperacaoSenhaJSON.id = resultRecSenha.item[0].id
-
-                    let resultUpdate = await atualizarRecuperacaoSenha(recuperacaoSenhaJSON)
-
-                    if(resultUpdate.status == true){
-                        
-                        const enviar = await smtp.sendMail({
-                            from: "email@gmail.com",
-                            to: `${email}`,
-                            subject: "GYMBUDDY - Recupere sua senha",
-                            text: `Esse é seu código de recuperação de senha: ${token}`,
-                        })
-
-                        return MESSAGE.SUCCESS_EMAIL
-                        
-                    }else{
-                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
-                    }
-
-                }else if(resultRecSenha.status_code == 404){
-                    return MESSAGE.ERROR_NOT_FOUND
-                }
-
-            } else {
-                return resultUsuario
+        if (!usuario) {
+            return {
+                status: 404,
+                status_code: 404,
+                message: 'Usuário não encontrado'
             }
-
         }
 
-    }catch (error) {
-        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
-    }
+        // Gerar código de recuperação (6 dígitos)
+        const codigo = Math.floor(100000 + Math.random() * 900000).toString()
 
-}
+        // Remover códigos antigos deste usuário
+        await prisma.tbl_recuperacao_senha.deleteMany({
+            where: { id_user: usuario.id }
+        })
 
-const inserirRecuperacaoSenha = async function (recuperacaoSenhaJSON){
-    try {
-
-        //Não precisa de verificacao, porque  o JSON já será enviado formatado
-
-
-            let result = await recuperacaoSenhaDAO.insertRecuperacaoSenha(recuperacaoSenhaJSON)
-                
-                
-            if(result){
-                return MESSAGE.SUCCESS_CREATED_ITEM
-            }else{
-                return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+        // Salvar o novo código
+        await prisma.tbl_recuperacao_senha.create({
+            data: {
+                id_user: usuario.id,
+                token: codigo
             }
+        })
 
+        // Enviar email
+        const resultadoEmail = await emailService.enviarEmailRecuperacao(
+            email,
+            usuario.nome,
+            codigo
+        )
 
-    } catch (error) {
-        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
-    }
-}
-
-const atualizarRecuperacaoSenha = async function (recuperacaoSenhaJSON){
-    try {
-
-        //nao preciso criar verificacao pois o JSON já chegará formatado pelo próprio código
-
-        let result = await recuperacaoSenhaDAO.updateRecuperacaoSenha(recuperacaoSenhaJSON)
-
-        if(result){
-            return MESSAGE.SUCCES_UPDATED_ITEM
-        }else{
-            return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+        if (!resultadoEmail.sucesso) {
+            return {
+                status: 500,
+                status_code: 500,
+                message: 'Erro ao enviar email de recuperação'
+            }
         }
-        
+
+        return {
+            status: 200,
+            status_code: 200,
+            message: 'Email de recuperação enviado com sucesso'
+        }
+
     } catch (error) {
-        console.log(error)
-        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+        console.error('❌ Erro:', error.message)
+        return {
+            status: 500,
+            status_code: 500,
+            message: 'Erro interno do servidor'
+        }
     }
 }
 
@@ -207,6 +120,7 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
 
             let dataResponse = {}
 
+            // Busca pelo código numérico que foi salvo como token
             let result = await recuperacaoSenhaDAO.searchRecuperacaoSenhaByToken(token)
 
             if(result){
