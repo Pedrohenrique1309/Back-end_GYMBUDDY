@@ -38,9 +38,10 @@ const enviarEmail = async function(email) {
         }
 
         // Gerar código de recuperação (6 dígitos)
-        const codigo = Math.floor(100000 + Math.random() * 900000).toString()
+        const codigo = Math.floor(100000 + Math.random() * 900000)  // código é número
 
-        // Remover códigos antigos deste usuário
+
+       // Remover códigos antigos deste usuário
         await prisma.tbl_recuperacao_senha.deleteMany({
             where: { id_user: usuario.id }
         })
@@ -52,6 +53,9 @@ const enviarEmail = async function(email) {
                 token: codigo
             }
         })
+
+        
+        
 
         // Enviar email
         const resultadoEmail = await emailService.enviarEmailRecuperacao(
@@ -75,7 +79,7 @@ const enviarEmail = async function(email) {
         }
 
     } catch (error) {
-        console.error('❌ Erro:', error.message)
+        console.error('Erro:', error.message)
         return {
             status: 500,
             status_code: 500,

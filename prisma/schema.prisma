@@ -33,9 +33,9 @@ model tbl_user {
 model tbl_recuperacao_senha {
   id             Int      @id @default(autoincrement())
   id_user        Int
-  token          String   @unique @db.VarChar(255)
-  data_criacao   DateTime @default(now())
+  token          Int      @unique
   usuario        tbl_user @relation(fields: [id_user], references: [id])
 
   @@index([token])
 }
+

@@ -64,12 +64,11 @@ app.post('/v1/gymbuddy/usuario', cors(), bodyParserJSON, async function(request,
 })
 
 
-app.put('/v1/gymbuddy/usuario/senha', cors(), bodyParserJSON, async function(request, response){
+app.put('/v1/gymbuddy/senha/usuario', cors(), bodyParserJSON, async function(request, response){
 
     let contentType = request.headers['content-type']
 
     let dadosBody = request.body
-
 
     let result = await controllerUsuario.atualizarUsuarioSenha(dadosBody, contentType)
 

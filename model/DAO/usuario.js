@@ -142,11 +142,13 @@ const selectByUsuario = async function(id){
 }
 
 const updateUsuarioSenha = async function(usuario){
-    try {
 
-        let sql = `UPDATE tbl_user SET senha = '${usuario.senha}' WHERE id = ${usuario.id}`
+    try {
+        
+        let sql = `UPDATE tbl_user SET senha = '${usuario.senha}' WHERE id = ${usuario.id_user}`
 
         let result = await prisma.$executeRawUnsafe(sql)
+
 
         if(result)
             return true

@@ -311,7 +311,7 @@ const logarUsuario = async function (user) {
 
 //Função para bucar um usuário pelo email 
 const buscarUsuarioPeloEmail = async function (email){
-    console.log(email);
+   
     try {
        
         if(email == undefined || email == '' || email == null || email.length < 1){
@@ -354,7 +354,7 @@ const atualizarUsuarioSenha = async function(usuario, contentType) {
         if(contentType == 'application/json'){
 
             if(
-                usuario.id          == undefined || usuario.id       == ''|| usuario.id       == null || isNaN(usuario.id)           || usuario.id <= 0 ||
+                usuario.id_user     == undefined || usuario.id_user  == ''|| usuario.id_user  == null || isNaN(usuario.id_user)           || usuario.id_user <= 0 ||
                 usuario.senha       == undefined || usuario.senha    == ''|| usuario.senha    == null || usuario.senha.length  > 30 
             ){
 
@@ -362,13 +362,15 @@ const atualizarUsuarioSenha = async function(usuario, contentType) {
 
             }
 
-            let usuarioExists = await buscarUsuario(usuario.id)
-
+            let usuarioExists = await buscarUsuario(usuario.id_user)
+            
             if(usuarioExists.status_code == 200){
-
-                let resultUsuario = await usuarioDAO.updateUsuario(usuario)
-
-                if(resultUsuario){
+                
+                
+                let resultUsuario = await usuarioDAO.updateUsuarioSenha(usuario)
+             
+                
+                if(!resultUsuario.code){
                     
                     return MESSAGE.SUCCES_UPDATED_ITEM //201
                 
@@ -390,7 +392,7 @@ const atualizarUsuarioSenha = async function(usuario, contentType) {
         }
     
 
-    }catch(error){
+    }catch(error){        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
