@@ -78,7 +78,7 @@ const searchRecuperacaoSenhaByID = async function(id){
 const searchRecuperacaoSenhaByToken = async function(token){
     try {
         
-        let sql = `select * fromtbl_recuperacao_senha where binary token = '${token}'` // binary deixa o sql case-sensitive
+        let sql = `select * from tbl_recuperacao_senha where token = ${token}` 
 
         let result = await prisma.$queryRawUnsafe(sql)
 

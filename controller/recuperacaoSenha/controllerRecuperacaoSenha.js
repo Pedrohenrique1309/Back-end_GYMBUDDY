@@ -14,6 +14,9 @@ const recuperacaoSenhaDAO = require('../../model/DAO/recuperacaoSenha.js')
 //Import do serviço de email
 const emailService = require('../../src/services/emailService')
 
+//import de comtrollers para fazer os relacionamentos
+const controllerUsuario = require('../usuario/controllerUsuario.js')
+
 const { PrismaClient } = require('@prisma/client')
 
 // Inicializa o Prisma Client
@@ -21,7 +24,6 @@ const prisma = new PrismaClient();
 
 const enviarEmail = async function(email) {
     try {
-        console.log('🔄 Iniciando processo de recuperação para:', email)
 
         const usuario = await prisma.tbl_user.findUnique({
             where: { email }
@@ -119,8 +121,8 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
         }else{
 
             let dataResponse = {}
-
-            // Busca pelo código numérico que foi salvo como token
+            let arrayResponse = []
+            
             let result = await recuperacaoSenhaDAO.searchRecuperacaoSenhaByToken(token)
 
             if(result){
@@ -131,9 +133,24 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
                     
                     dataResponse.status = true
                     dataResponse.status_code = 200
-                    dataResponse.id_user = result[0].id_user
 
-                    return dataResponse
+                    for(itemResponse of result){
+                    
+                    let dadosUsuario= await controllerUsuario.buscarUsuario(itemResponse.id_user)
+                     
+                                        
+                        itemResponse.user = dadosUsuario.usuario
+                                           
+                        delete itemResponse.id_user
+                    
+                                        
+                         arrayResponse.push(itemResponse)
+                                        
+                                        
+                    }
+                    dataResponse.recupercoes_senha = arrayResponse
+                                    
+                    return dataResponse //200
                 }
             
             }else{
@@ -143,6 +160,8 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
         }
         
     } catch (error) {
+        console.log(error);
+        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 }
