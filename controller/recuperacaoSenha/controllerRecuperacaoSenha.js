@@ -118,6 +118,8 @@ const buscarRecuperacaoSenhaPeloUser = async function (id_user){
 }
 
 const buscarRecuperacaoSenhaPeloToken = async function(token){
+
+    
     try {
 
         if(token== undefined || token == '' || token == null){
