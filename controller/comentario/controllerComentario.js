@@ -299,6 +299,52 @@ const buscarComentario = async function (id) {
 
 }
 
+// Função para buscar comentarios por id_publicacao
+const buscarComentariosPorPublicacao = async function(id_publicacao){
+
+    try{
+
+        if(id_publicacao != '' && id_publicacao != undefined && id_publicacao != null && !isNaN(id_publicacao) && id_publicacao > 0){
+
+            let dadosComentarios= {}
+
+            let resultComentario = await comentarioDAO.selectComentarioByPublicacao(parseInt(id_publicacao))
+
+            if(resultComentario !== String(resultComentario)){
+                
+                if(resultComentario != false || typeof(resultComentario) == 'object'){
+
+                    if(resultComentario.length > 0){
+
+                        dadosComentarios.status = true
+                        dadosComentarios.status_code = 200
+                        dadosComentarios.itens = resultComentario.length
+                        dadosComentarios.comentarios = resultComentario
+
+                        return dadosComentarios//200
+                    }else{
+        
+                        return MESSAGE.ERROR_NOT_FOUND //404
+                    }
+        
+                }else{
+                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+            }else{
+                return MESSAGE.ERROR_CONTENT_TYPE//415
+            }
+            
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
+        }
+
+
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
+}
+
 module.exports = {
     inserirComentario,
     atualizarComentario,
@@ -306,3 +352,6 @@ module.exports = {
     listarComentarios,
     excluirComentario
 }
+
+// Export adicional para suportar busca por id_publicacao
+module.exports.buscarComentariosPorPublicacao = buscarComentariosPorPublicacao

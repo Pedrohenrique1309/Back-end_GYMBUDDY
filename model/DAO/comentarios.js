@@ -144,3 +144,32 @@ module.exports = {
     selectAllComentario,
     selectComentario
 }
+
+// Função para selecionar comentários por id_publicacao
+const selectComentarioByPublicacao = async function(id_publicacao){
+    try{
+
+        let sql = `SELECT * FROM tbl_comentario where id_publicacao = ${id_publicacao} order by id desc`
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if(result){
+            return result
+        }else{
+            return false
+        }
+
+    }catch(error){
+        return error
+    }
+
+}
+
+module.exports = {
+    insertComentario,
+    updateComentario,
+    deleteComentario,
+    selectAllComentario,
+    selectComentario,
+    selectComentarioByPublicacao
+}

@@ -464,3 +464,51 @@ module.exports = {
     listarNotificacao,
     buscarNotificacaoPeloUsuario
 }
+
+// Marca uma notificacao como lida
+const marcarComoLida = async function(id_notificacao){
+    try{
+        if(id_notificacao != '' && id_notificacao != undefined && id_notificacao != null && !isNaN(id_notificacao) && id_notificacao > 0){
+            let result = await notificacaoDAO.updateIsLida(parseInt(id_notificacao), 1)
+            if(result) return MESSAGE.SUCCES_UPDATED_ITEM
+            else return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS
+        }
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+}
+
+// Marca todas as notificacoes de um usuario como lidas
+const marcarTodasComoLidas = async function(id_usuario_destino){
+    try{
+        if(id_usuario_destino != '' && id_usuario_destino != undefined && id_usuario_destino != null && !isNaN(id_usuario_destino) && id_usuario_destino > 0){
+            let result = await notificacaoDAO.updateAllLidasByUser(parseInt(id_usuario_destino))
+            if(result) return MESSAGE.SUCCES_UPDATED_ITEM
+            else return MESSAGE.ERROR_INTERNAL_SERVER_MODEL
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS
+        }
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+}
+
+// Conta notificacoes nao lidas de um usuario
+const contarNaoLidas = async function(id_usuario_destino){
+    try{
+        if(id_usuario_destino != '' && id_usuario_destino != undefined && id_usuario_destino != null && !isNaN(id_usuario_destino) && id_usuario_destino > 0){
+            let count = await notificacaoDAO.countNaoLidasByUser(parseInt(id_usuario_destino))
+            return { status: true, status_code: 200, nao_lidas: parseInt(count) }
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS
+        }
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+}
+
+module.exports.marcarComoLida = marcarComoLida
+module.exports.marcarTodasComoLidas = marcarTodasComoLidas
+module.exports.contarNaoLidas = contarNaoLidas

@@ -263,10 +263,18 @@ app.put('/v1/gymbuddy/comentario/:search_id', cors(), bodyParserJSON, async func
 
 app.get('/v1/gymbuddy/comentario', cors(), async function(request, response){
 
-    let result = await controllerComentario.listarComentarios()
+    // Se for passada a query id_publicacao, retorne comentarios daquela publicacao
+    const id_publicacao = request.query.id_publicacao
 
-    response.status(result.status_code)
-    response.json(result)
+    if(id_publicacao){
+        let result = await controllerComentario.buscarComentariosPorPublicacao(id_publicacao)
+        response.status(result.status_code)
+        response.json(result)
+    }else{
+        let result = await controllerComentario.listarComentarios()
+        response.status(result.status_code)
+        response.json(result)
+    }
 
 })
 
@@ -442,6 +450,30 @@ app.put('/v1/gymbuddy/notificacao/:search_id', cors(), bodyParserJSON, async fun
     response.json(result)
 })
 
+// Marca uma notificacao como lida
+app.patch('/v1/gymbuddy/notificacao/:idNotificacao/marcar-lida', cors(), async function(request, response){
+    const idNotificacao = request.params.idNotificacao
+    let result = await controllerNotificacao.marcarComoLida(idNotificacao)
+    response.status(result.status_code || 200)
+    response.json(result)
+})
+
+// Marca todas as notificacoes de um usuario como lidas
+app.patch('/v1/gymbuddy/notificacao/usuario/:idUsuario/marcar-todas-lidas', cors(), async function(request, response){
+    const idUsuario = request.params.idUsuario
+    let result = await controllerNotificacao.marcarTodasComoLidas(idUsuario)
+    response.status(result.status_code || 200)
+    response.json(result)
+})
+
+// Conta notificacoes nao lidas de um usuario
+app.get('/v1/gymbuddy/notificacao/usuario/:idUsuario/count-nao-lidas', cors(), async function(request, response){
+    const idUsuario = request.params.idUsuario
+    let result = await controllerNotificacao.contarNaoLidas(idUsuario)
+    response.status(result.status_code || 200)
+    response.json(result)
+})
+
 
 
 app.get('/v1/gymbuddy/notificacao', cors(), async function(request, response){
@@ -516,6 +548,12 @@ app.get('/v1/gymbuddy/recuperar-senha/:token', cors(), async function(request, r
 })
 
 
-app.listen('3030', function(){
-    console.log('API GYTMBUDDY aguardando requisições...')
-})
+// Se o arquivo for executado diretamente, inicia o servidor.
+// Caso contrário (quando importado em testes), exporta o app para o supertest.
+if (require.main === module) {
+    app.listen('8080', function(){
+        console.log('API GYTMBUDDY aguardando requisições...')
+    })
+} else {
+    module.exports = app
+}

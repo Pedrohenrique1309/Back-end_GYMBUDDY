@@ -24,20 +24,18 @@
                                                  id_publicacao,
                                                  id_comentario,
                                                  id_curtida_comentario,
-                                                 tipo,
-                                                 mensagem,
+                                                 tipo_notificacao,
                                                  data_criacao,
                                                  is_lida
                                              )values(
-                                                 '${notificacao.id_usuario_destino}',
-                                                 '${notificacao.id_usuario_origem}',
-                                                 '${notificacao.id_publicacao}',
-                                                 '${notificacao.id_comentario}',
-                                                 '${notificacao.id_curtida_comentario}',
-                                                 '${notificacao.tipo}',
-                                                 '${notificacao.mensagem}',
-                                                 '${notificacao.data_criacao}',
-                                                 '${notificacao.is_lida}'
+                                                 ${notificacao.id_usuario_destino},
+                                                 ${notificacao.id_usuario_origem},
+                                                 ${notificacao.id_publicacao || 'NULL'},
+                                                 ${notificacao.id_comentario || 'NULL'},
+                                                 ${notificacao.id_curtida_comentario || 'NULL'},
+                                                 '${notificacao.tipo_notificacao}',
+                                                 NOW(),
+                                                 ${notificacao.is_lida}
 
                                              );`
  
@@ -183,3 +181,44 @@ module.exports = {
     selectNotificacao,
     selectNotificacaoByUser
 }
+
+// Marca o campo is_lida de uma notificacao (0/1)
+const updateIsLida = async function(id, is_lida){
+    try{
+        let sql = `UPDATE tbl_notificacao SET is_lida = ${is_lida} WHERE id = ${id}`
+        let result = await prisma.$executeRawUnsafe(sql)
+        return result ? true : false
+    }catch(error){
+        return error
+    }
+}
+
+// Marca todas as notificacoes de um usuario como lidas
+const updateAllLidasByUser = async function(id_usuario_destino){
+    try{
+        let sql = `UPDATE tbl_notificacao SET is_lida = 1 WHERE id_usuario_destino = ${id_usuario_destino}`
+        let result = await prisma.$executeRawUnsafe(sql)
+        return result ? true : false
+    }catch(error){
+        return error
+    }
+}
+
+// Conta quantas notificacoes nao lidas existem para um usuario
+const countNaoLidasByUser = async function(id_usuario_destino){
+    try{
+        let sql = `SELECT COUNT(*) as nao_lidas FROM tbl_notificacao WHERE id_usuario_destino = ${id_usuario_destino} AND is_lida = 0`
+        let result = await prisma.$queryRawUnsafe(sql)
+        if(result && result.length > 0){
+            return result[0].nao_lidas || 0
+        }else{
+            return 0
+        }
+    }catch(error){
+        return error
+    }
+}
+
+module.exports.updateIsLida = updateIsLida
+module.exports.updateAllLidasByUser = updateAllLidasByUser
+module.exports.countNaoLidasByUser = countNaoLidasByUser
