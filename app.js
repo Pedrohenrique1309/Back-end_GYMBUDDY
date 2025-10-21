@@ -515,31 +515,6 @@ app.get('/v1/gymbuddy/recuperar-senha/:token', cors(), async function(request, r
     response.json(result)
 })
 
-app.post('/api/recuperar-senha', async (req, res) => {
-    try {
-        console.log(' Requisição recebida:', req.body);
-        
-        const { email } = req.body;
-        
-        if (!email) {
-            return res.status(400).json({
-                status: 400,
-                message: 'Email é obrigatório'
-            });
-        }
-
-        const resultado = await controllerRecuperacaoSenha.enviarEmail(email);
-        console.log(' Resultado do processamento:', resultado);
-        
-        return res.status(resultado.status).json(resultado);
-    } catch (error) {
-        console.error(' Erro na rota:', error);
-        return res.status(500).json({
-            status: 500,
-            message: 'Erro interno do servidor'
-        });
-    }
-});
 
 app.listen('3030', function(){
     console.log('API GYTMBUDDY aguardando requisições...')

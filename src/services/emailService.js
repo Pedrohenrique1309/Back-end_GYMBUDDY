@@ -106,21 +106,7 @@ const enviarEmailRecuperacao = async (email, nomeUsuario, codigo) => {
                     font-size: 14px;
                     color: rgba(255,255,255,0.6);
                 }
-                .btn {
-                    display: inline-block;
-                    padding: 15px 30px;
-                    background: #dc2626;
-                    color: #ffffff;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-weight: bold;
-                    margin: 20px 0;
-                    text-transform: uppercase;
-                    transition: background 0.3s ease;
-                }
-                .btn:hover {
-                    background: #991b1b;
-                }
+                
             </style>
         </head>
         <body>
@@ -147,9 +133,6 @@ const enviarEmailRecuperacao = async (email, nomeUsuario, codigo) => {
                     </ul>
                 </div>
                 
-                <p style="text-align: center;">
-                    <a href="#" class="btn">Redefinir Senha</a>
-                </p>
                 
                 <div class="footer">
                     <p>Este é um email automático, não responda.</p>
