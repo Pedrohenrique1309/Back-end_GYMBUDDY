@@ -382,5 +382,6 @@ module.exports = {
     atualizarCurtida,
     excluirCurtida,
     buscarCurtida,
-    listarCurtida
+    listarCurtida,
+    buscarCurtidaPeloUsuario
 }
