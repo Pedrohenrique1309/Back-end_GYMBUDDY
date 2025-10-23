@@ -1,40 +1,37 @@
 {
   "name": "back-end_gymbuddy",
   "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "@prisma/client": "^6.17.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^7.0.2",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.10",
+    "prisma": "^6.17.1",
+    "supertest": "^6.3.3"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "node src/server.js",
     "test": "jest --passWithNoTests"
   },
-  "dependencies": {
-    "@prisma/client": "^6.17.1",
-    "bcryptjs": "^3.0.2",
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^7.0.9"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pedrohenrique1309/Back-end_GYMBUDDY.git"
   },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pedrohenrique1309/Back-end_GYMBUDDY/issues"
+  },
+  "homepage": "https://github.com/Pedrohenrique1309/Back-end_GYMBUDDY#readme",
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/nodemailer": "^7.0.2",
-<<<<<<< HEAD
-    "prisma": "^6.17.1",
-    "jest": "^29.7.0",
-    "supertest": "^6.3.3"
-  }
-  ,
-  "scripts": {
-    "test": "jest --runInBand"
-=======
-    "jest": "^30.2.0",
-    "prisma": "^6.17.1"
-    },
-   "scripts": {
-    "start": "node src/server.js",
-    "test": "jest",
-    "test": "jest --passWithNoTests"
->>>>>>> 8a3510d (adicionando arquivo de teste de usuarios)
+    "jest": "^30.2.0"
   }
 }

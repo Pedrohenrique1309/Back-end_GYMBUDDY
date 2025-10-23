@@ -11,11 +11,11 @@
                 body-parser            npm instal body-parser --save
 
         ********** Para configurar e instalar o acesso ao Banco de Dados precimos:   
-                prisma                 npm install prisma --save (conexão com o BD)
-                prisma/client          npm install @prisma/client --save  (Executa scripts no BD)
+                prisma                 npm instal body-parser --save (conexão com o BD)
+                prisma/client          npm instal body-parser --save (Executa scripts no BD)
 
         *********** Após a instalação do prisma e do prisma client, devemos:
-                npx prisma init (Inicializar o prisma no projeto)
+                npm instal body-parser --save (Inicializar o prisma no projeto)
 
         ***********  Comando para instalar o nodemailer para enviar email da recuperação de senha:
             npm install nodemailer

@@ -27,7 +27,7 @@ describe("Teste de autenticação de usuário", () => {
     it("deve autenticar um usuário existente", async() => {
         const credenciais = {
             email: "joao.silva1@example.com",
-            senha: "senha123"
+            senha: "senhaSegura123"
         };
 
         const resultado = await controllerUsuario.logarUsuario(credenciais);
@@ -51,7 +51,7 @@ describe("Teste de atualização de usuário", () => {
             "nome": "João Silva",
             "email": "joao.silva1@example.com",
             "senha": "senha123456",
-            "peso": 75.50, 
+            "peso": 76.50, 
             "altura": 1.75,
             "imc": 24.65,
             "nickname": "joaos",
