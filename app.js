@@ -558,9 +558,7 @@ app.get('/v1/gymbuddy/recuperar-senha/:token', cors(), async function(request, r
 })
 
 
-<<<<<<< HEAD
-// Se o arquivo for executado diretamente, inicia o servidor.
-// Caso contrário (quando importado em testes), exporta o app para o supertest.
+
 if (require.main === module) {
     app.listen('8080', function(){
         console.log('API GYTMBUDDY aguardando requisições...')
@@ -568,8 +566,3 @@ if (require.main === module) {
 } else {
     module.exports = app
 }
-=======
-app.listen('8080', function(){
-    console.log('API GYTMBUDDY aguardando requisições...')
-})
->>>>>>> 8a3510d (adicionando arquivo de teste de usuarios)

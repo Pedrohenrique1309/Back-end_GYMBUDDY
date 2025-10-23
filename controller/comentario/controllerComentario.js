@@ -350,8 +350,6 @@ module.exports = {
     atualizarComentario,
     buscarComentario,
     listarComentarios,
-    excluirComentario
+    excluirComentario,
+    buscarComentariosPorPublicacao
 }
-
-// Export adicional para suportar busca por id_publicacao
-module.exports.buscarComentariosPorPublicacao = buscarComentariosPorPublicacao
