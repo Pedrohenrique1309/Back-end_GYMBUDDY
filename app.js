@@ -495,6 +495,16 @@ app.get('/v1/gymbuddy/notificacao/:search_id', cors(), async function(request, r
     response.json(result)
 })
 
+app.get('/v1/gymbuddy/notificacao/usuario/:id_usuario', cors(), async function(request, response){
+
+    let id_usuario = request.params.id_usuario
+
+    let result = await controllerNotificacao.buscarNotificacaoPeloUsuario(id_usuario)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
 app.delete('/v1/gymbuddy/notificacao/:search_id', cors(), async function(request, response){
 
     let search_id = request.params.search_id
@@ -548,6 +558,7 @@ app.get('/v1/gymbuddy/recuperar-senha/:token', cors(), async function(request, r
 })
 
 
+<<<<<<< HEAD
 // Se o arquivo for executado diretamente, inicia o servidor.
 // Caso contrário (quando importado em testes), exporta o app para o supertest.
 if (require.main === module) {
@@ -557,3 +568,8 @@ if (require.main === module) {
 } else {
     module.exports = app
 }
+=======
+app.listen('8080', function(){
+    console.log('API GYTMBUDDY aguardando requisições...')
+})
+>>>>>>> 8a3510d (adicionando arquivo de teste de usuarios)

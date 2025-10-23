@@ -152,7 +152,7 @@
 }
 
  //Função para buscar no Banco de Dados uma notificacao pelo ID do usuario
- const selectNotificacaoByUser = async function(id){
+ const selectNotificacaoByUser = async function(id_usuario_destino){
  
      try{
  
