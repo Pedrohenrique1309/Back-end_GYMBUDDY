@@ -39,7 +39,7 @@ const inserirNotificacao = async function(notificacao, contentType){
                  if(
                     notificacao.id_usuario_origem  == undefined || notificacao.id_usuario_origem  == ''|| notificacao.id_usuario_origem  == null ||isNaN(notificacao.id_usuario_origem)       || notificacao.id_usuario_origem  <= 0 ||
                     notificacao.id_usuario_destino == undefined || notificacao.id_usuario_destino == ''|| notificacao.id_usuario_destino == null ||isNaN(notificacao.id_usuario_destino)      || notificacao.id_usuario_destino <= 0 ||
-                    notificacao.tipo               == undefined || notificacao.tipo               == ''|| notificacao.tipo               == null || notificacao.tipo.length           > 50 ||
+                    notificacao.tipo_notificacao   == undefined || notificacao.tipo_notificacao   == ''|| notificacao.tipo_notificacao   == null || notificacao.tipo_notificacao.length  > 50 ||
                     notificacao.mensagem           == undefined || notificacao.mensagem           == ''|| notificacao.mensagem           == null || notificacao.mensagem.length         > 255 ||
                     notificacao.data_criacao       == undefined || notificacao.data_criacao       == ''|| notificacao.data_criacao       == null || notificacao.data_criacao.length    != 10 
                 ){
@@ -96,7 +96,7 @@ const atualizarNotificacao = async function(notificacao, id, contentType) {
                     id                             == undefined || id                             == ''|| id                             == null ||isNaN(id)                                  || id                             <= 0 ||
                     notificacao.id_usuario_origem  == undefined || notificacao.id_usuario_origem  == ''|| notificacao.id_usuario_origem  == null ||isNaN(notificacao.id_usuario_origem)       || notificacao.id_usuario_origem  <= 0 ||
                     notificacao.id_usuario_destino == undefined || notificacao.id_usuario_destino == ''|| notificacao.id_usuario_destino == null ||isNaN(notificacao.id_usuario_destino)      || notificacao.id_usuario_destino <= 0 ||
-                    notificacao.tipo               == undefined || notificacao.tipo               == ''|| notificacao.tipo               == null || notificacao.tipo.length              > 50 ||
+                    notificacao.tipo_notificacao   == undefined || notificacao.tipo_notificacao   == ''|| notificacao.tipo_notificacao   == null || notificacao.tipo_notificacao.length   > 50 ||
                     notificacao.mensagem           == undefined || notificacao.mensagem           == ''|| notificacao.mensagem           == null || notificacao.mensagem.length         > 255 ||
                     notificacao.data_criacao       == undefined || notificacao.data_criacao       == ''|| notificacao.data_criacao       == null || notificacao.data_criacao.length     != 10 
                 ){

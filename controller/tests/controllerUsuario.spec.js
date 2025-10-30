@@ -11,7 +11,7 @@ describe("Teste de inserção de usuário", () => {
         const novoUsuario = {
             nome: "João Silva",
             nickname: "joaosilva",        
-            email: "joao.silva2134@example.com",
+            email: "joao.silva21344@example.com",
             senha: "senhaSegura123"
         };
 
@@ -26,8 +26,8 @@ describe("Teste de inserção de usuário", () => {
 describe("Teste de autenticação de usuário", () => {
     it("deve autenticar um usuário existente", async() => {
         const credenciais = {
-            email: "joao.silva1@example.com",
-            senha: "senha1"
+            email: "joao.silva2134@example.com",
+            senha: "senhaSegura123"
         };
 
         const resultado = await controllerUsuario.logarUsuario(credenciais);
@@ -46,11 +46,11 @@ describe("Teste de listagem de usuários", () => {
 
 describe("Teste de atualização de usuário", () => {
     it("deve atualizar os dados de um usuário existente", async() => {
-        const idUsuario = 4; 
+        const idUsuario = 3; 
         const dadosAtualizados = {
-            "nome": "João Silva",
-            "email": "joao.silva1@example.com",
-            "senha": "senha1",
+            "nome": "Pedro",
+            "email": "pedrohenrique.jorge@outlook.com",
+            "senha": "Pedro123.",
             "peso": 76.50, 
             "altura": 1.75,
             "imc": 24.65,
@@ -73,7 +73,7 @@ describe("Teste de atualização de usuário", () => {
 
 describe("Teste de exclusão de usuário", () => {
     it("deve excluir um usuário existente", async() => {
-        const idUsuario = 5;
+        const idUsuario = 2;
         const resultado = await controllerUsuario.excluirUsuario(idUsuario);
 
         expect(resultado).toBeTruthy();
@@ -100,7 +100,7 @@ describe("Teste para mudança de senha", () => {
 
 describe("Teste para buscar um usuário", () => {
     it("deve buscar um usuário pelo ID", async() => {
-        const idUsuario = 4;
+        const idUsuario = 3;
 
         const resultado = await controllerUsuario.buscarUsuario(idUsuario); 
 
@@ -113,7 +113,7 @@ describe("Teste para buscar um usuário", () => {
 
 describe("Teste para buscar um usuário por email", () => {  
     it("deve buscar um usuário pelo email", async() => {
-        const emailUsuario = "pedrinho@email.com";
+        const emailUsuario = "pedrohenrique.jorge@outlook.com";
 
         const resultado = await controllerUsuario.buscarUsuarioPeloEmail(emailUsuario); 
 

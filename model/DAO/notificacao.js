@@ -66,7 +66,7 @@
                                                  id_publicacao         = '${notificacao.id_publicacao}',
                                                  id_comentario         = '${notificacao.id_comentario}',
                                                  id_curtida_comentario = '${notificacao.id_curtida_comentario}',
-                                                 tipo                  = '${notificacao.tipo}',
+                                                 tipo_notificacao      = '${notificacao.tipo_notificacao}',
                                                  mensagem              = '${notificacao.mensagem}',
                                                  data_criacao          = '${notificacao.data_criacao}',
                                                  is_lida               =  ${notificacao.is_lida}
