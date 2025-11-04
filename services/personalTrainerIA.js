@@ -61,6 +61,7 @@ FORMATO DE RESPOSTA:
 - Estruture respostas em seções claras
 - Inclua dicas práticas e aplicáveis
 - Finalize sempre com encorajamento personalizado
+- Sempre responda em portugues e o que o usuario pedir
 
 Você tem acesso aos dados completos do perfil do usuário para fornecer orientações extremamente personalizadas.`;
     }
