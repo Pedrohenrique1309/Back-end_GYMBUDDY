@@ -35,7 +35,20 @@ const inserirTreino = async function(treino, contentType){
 
                 let resultTreino = await treinoDAO.insertTreino(treino)
 
+                
                 if(!resultTreino.code){
+                    
+                    for(itemExercicio of treino.exercicio){
+                            itemExercicio.id_treino = resultTreino.id
+
+                            let resultItemExercicio = await controllerExercicioTreino.inserirExercicioTreino(itemExercicio, contentType)
+
+                            if(!resultItemExercicio){
+                                return MESSAGE.ERROR_CONTENT_TYPE
+                            }
+                    }
+
+
                     return {
                         status_code: 200,
                         message: "treino criado com sucesso",

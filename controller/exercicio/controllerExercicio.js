@@ -85,7 +85,7 @@ const atualizarExercicio = async function(exercicio, id, contentType) {
 
 
                 if(!resultExercicio.code){
-                    
+
                     return {
                         status_code: 200,
                         message: 'item atualizado com sucesso',

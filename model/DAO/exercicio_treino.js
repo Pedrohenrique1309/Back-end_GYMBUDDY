@@ -21,16 +21,10 @@ const insertExercicioTreino = async function(exercicioTreino){
 
         let sql = `insert into tbl_exercicio_treino(
                                                 id_treino,
-                                                id_exercicio,
-                                                nome_exercicio,
-                                                peso,
-                                                repeticoes
+                                                id_exercicio
                                             )values(
                                                 '${exercicioTreino.id_treino}',
-                                                '${exercicioTreino.id_exercicio}',
-                                                '${exercicioTreino.nome_exercicio}',
-                                                '${exercicioTreino.peso}',
-                                                '${exercicioTreino.repeticoes}'
+                                                '${exercicioTreino.id_exercicio}'
                                             );`
 
         let result = await prisma.$executeRawUnsafe(sql)
@@ -55,10 +49,7 @@ const updateExercicioTreino = async function(exercicioTreino){
     try{
 
         let sql = `update tbl_exercicio_treino set    id_treino      =  '${exercicioTreino.id_treino}',
-                                                      id_exercicio   =  '${exercicioTreino.id_exercicio}',
-                                                      nome_exercicio =  '${exercicioTreino.nome_exercicio}',
-                                                      peso           =  '${exercicioTreino.peso}',
-                                                      repeticoes     =  '${exercicioTreino.repeticoes}'
+                                                      id_exercicio   =  '${exercicioTreino.id_exercicio}'
                                                 where id = ${exercicioTreino.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)

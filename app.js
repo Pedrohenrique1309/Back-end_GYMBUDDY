@@ -41,6 +41,9 @@ const controllerNotificacao = require('./controller/notificacao/controllerNotifi
 const controllerView= require('./controller/views/controllerViews.js')
 const controllerRecuperacaoSenha = require('./controller/recuperacaoSenha/controllerRecuperacaoSenha.js')
 const controllerIA = require('./controller/ia/controllerIA.js')
+const controllerExercicio = require('./controller/exercicio/controllerExercicio.js')
+const controllerTreino = require('./controller/treino/controllerTreino.js')
+const controllerExercicioTreino = require('./controller/treino/controllerTreino.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -615,17 +618,73 @@ app.get('/v1/gymbuddy/ia/status', cors(), async function(request, response) {
     response.json(statusIA)
 })
 
+//************************************* EXERCICIO *******************************************//
+
+app.post('/v1/gymbuddy/exercicio', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let result = await controllerExercicio.inserirExercicio(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.put('/v1/gymbuddy/exercicio/:search_id', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+ 
+    let dadosBody = request.body
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicio.atualizarExercicio(dadosBody, search_id, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
+app.get('/v1/gymbuddy/exercicio', cors(), async function(request, response){
+
+    let result = await controllerExercicio.listarExercicio()
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/exercicio/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicio.buscarExercicio(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.delete('/v1/gymbuddy/exercicio/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicio.excluirExercicio(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
 //************************************* FIM ROTAS IA *******************************************//
 
 if (require.main === module) {
     app.listen('8080', function(){
         console.log('API GYTMBUDDY aguardando requisições...')
-        console.log('🤖 Serviço de IA integrado - Endpoints disponíveis:')
-        console.log('   • POST /v1/gymbuddy/ia/chat - Chat com IA')
-        console.log('   • POST /v1/gymbuddy/ia/analisar-perfil - Análise de perfil')
-        console.log('   • POST /v1/gymbuddy/ia/plano-treino - Gerar plano de treino')
-        console.log('   • POST /v1/gymbuddy/ia/plano-nutricional - Gerar plano nutricional')
-        console.log('   • GET /v1/gymbuddy/ia/status - Status do serviço IA')
     })
 } else {
     module.exports = app
