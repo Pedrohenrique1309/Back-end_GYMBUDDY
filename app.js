@@ -40,6 +40,7 @@ const controllerCurtidaComentario = require('./controller/curtida_comentario/cur
 const controllerNotificacao = require('./controller/notificacao/controllerNotificacao.js')
 const controllerView= require('./controller/views/controllerViews.js')
 const controllerRecuperacaoSenha = require('./controller/recuperacaoSenha/controllerRecuperacaoSenha.js')
+const controllerIA = require('./controller/ia/controllerIA.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -559,9 +560,72 @@ app.get('/v1/gymbuddy/recuperar-senha/:token', cors(), async function(request, r
 
 
 
+//************************************* IA (GYMBUDDY ASSISTANT) *******************************************//
+
+// Endpoint para chat com IA
+app.post('/v1/gymbuddy/ia/chat', cors(), bodyParserJSON, async function(request, response) {
+    
+    let dadosChat = request.body
+
+    let resultadoChat = await controllerIA.processarChatIA(dadosChat)
+
+    response.status(resultadoChat.status_code)
+    response.json(resultadoChat)
+})
+
+// Endpoint para análise de perfil e cálculo de métricas
+app.post('/v1/gymbuddy/ia/analisar-perfil', cors(), bodyParserJSON, async function(request, response) {
+    
+    let dadosPerfil = request.body
+
+    let resultadoAnalise = await controllerIA.analisarPerfilUsuario(dadosPerfil)
+
+    response.status(resultadoAnalise.status_code)
+    response.json(resultadoAnalise)
+})
+
+// Endpoint para gerar plano de treino personalizado
+app.post('/v1/gymbuddy/ia/plano-treino', cors(), bodyParserJSON, async function(request, response) {
+    
+    let dadosPlano = request.body
+
+    let resultadoPlano = await controllerIA.gerarPlanoTreino(dadosPlano)
+
+    response.status(resultadoPlano.status_code)
+    response.json(resultadoPlano)
+})
+
+// Endpoint para gerar plano nutricional personalizado
+app.post('/v1/gymbuddy/ia/plano-nutricional', cors(), bodyParserJSON, async function(request, response) {
+    
+    let dadosNutricao = request.body
+
+    let resultadoNutricao = await controllerIA.gerarPlanoNutricional(dadosNutricao)
+
+    response.status(resultadoNutricao.status_code)
+    response.json(resultadoNutricao)
+})
+
+// Endpoint para verificar status do serviço de IA
+app.get('/v1/gymbuddy/ia/status', cors(), async function(request, response) {
+    
+    let statusIA = await controllerIA.verificarStatusIA()
+
+    response.status(statusIA.status_code)
+    response.json(statusIA)
+})
+
+//************************************* FIM ROTAS IA *******************************************//
+
 if (require.main === module) {
     app.listen('8080', function(){
         console.log('API GYTMBUDDY aguardando requisições...')
+        console.log('🤖 Serviço de IA integrado - Endpoints disponíveis:')
+        console.log('   • POST /v1/gymbuddy/ia/chat - Chat com IA')
+        console.log('   • POST /v1/gymbuddy/ia/analisar-perfil - Análise de perfil')
+        console.log('   • POST /v1/gymbuddy/ia/plano-treino - Gerar plano de treino')
+        console.log('   • POST /v1/gymbuddy/ia/plano-nutricional - Gerar plano nutricional')
+        console.log('   • GET /v1/gymbuddy/ia/status - Status do serviço IA')
     })
 } else {
     module.exports = app
