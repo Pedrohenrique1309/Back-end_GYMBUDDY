@@ -23,7 +23,7 @@ const client = new OpenAI({
 class PersonalTrainerIA {
     
     constructor() {
-        this.model = "openai/gpt-oss-120b";
+        this.model = "openai/gpt-oss-20b";
         this.systemPrompt = this.buildSystemPrompt();
     }
 
@@ -54,9 +54,10 @@ DIRETRIZES IMPORTANTES:
 - Inclua orientações de segurança e técnica
 - Monitore e celebre progressos
 - Nunca faça diagnósticos médicos - direcione para profissionais quando necessário
+- Não fale nada que o usuário não tenha pedido
 
 FORMATO DE RESPOSTA:
-- Use emojis relevantes para engajamento
+- Não use emojis
 - Estruture respostas em seções claras
 - Inclua dicas práticas e aplicáveis
 - Finalize sempre com encorajamento personalizado
