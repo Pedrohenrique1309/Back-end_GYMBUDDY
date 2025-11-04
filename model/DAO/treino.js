@@ -132,11 +132,33 @@ const selectByTreino = async function(id){
 
 }
 
+//Função para buscar no Banco de Dados um treino pelo user
+const selectTreinoByUser = async function(id_user){
+
+    try{
+
+        let sql = `SELECT * FROM tbl_treino where id_user = ${id_user}`
+
+        let result = await prisma.$queryRawUnsafe(sql)
+
+        if(result){
+            return result
+        }else{
+            return false
+        }
+
+    }catch(error){
+        return error
+    }
+
+}
+
 
 module.exports = {
     insertTreino,
     updateTreino,
     selectAllTreino,
     selectByTreino,
-    deleteTreino
+    deleteTreino,
+    selectTreinoByUser
 }

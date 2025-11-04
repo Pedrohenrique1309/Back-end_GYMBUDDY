@@ -100,7 +100,7 @@ const atualizarPublicacao = async function(publicacao, id, contentType) {
             let resultPublicacao = await publicacaoDAO.selectPublicacao(parseInt(id))
 
             if(resultPublicacao.status_code == 200){
-                usuario.id = id
+                publicacao.id = id
 
                 let result = await publicacaoDAO.atualizarPublicacao(publicacao)
 
