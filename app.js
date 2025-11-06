@@ -43,7 +43,7 @@ const controllerRecuperacaoSenha = require('./controller/recuperacaoSenha/contro
 const controllerIA = require('./controller/ia/controllerIA.js')
 const controllerExercicio = require('./controller/exercicio/controllerExercicio.js')
 const controllerTreino = require('./controller/treino/controllerTreino.js')
-const controllerExercicioTreino = require('./controller/treino/controllerTreino.js')
+const controllerExercicioTreinoSerie = require('./controller/exercicio_treino_serie/controllerExercicioTreinoSerie.js')
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -680,7 +680,141 @@ app.delete('/v1/gymbuddy/exercicio/:search_id', cors(), async function(request, 
 })
 
 
-//************************************* FIM ROTAS IA *******************************************//
+//************************************* TREINO *******************************************//
+
+app.post('/v1/gymbuddy/treino', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let result = await controllerTreino.inserirTreino(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.put('/v1/gymbuddy/treino/:search_id', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+ 
+    let dadosBody = request.body
+
+    let search_id = request.params.search_id
+
+    let result = await controllerTreino.atualizarTreino(dadosBody, search_id, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
+app.get('/v1/gymbuddy/treino', cors(), async function(request, response){
+
+    let result = await controllerTreino.listarTreino()
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/treino/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerTreino.buscarTreino(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.delete('/v1/gymbuddy/treino/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerTreino.excluirTreino(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//************************************* SERIE *******************************************//
+
+//************************************* EXERCICIO_TREINO_SERIE *******************************************//
+app.post('/v1/gymbuddy/exercicio_treino_serie', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+    
+    let dadosBody = request.body
+
+    let result = await controllerExercicioTreinoSerie.inserirExerciciotTreinoSerie(dadosBody, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.put('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), bodyParserJSON, async function(request, response){
+
+    let contentType = request.headers['content-type']
+ 
+    let dadosBody = request.body
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicioTreinoSerie.atualizarExercicioTreinoSerie(dadosBody, search_id, contentType)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
+
+app.get('/v1/gymbuddy/exercicio_treino_serie', cors(), async function(request, response){
+
+    let result = await controllerExercicioTreinoSerie.listarExercicioTreinoSerie()
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicioTreinoSerie.buscarExercicioTreinoSerie(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.get('/v1/gymbuddy/exercicio_treino_serie/exercicio/:id_treino', cors(), async function(request, response){
+
+    let id_treino = request.params.id_treino
+
+    let result = await controllerExercicioTreinoSerie.buscarExercicioByTreino(id_treino)
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+app.delete('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicioTreinoSerie.excluirExercicioTreinoSerie(search_id)
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+
 
 if (require.main === module) {
     app.listen('8080', function(){

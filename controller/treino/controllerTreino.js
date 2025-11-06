@@ -13,6 +13,7 @@ const treinoDAO = require('../../model/DAO/treino.js')
 
 //import de comtrollers para fazer os relacionamentos
 const controllerUsuario = require('../usuario/controllerUsuario.js')
+const controllerExercicioTreinoSerie = require('../exercicio_treino_serie/controllerExercicioTreinoSerie.js')
 const { updateExercicio } = require('../../model/DAO/exercicio.js')
 
 //Função para inserir um novo treino no Banco de dados 
@@ -41,7 +42,7 @@ const inserirTreino = async function(treino, contentType){
                     for(itemExercicio of treino.exercicio){
                             itemExercicio.id_treino = resultTreino.id
 
-                            let resultItemExercicio = await controllerExercicioTreino.inserirExercicioTreino(itemExercicio, contentType)
+                            let resultItemExercicio = await controllerExercicioTreinoSerie.inserirExerciciotTreinoSerie(itemExercicio, contentType)
 
                             if(!resultItemExercicio){
                                 return MESSAGE.ERROR_CONTENT_TYPE
@@ -206,11 +207,14 @@ const listarTreino = async function () {
 
                 for(itemTreino of resultTreino){
 
-                        let dadosUsuario= await controllerUsuario.buscarUsuario(itemTreino.id_user)
+                        let dadosUsuario = await controllerUsuario.buscarUsuario(itemTreino.id_user)
                     
                         itemTreino.user = dadosUsuario.usuario
                        
                         delete itemTreino.id_user
+
+                        let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
+                        itemTreino.exercicio = dadosExercicio.exercicio
 
                     
                     arrayTreinos.push(itemTreino)
@@ -265,6 +269,9 @@ const buscarTreino = async function (id) {
                                 itemTreino.user = dadosUsuario.usuario
                             
                                 delete itemTreino.id_user
+
+                                let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
+                                itemTreino.exercicio = dadosExercicio.exercicio
 
                             
                             arrayTreinos.push(itemTreino)
@@ -350,7 +357,7 @@ const buscarTreinoPeloUsuario = async function (id_user) {
 
 module.exports = {
     inserirTreino,
-    updateExercicio,
+    atualizarTreino,
     buscarTreino,
     listarTreino,
     buscarTreinoPeloUsuario,
