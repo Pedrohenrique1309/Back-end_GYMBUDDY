@@ -21,12 +21,10 @@ const insertTreino = async function(treino){
 
         let sql = `insert into tbl_treino(
                                                 nome,
-                                                id_user,
-                                                is_ia_generated
+                                                id_user
                                             )values(
                                                 '${treino.nome}',
-                                                '${treino.id_user}',
-                                                '${treino.is_ia_generated}'
+                                                '${treino.id_user}'
                                             );`
 
         let result = await prisma.$executeRawUnsafe(sql)
@@ -51,8 +49,7 @@ const updateTreino = async function(treino){
     try{
 
         let sql = `update tbl_treino set    nome            =  '${treino.nome}',
-                                            id_user         =  '${treino.id_user}',
-                                            is_ia_generated =  '${treino.is_ia_generated}'
+                                            id_user         =  '${treino.id_user}'
                                         where id = ${treino.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)

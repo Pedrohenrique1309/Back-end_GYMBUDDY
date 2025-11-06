@@ -785,8 +785,9 @@ app.get('/v1/gymbuddy/serie', cors(), async function(request, response){
 app.get('/v1/gymbuddy/serie/:search_id', cors(), async function(request, response){
 
     let search_id = request.params.search_id
+    
+    let result = await controllerSerie.buscarSerie(search_id)
 
-    let result = await controllerTreino.buscarTreino(search_id)
 
     response.status(result.status_code)
     response.json(result)

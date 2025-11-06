@@ -38,7 +38,7 @@ const inserirExercicio = async function(exercicio, contentType){
                     return {
                         status_code: 200,
                         message: "exercicio criado com sucesso",
-                        publicacao: resultExercicio
+                        exercicio: resultExercicio
                     }
 
                 }else{

@@ -236,6 +236,7 @@ const buscarSerie = async function (id) {
 
             let resultSerie = await serieDAO.selectBySerie(parseInt(id))
 
+
             if(resultSerie !== String(resultSerie)){
                 
                 if(resultSerie != false || typeof(resultSerie) == 'object'){

@@ -26,8 +26,7 @@ const inserirTreino = async function(treino, contentType){
 
             if(
                 treino.nome            == undefined || treino.nome            == ''|| treino.nome            == null ||treino.nome.length            > 45 ||  
-                treino.id_user         == undefined || treino.id_user         == ''|| treino.id_user         == null ||treino.id_user                <= 0 || isNaN(treino.id_user) ||
-                treino.is_ia_generated == undefined || treino.is_ia_generated == ''|| treino.is_ia_generated == null ||treino.is_ia_generated.length <= 0
+                treino.id_user         == undefined || treino.id_user         == ''|| treino.id_user         == null ||treino.id_user                <= 0 || isNaN(treino.id_user) 
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
@@ -36,6 +35,7 @@ const inserirTreino = async function(treino, contentType){
 
                 let resultTreino = await treinoDAO.insertTreino(treino)
 
+                console.log(resultTreino);
                 
                 if(!resultTreino.code){
                     
@@ -81,8 +81,7 @@ const atualizarTreino = async function(treino, id, contentType) {
             if(
                 id                     == undefined || id                     == ''|| id                     == null || isNaN(id)                         ||id                <= 0    ||
                 treino.nome            == undefined || treino.nome            == ''|| treino.nome            == null ||treino.nome.length            > 45 ||  
-                treino.id_user         == undefined || treino.id_user         == ''|| treino.id_user         == null ||treino.id_user                <= 0 || isNaN(treino.id_user) ||
-                treino.is_ia_generated == undefined || treino.is_ia_generated == ''|| treino.is_ia_generated == null ||treino.is_ia_generated.length <= 0
+                treino.id_user         == undefined || treino.id_user         == ''|| treino.id_user         == null ||treino.id_user                <= 0 || isNaN(treino.id_user) 
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400

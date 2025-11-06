@@ -51,7 +51,7 @@ const updateSerie = async function(serie){
     try{
 
         let sql = `update tbl_serie set     id_exercicio =  '${serie.id_exercicio}',
-                                            peso         =  '${serie.peso}'
+                                            peso         =  '${serie.peso}',
                                             repeticoes   =  '${serie.repeticoes}'
                                         where id = ${serie.id}`
 
