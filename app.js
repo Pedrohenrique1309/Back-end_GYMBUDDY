@@ -743,6 +743,8 @@ app.delete('/v1/gymbuddy/treino/:search_id', cors(), async function(request, res
 
 //************************************* SERIE *******************************************//
 
+
+
 //************************************* EXERCICIO_TREINO_SERIE *******************************************//
 app.post('/v1/gymbuddy/exercicio_treino_serie', cors(), bodyParserJSON, async function(request, response){
 
