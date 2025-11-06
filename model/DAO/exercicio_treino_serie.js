@@ -158,11 +158,11 @@ const selectExercicioByTreino= async function(id_treino){
 
     try{
 
-        let sql = `select tbl_treino.* from tbl_exercicio
+        let sql = `select tbl_exercicio.* from tbl_exercicio
                           inner join tbl_exercicio_treino_serie
                             on tbl_exercicio.id = tbl_exercicio_treino_serie.id_exercicio
                           inner join tbl_treino
-                            on tbl_treino.id = tbl_exercicio_treino_serie.id_teino
+                            on tbl_treino.id = tbl_exercicio_treino_serie.id_treino
                       where tbl_treino.id = ${id_treino}`
 
         let result = await prisma.$queryRawUnsafe(sql)
@@ -187,6 +187,7 @@ module.exports = {
     deleteExercicioTreinoSerie,
     selectAllExercicioTreinoSerie,
     selectByExercicioTreinoSerie,
-    selectExercicioByTreino
+    selectExercicioByTreino,
+    selectExercicioTreinoSerieByTreino
 
 }

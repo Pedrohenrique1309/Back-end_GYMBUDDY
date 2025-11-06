@@ -691,6 +691,7 @@ app.post('/v1/gymbuddy/treino', cors(), bodyParserJSON, async function(request, 
 
     let result = await controllerTreino.inserirTreino(dadosBody, contentType)
 
+        
     response.status(result.status_code)
     response.json(result)
 

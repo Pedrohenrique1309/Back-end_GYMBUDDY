@@ -13,7 +13,7 @@ const exercicioTreinoSerieDAO = require('../../model/DAO/exercicio_treino_serie.
 
 
 //Função para inserir um novo exercicio_treino_serie no Banco de dados 
-const inserirExerciciotTreinoSerie = async function(exercicioTreinoSerie, contentType){
+const inserirExercicioTreinoSerie = async function(exercicioTreinoSerie, contentType){
 
     try{
 
@@ -36,7 +36,7 @@ const inserirExerciciotTreinoSerie = async function(exercicioTreinoSerie, conten
                     return {
                         status_code: 200,
                         message: "exercicio_treino criado com sucesso",
-                        publicacao: resultExercicioTreinoSerie
+                        exercicio_treino_serie: resultExercicioTreinoSerie
                     }
 
                 }else{
@@ -259,7 +259,7 @@ const buscarExercicioByTreino = async function (id_treino) {
     
             let dadosExercicio = {}
 
-            let resultExercicio = await exercicioTreinoSerieDAO.selectExercicioByTreino(parseInt(id))
+            let resultExercicio = await exercicioTreinoSerieDAO.selectExercicioByTreino(parseInt(id_treino))
 
             if(resultExercicio !== String(resultExercicio)){
                 
@@ -299,7 +299,7 @@ const buscarExercicioByTreino = async function (id_treino) {
 
 
 module.exports = {
-    inserirExerciciotTreinoSerie,
+    inserirExercicioTreinoSerie,
     atualizarExercicioTreinoSerie,
     buscarExercicioTreinoSerie,
     listarExercicioTreinoSerie,

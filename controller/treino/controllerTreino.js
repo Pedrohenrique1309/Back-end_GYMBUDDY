@@ -35,25 +35,31 @@ const inserirTreino = async function(treino, contentType){
 
                 let resultTreino = await treinoDAO.insertTreino(treino)
 
-                console.log(resultTreino);
                 
                 if(!resultTreino.code){
                     
-                    for(itemExercicio of treino.exercicio){
-                            itemExercicio.id_treino = resultTreino.id
+                    if(treino.exercicio && Array.isArray(treino.exercicio) && treino.exercicio.length > 0){
+                        
+                        for(let itemExercicio of treino.exercicio){
+                                                    
+                                itemExercicio.id_treino = resultTreino.id
+                            
+                                let resultItemExercicio = await controllerExercicioTreinoSerie.inserirExercicioTreinoSerie(itemExercicio, contentType)
+                                
+                                
+                                if(!resultItemExercicio){
+                                    return MESSAGE.ERROR_CONTENT_TYPE
+                                }
 
-                            let resultItemExercicio = await controllerExercicioTreinoSerie.inserirExerciciotTreinoSerie(itemExercicio, contentType)
 
-                            if(!resultItemExercicio){
-                                return MESSAGE.ERROR_CONTENT_TYPE
-                            }
+                        }
                     }
-
-
+                    
                     return {
                         status_code: 200,
                         message: "treino criado com sucesso",
-                        publicacao: resultTreino
+                        treino: resultTreino
+                        
                     }
 
                 }else{
@@ -207,14 +213,13 @@ const listarTreino = async function () {
                 for(itemTreino of resultTreino){
 
                         let dadosUsuario = await controllerUsuario.buscarUsuario(itemTreino.id_user)
-                    
                         itemTreino.user = dadosUsuario.usuario
                        
                         delete itemTreino.id_user
 
                         let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
                         itemTreino.exercicio = dadosExercicio.exercicio
-
+                    
                     
                     arrayTreinos.push(itemTreino)
                     
@@ -270,7 +275,7 @@ const buscarTreino = async function (id) {
                                 delete itemTreino.id_user
 
                                 let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
-                                itemTreino.exercicio = dadosExercicio.exercicio
+                                itemTreino.exercicio = dadosExercicio.exercicio || []
 
                             
                             arrayTreinos.push(itemTreino)
