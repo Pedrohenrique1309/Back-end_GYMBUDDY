@@ -223,48 +223,46 @@ const listarSerie = async function () {
 
 }
 
-//Função para buscar um treino no Banco de Dados pelo ID
-const buscarTreino = async function (id) {
+//Função para buscar uma serie no Banco de Dados pelo ID
+const buscarSerie = async function (id) {
    
     try{
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
             
-            let arrayTreinos = []
-            let dadosTreinos = {}
+            let arraySeries = []
+            let dadosSeries = {}
 
-            let resultTreino = await treinoDAO.selectByTreino(parseInt(id))
+            let resultSerie = await serieDAO.selectBySerie(parseInt(id))
 
-            if(resultTreino !== String(resultTreino)){
+            if(resultSerie !== String(resultSerie)){
                 
-                if(resultTreino != false || typeof(resultTreino) == 'object'){
+                if(resultSerie != false || typeof(resultSerie) == 'object'){
 
-                    if(resultTreino.length > 0){
+                    if(resultSerie.length > 0){
 
-                        dadosTreinos.status = true
-                        dadosTreinos.status_code = 200
-                        dadosTreinos.itens = resultTreino.length
+                        dadosSeries.status = true
+                        dadosSeries.status_code = 200
+                        dadosSeries.itens = resultSerie.length
 
-                        for(itemTreino of resultTreino){
+                       for(itemSerie of resultSerie){
 
-                                let dadosUsuario= await controllerUsuario.buscarUsuario(itemTreino.id_user)
-                            
-                                itemTreino.user = dadosUsuario.usuario
-                            
-                                delete itemTreino.id_user
+                        let dadosExercicio = await controllerExercicio.buscarExercicio(itemSerie.id_exercicio)
+                    
+                        itemSerie.exercicio = dadosExercicio.exercicio
+                       
+                        delete itemSerie.id_exercicio
 
-                                let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
-                                itemTreino.exercicio = dadosExercicio.exercicio
-
-                            
-                            arrayTreinos.push(itemTreino)
+                    
+                            arraySeries.push(itemSerie)
                             
                             
                         }
-                        dadosTreinos.treinos = arrayTreinos
+                        dadosSeries.serie = arraySeries
                         
-                        return dadosTreinos //200
+                        return dadosSeries //200
+
                         
                     }else{
             
@@ -290,30 +288,30 @@ const buscarTreino = async function (id) {
 }
 
 //Função para buscar os treino de um usuário no Banco de Dados pelo ID
-const buscarTreinoPeloUsuario = async function (id_user) {
+const buscarSeriePeloExercicio = async function (id_exercicio) {
 
     try{
 
-        if(id_user != '' && id_user != undefined && id_user != null && !isNaN(id_user) && id_user > 0){
+        if(id_exercicio != '' && id_exercicio != undefined && id_exercicio != null && !isNaN(id_exercicio) && id_exercicio > 0){
 
-            let dadosTreinos= {}
+            let dadosSeries = {}
 
-            let resultTreino = await treinoDAO.selectTreinoByUser(parseInt(id_user))
+            let resultSerie = await serieDAO.selectSerieByExercicio(parseInt(id_user))
 
-            if(resultTreino !== String(resultTreino)){
+            if(resultSerie !== String(resultSerie)){
                 
-                if(resultTreino != false || typeof(resultTreino) == 'object'){
+                if(resultSerie!= false || typeof(resultSerie) == 'object'){
 
 
-                    if(resultTreino.length > 0){
+                    if(resultSerie.length > 0){
 
                         //Cria um objeto Json para retornar a lista de Publicações
-                        dadosTreinos.status = true
-                        dadosTreinos.status_code = 200
-                        dadosTreinos.Itens = resultTreino.length
-                        dadosTreinos.treinos = resultTreino
+                        dadosSeries.status = true
+                        dadosSeries.status_code = 200
+                        dadosSeries.Itens = resultSerie.length
+                        dadosSeries.series = resultSerie
         
-                        return dadosPublicao//200
+                        return dadosSeries//200
                     }else{
             
                         return MESSAGE.ERROR_NOT_FOUND //404
@@ -340,10 +338,10 @@ const buscarTreinoPeloUsuario = async function (id_user) {
 
 
 module.exports = {
-    inserirTreino,
-    atualizarTreino,
-    buscarTreino,
-    listarTreino,
-    buscarTreinoPeloUsuario,
-    excluirTreino
+    inserirSerie,
+    atualizarSerie,
+    excluirSerie,
+    listarSerie,
+    buscarSerie,
+    buscarSeriePeloExercicio
 }

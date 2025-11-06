@@ -329,7 +329,7 @@ const buscarTreinoPeloUsuario = async function (id_user) {
                         dadosTreinos.Itens = resultTreino.length
                         dadosTreinos.treinos = resultTreino
         
-                        return dadosPublicao//200
+                        return dadosTreinos//200
                     }else{
             
                         return MESSAGE.ERROR_NOT_FOUND //404
