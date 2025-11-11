@@ -33,7 +33,6 @@ const inserirExercicioTreinoSerie = async function(exercicioTreinoSerie, content
             }else{
 
                 let resultExercicioTreinoSerie = await exercicioTreinoSerieDAO.insertExercicioTreinoSerie(exercicioTreinoSerie)
-                console.log(resultExercicioTreinoSerie);
                 
                 if(!resultExercicioTreinoSerie.code){
                     return {

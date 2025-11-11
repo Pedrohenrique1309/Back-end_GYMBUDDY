@@ -17,32 +17,31 @@ const insertCurtida = async function(curtida) {
     try {
 
         let sql = `insert into tbl_curtida  ( 
-                                            id_user,
-                                            id_publicacao
+                                            id_publicacao,
+                                            id_user
                                           ) 
                                             values 
                                           (
-                                            ${curtida.id_user},
-                                            ${curtida.id_publicacao}
+                                            ${curtida.id_publicacao},
+                                            ${curtida.id_user}
                                           )`
 
   
         //Executa o scriptSQL no banco de dados e aguarda o retorno do BD para 
         //saber se deu certo                                  
         let result = await prisma.$executeRawUnsafe(sql)
-
+        
         if(result){
             let sqlSelectId = `SELECT * FROM tbl_curtida WHERE id_user = '${curtida.id_user}' ORDER BY id DESC LIMIT 1`
             let criar = await prisma.$queryRawUnsafe(sqlSelectId)
-            console.log(criar);
+
             return criar[0]
         }else{
-            return false
+            return result
         }
 
     } catch (error) {
-        
-        return false
+        return error
     }
 }
 

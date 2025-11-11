@@ -39,9 +39,9 @@ const inserirCurtida = async function(curtida, contentType){
                 }else {
                     
                 
-                    let resultCurtida = await curtidaDAO.insertCurtida(curtida)
-
-
+                    let resultCurtida = await   curtidaDAO.insertCurtida(curtida)
+                    console.log(resultCurtida);
+                    
                     if(!resultCurtida.code && resultCurtida != false){
                         return {
                             status_code: 200,
@@ -355,6 +355,8 @@ const buscarCurtidaPeloUsuario = async function (curtida) {
                        }
         
                      dadosCurtidas.curtidas = arrayCurtidas
+
+                     return dadosCurtidas
                     }else{
             
                         return MESSAGE.ERROR_NOT_FOUND //404

@@ -297,7 +297,7 @@ const buscarSeriePeloExercicio = async function (id_exercicio) {
 
             let dadosSeries = {}
 
-            let resultSerie = await serieDAO.selectSerieByExercicio(parseInt(id_user))
+            let resultSerie = await serieDAO.selectSerieByExercicio(parseInt(id_exercicio))
 
             if(resultSerie !== String(resultSerie)){
                 
@@ -331,6 +331,8 @@ const buscarSeriePeloExercicio = async function (id_exercicio) {
 
 
     }catch(error){
+        console.log(error);
+        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
