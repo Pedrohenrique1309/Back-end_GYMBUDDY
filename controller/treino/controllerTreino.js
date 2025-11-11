@@ -11,10 +11,8 @@ const MESSAGE = require('../../modulo/config')
 //Import da DAO de treino
 const treinoDAO = require('../../model/DAO/treino.js')
 
-//import de comtrollers para fazer os relacionamentos
-const controllerUsuario = require('../usuario/controllerUsuario.js')
-const controllerExercicioTreinoSerie = require('../exercicio_treino_serie/controllerExercicioTreinoSerie.js')
-const { updateExercicio } = require('../../model/DAO/exercicio.js')
+//Import do controllerHub para acessar todas as controllers
+const controllers = require('../controllerHub')
 
 //Função para inserir um novo treino no Banco de dados 
 const inserirTreino = async function(treino, contentType){
@@ -44,7 +42,7 @@ const inserirTreino = async function(treino, contentType){
                                                     
                                 itemExercicio.id_treino = resultTreino.id
                             
-                                let resultItemExercicio = await controllerExercicioTreinoSerie.inserirExercicioTreinoSerie(itemExercicio, contentType)
+                                let resultItemExercicio = await controllers.controllerExercicioTreinoSerie.inserirExercicioTreinoSerie(itemExercicio, contentType)
                                 
                                 
                                 if(!resultItemExercicio){
@@ -103,7 +101,7 @@ const atualizarTreino = async function(treino, id, contentType) {
                 let resultTreino = await treinoDAO.updateTreino(treino)
 
 
-                if(!resultTreino.code){
+                if(resultTreino){
                     
                     return {
                         status_code: 200,
@@ -212,12 +210,12 @@ const listarTreino = async function () {
 
                 for(itemTreino of resultTreino){
 
-                        let dadosUsuario = await controllerUsuario.buscarUsuario(itemTreino.id_user)
+                        let dadosUsuario = await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
                         itemTreino.user = dadosUsuario.usuario
                        
                         delete itemTreino.id_user
 
-                        let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
+                        let dadosExercicio = await controllers.controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
                         itemTreino.exercicio = dadosExercicio.exercicio
                     
                     
@@ -268,13 +266,13 @@ const buscarTreino = async function (id) {
 
                         for(itemTreino of resultTreino){
 
-                                let dadosUsuario= await controllerUsuario.buscarUsuario(itemTreino.id_user)
+                                let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
                             
                                 itemTreino.user = dadosUsuario.usuario
                             
                                 delete itemTreino.id_user
 
-                                let dadosExercicio = await controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
+                                let dadosExercicio = await controllers.controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
                                 itemTreino.exercicio = dadosExercicio.exercicio || []
 
                             

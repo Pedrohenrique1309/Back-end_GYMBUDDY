@@ -200,7 +200,6 @@ const listarUsuario = async function () {
         if(resultUsuario != false || typeof (resultUsuario) == 'object'){
 
             if(resultUsuario.length > 0 ){
-
                 
                 dadosUsuarios.status = true
                 dadosUsuarios.status_code = 200

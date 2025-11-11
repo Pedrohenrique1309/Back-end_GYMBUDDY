@@ -11,8 +11,8 @@ const MESSAGE = require('../../modulo/config')
 //Import da DAO de publicacao
 const publicacaoDAO = require('../../model/DAO/publicacao.js')
 
-//import de comtrollers para fazer os relacionamentos
-const controllerUsuario = require('../usuario/controllerUsuario.js')
+//Import do controllerHub para acessar todas as controllers
+const controllers = require('../controllerHub')
 
 //Função para inserir uma nova publicacao no Banco de dados 
 const inserirPublicacao = async function(publicacao, contentType){
@@ -192,7 +192,7 @@ const listarPublicacao = async function () {
 
                 for(itemPublicacao of resultPublicacao){
 
-                        let dadosUsuario= await controllerUsuario.buscarUsuario(itemPublicacao.id_user)
+                        let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemPublicacao.id_user)
                     
                         itemPublicacao.user = dadosUsuario.usuario
                        
@@ -246,7 +246,7 @@ const buscarPublicacao = async function (id) {
 
                         for(itemPublicacao of resultPublicacao){
 
-                                let dadosUsuario= await controllerUsuario.buscarUsuario(itemPublicacao.id_user)
+                                let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemPublicacao.id_user)
                             
                                 itemPublicacao.user = dadosUsuario.usuario
                             

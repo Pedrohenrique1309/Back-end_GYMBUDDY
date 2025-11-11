@@ -11,9 +11,8 @@ const MESSAGE = require('../../modulo/config')
 //Import da DAO de publicacao
 const comentarioDAO = require('../../model/DAO/comentarios.js')
 
-//import de comtrollers para fazer os relacionamentos
-const controllerUsuario = require('../usuario/controllerUsuario.js')
-const controllerPublicacao = require('../publicacao/controllerPublicacao.js')
+//Import do controllerHub para acessar todas as controllers
+const controllers = require('../controllerHub')
 
 //Função para inserir um novo comentario no Banco de dados 
 const inserirComentario = async function(comentario, contentType){
@@ -195,14 +194,14 @@ const listarComentarios = async function () {
 
                 for(itemComentario of resultComentario){
                 
-                    let dadosUsuario= await controllerUsuario.buscarUsuario(itemComentario.id_user)
+                    let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemComentario.id_user)
                                     
                     itemComentario.user = dadosUsuario.usuario
                                    
                     delete itemComentario.id_user
                 
 
-                    let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemComentario.id_publicacao) 
+                    let dadosPublicacao = await controllers.controllerPublicacao.buscarPublicacao(itemComentario.id_publicacao) 
 
                     itemComentario.publicacao = dadosPublicacao.publicacoes
 
@@ -255,14 +254,14 @@ const buscarComentario = async function (id) {
         
                         for(itemComentario of resultComentario){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemComentario.id_user)
+                            let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemComentario.id_user)
                                             
                             itemComentario.user = dadosUsuario.usuario
                                            
                             delete itemComentario.id_user
                         
         
-                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemComentario.id_publicacao) 
+                            let dadosPublicacao = await controllers.controllerPublicacao.buscarPublicacao(itemComentario.id_publicacao) 
         
                             itemComentario.publicacao = dadosPublicacao.publicacoes
         

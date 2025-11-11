@@ -31,20 +31,25 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 
 
-//Import das cotrollers para realizar o CRUD de dados
-const controllerUsuario = require('./controller/usuario/controllerUsuario.js')
-const controllerPublicacao = require('./controller/publicacao/controllerPublicacao.js')
-const controllerComentario = require('./controller/comentario/controllerComentario.js')
-const controllerCurtida = require('./controller/curtida/controllerCurtida.js')
-const controllerCurtidaComentario = require('./controller/curtida_comentario/curtida_comentario.js')
-const controllerNotificacao = require('./controller/notificacao/controllerNotificacao.js')
-const controllerView= require('./controller/views/controllerViews.js')
-const controllerRecuperacaoSenha = require('./controller/recuperacaoSenha/controllerRecuperacaoSenha.js')
-const controllerIA = require('./controller/ia/controllerIA.js')
-const controllerExercicio = require('./controller/exercicio/controllerExercicio.js')
-const controllerTreino = require('./controller/treino/controllerTreino.js')
-const controllerSerie = require('./controller/serie/controllerSerie.js')
-const controllerExercicioTreinoSerie = require('./controller/exercicio_treino_serie/controllerExercicioTreinoSerie.js')
+//Import do controllerHub que centraliza todas as controllers
+const controllers = require('./controller/controllerHub')
+
+//Desestruturação para facilitar o uso das controllers
+const {
+    controllerUsuario,
+    controllerPublicacao,
+    controllerComentario,
+    controllerCurtida,
+    controllerCurtidaComentario,
+    controllerNotificacao,
+    controllerRecuperacaoSenha,
+    controllerExercicio,
+    controllerTreino,
+    controllerSerie,
+    controllerExercicioTreinoSerie,
+    controllerView,
+    controllerIA
+} = controllers
 
 //Estabelecendo o formato dos dados que deverá chegar no body da requisição (POST ou PUT)
 const bodyParserJSON = bodyParser.json()
@@ -824,7 +829,7 @@ app.post('/v1/gymbuddy/exercicio_treino_serie', cors(), bodyParserJSON, async fu
     
     let dadosBody = request.body
 
-    let result = await controllerExercicioTreinoSerie.inserirExerciciotTreinoSerie(dadosBody, contentType)
+    let result = await controllerExercicioTreinoSerie.inserirExercicioTreinoSerie(dadosBody, contentType)
 
     response.status(result.status_code)
     response.json(result)

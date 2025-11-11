@@ -11,9 +11,8 @@ const MESSAGE = require('../../modulo/config.js')
 //Import da DAO de curtida
 const curtidaDAO = require('../../model/DAO/curtida.js')
 
-//import de comtrollers para fazer os relacionamentos
-const controllerUsuario = require('../usuario/controllerUsuario.js')
-const controllerPublicacao = require('../publicacao/controllerPublicacao.js')
+//Import do controllerHub para acessar todas as controllers
+const controllers = require('../controllerHub')
 
 //Função para inserir uma nova curtida no Banco de dados 
 const inserirCurtida = async function(curtida, contentType){
@@ -201,14 +200,14 @@ const listarCurtida = async function () {
         
                         for(itemCurtidas of resultCurtidas){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                            let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemCurtidas.id_user)
                                             
                             itemCurtidas.user = dadosUsuario.usuario
                                            
                             delete itemCurtidas.id_user
                         
         
-                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
+                            let dadosPublicacao = await controllers.controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
         
                             itemCurtidas.publicacao = dadosPublicacao.publicacoes
         
@@ -261,14 +260,14 @@ const buscarCurtida = async function (id) {
         
                         for(itemCurtidas of resultCurtidas){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                            let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemCurtidas.id_user)
                                             
                             itemCurtidas.user = dadosUsuario.usuario
                                            
                             delete itemCurtidas.id_user
                         
         
-                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
+                            let dadosPublicacao = await controllers.controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
         
                             itemCurtidas.publicacao = dadosPublicacao.publicacoes
         
@@ -337,14 +336,14 @@ const buscarCurtidaPeloUsuario = async function (curtida) {
         
                         for(itemCurtidas of resultCurtidas){
                         
-                            let dadosUsuario= await controllerUsuario.buscarUsuario(itemCurtidas.id_user)
+                            let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemCurtidas.id_user)
                                             
                             itemCurtidas.user = dadosUsuario.usuario
                                            
                             delete itemCurtidas.id_user
                         
         
-                            let dadosPublicacao = await controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
+                            let dadosPublicacao = await controllers.controllerPublicacao.buscarPublicacao(itemCurtidas.id_publicacao) 
         
                             itemCurtidas.publicacao = dadosPublicacao.public
         

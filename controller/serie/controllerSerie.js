@@ -34,7 +34,7 @@ const inserirSerie = async function(serie, contentType){
             }else{
 
                 let resultSerie = await serieDAO.insertSerie(serie)
-
+                 
                 
                 if(!resultSerie.code){
                     
@@ -86,7 +86,7 @@ const atualizarSerie = async function(serie, id, contentType) {
                 let resultSerie = await serieDAO.updateSerie(serie)
 
 
-                if(!resultSerie.code){
+                if(resultSerie){
                     
                     return {
                         status_code: 200,

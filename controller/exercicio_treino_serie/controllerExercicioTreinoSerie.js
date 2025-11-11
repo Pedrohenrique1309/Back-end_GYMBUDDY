@@ -11,6 +11,8 @@ const MESSAGE = require('../../modulo/config.js')
 //Import da DAO de exercicio_treino_serie
 const exercicioTreinoSerieDAO = require('../../model/DAO/exercicio_treino_serie.js')
 
+//Import do controllerHub para acessar todas as controllers
+const controllers = require('../controllerHub')
 
 //Função para inserir um novo exercicio_treino_serie no Banco de dados 
 const inserirExercicioTreinoSerie = async function(exercicioTreinoSerie, contentType){
@@ -31,7 +33,8 @@ const inserirExercicioTreinoSerie = async function(exercicioTreinoSerie, content
             }else{
 
                 let resultExercicioTreinoSerie = await exercicioTreinoSerieDAO.insertExercicioTreinoSerie(exercicioTreinoSerie)
-
+                console.log(resultExercicioTreinoSerie);
+                
                 if(!resultExercicioTreinoSerie.code){
                     return {
                         status_code: 200,
@@ -79,9 +82,9 @@ const atualizarExercicioTreinoSerie = async function(exercicioTreinoSerie, id, c
             if(buscarExercicioTreinoSerie){
 
                 let resultExercicioTreinoSerie = await exercicioTreinoSerieDAO.updateExercicioTreinoSerie(exercicioTreinoSerie)
+                
 
-
-                if(!resultExercicioTreinoSerie.code){
+                if(resultExercicioTreinoSerie){
                     
                     return {
                         status_code: 200,
@@ -170,22 +173,46 @@ const listarExercicioTreinoSerie = async function () {
     
     try{
        
+        let arrayExercicioTreinoSerie = []
         let dadosExercicioTreinoSerie = {}
 
         let resultExercicioTreinoSerie = await exercicioTreinoSerieDAO.selectAllExercicioTreinoSerie()
-
+        
         
         if(resultExercicioTreinoSerie != false || typeof (resultExercicioTreinoSerie) == 'object'){
-        
+            
             if(resultExercicioTreinoSerie.length > 0 ){
-                
+    
                 dadosExercicioTreinoSerie.status = true
                 dadosExercicioTreinoSerie.status_code = 200
-                dadosExercicioTreinoSerie.itens = resultExercicio.length
+                dadosExercicioTreinoSerie.itens = resultExercicioTreinoSerie.length
 
-                dadosExercicioTreinoSerie.exercicio_treino_serie = resultExercicioTreinoSerie
-                
-                return dadosExercicioTreinoSerie //200
+                for(itemExercicioTreinoSerie of resultExercicioTreinoSerie){
+                        
+                        let dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreinoSerie.id_treino)
+                        itemExercicioTreinoSerie.treino = dadosTreino.treinos
+                       
+                                               
+                        delete itemExercicioTreinoSerie.id_treino
+
+                        let dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreinoSerie.id_exercicio)
+                        itemExercicioTreinoSerie.exercicio = dadosExercicio.exercicio
+            
+                        
+                        delete itemExercicioTreinoSerie.id_exercicio
+
+                        let dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreinoSerie.id_serie)
+                        itemExercicioTreinoSerie.serie = dadosSerie.serie
+
+                        delete itemExercicioTreinoSerie.id_serie
+
+        
+                        arrayExercicioTreinoSerie.push(itemExercicioTreinoSerie)         
+                                            
+                    }
+                    dadosExercicioTreinoSerie.exercicio_treino_serie = arrayExercicioTreinoSerie
+
+                    return dadosExercicioTreinoSerie
 
             }else{
                 return MESSAGE.ERROR_NOT_FOUND // 404
@@ -196,6 +223,9 @@ const listarExercicioTreinoSerie = async function () {
         }
 
     }catch(error){
+        console.log(error);
+        
+        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }   
 
@@ -210,6 +240,7 @@ const buscarExercicioTreinoSerie = async function (id) {
 
     
             let dadosExercicioTreinoSerie = {}
+            let arrayExercicioTreinoSerie = []
 
             let resultExercicioTreinoSerie = await exercicioTreinoSerieDAO.selectByExercicioTreinoSerie(parseInt(id))
 
@@ -222,9 +253,33 @@ const buscarExercicioTreinoSerie = async function (id) {
                         dadosExercicioTreinoSerie.status = true
                         dadosExercicioTreinoSerie.status_code = 200
                         dadosExercicioTreinoSerie.itens = resultExercicioTreinoSerie.length
-                        dadosExercicioTreinoSerie.exercicio_treino_serie = resultExercicioTreinoSerie
+
+                        for(itemExercicioTreinoSerie of resultExercicioTreinoSerie){
                         
-                        return dadosExercicioTreinoSerie //200
+                        let dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreinoSerie.id_treino)
+                        itemExercicioTreinoSerie.treino = dadosTreino.treinos
+                       
+                                               
+                        delete itemExercicioTreinoSerie.id_treino
+
+                        let dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreinoSerie.id_exercicio)
+                        itemExercicioTreinoSerie.exercicio = dadosExercicio.exercicio
+            
+                        
+                        delete itemExercicioTreinoSerie.id_exercicio
+
+                        let dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreinoSerie.id_serie)
+                        itemExercicioTreinoSerie.serie = dadosSerie.serie
+
+                        delete itemExercicioTreinoSerie.id_serie
+
+        
+                        arrayExercicioTreinoSerie.push(itemExercicioTreinoSerie)         
+                                            
+                    }
+                    dadosExercicioTreinoSerie.exercicio_treino_serie = arrayExercicioTreinoSerie
+
+                    return dadosExercicioTreinoSerie
                         
                     }else{
             
