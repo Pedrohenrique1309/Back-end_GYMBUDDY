@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,28 +8,165 @@ datasource db {
 }
 
 model tbl_user {
-  id              Int       @id @default(autoincrement())
-  nome            String    @db.VarChar(150)
-  email           String    @unique @db.VarChar(100)
-  senha           String    @db.VarChar(100)
-  peso            Decimal?  @db.Decimal(5, 2)
-  altura          Decimal?  @db.Decimal(3, 2)
-  imc             Decimal?  @db.Decimal(5, 2)
-  nickname        String    @db.VarChar(150)
-  data_nascimento DateTime? @db.Date
-  foto            String?   @db.VarChar(255)
-  descricao       String?   @db.Text
-  localizacao     String?   @db.Text
-  is_bloqueado    Boolean   @default(false)
-  recuperacaoSenha tbl_recuperacao_senha[]
+  id                                                           Int                      @id @default(autoincrement())
+  nome                                                         String                   @db.VarChar(150)
+  email                                                        String                   @unique(map: "email") @db.VarChar(100)
+  senha                                                        String                   @db.VarChar(100)
+  peso                                                         Decimal?                 @db.Decimal(5, 2)
+  altura                                                       Decimal?                 @db.Decimal(3, 2)
+  imc                                                          Decimal?                 @db.Decimal(5, 2)
+  nickname                                                     String                   @db.VarChar(150)
+  data_nascimento                                              DateTime?                @db.Date
+  foto                                                         String?                  @db.VarChar(255)
+  descricao                                                    String?                  @db.Text
+  localizacao                                                  String?                  @db.Text
+  is_bloqueado                                                 Boolean?                 @default(false)
+  tbl_comentario                                               tbl_comentario[]
+  tbl_curtida                                                  tbl_curtida[]
+  tbl_curtida_comentario                                       tbl_curtida_comentario[]
+  tbl_notificacao_tbl_notificacao_id_usuario_destinoTotbl_user tbl_notificacao[]        @relation("tbl_notificacao_id_usuario_destinoTotbl_user")
+  tbl_notificacao_tbl_notificacao_id_usuario_origemTotbl_user  tbl_notificacao[]        @relation("tbl_notificacao_id_usuario_origemTotbl_user")
+  tbl_publicacao                                               tbl_publicacao[]
+  recuperacaoSenha                                             tbl_recuperacao_senha[]
+  tbl_treino                                                   tbl_treino[]
 }
 
 model tbl_recuperacao_senha {
-  id             Int      @id @default(autoincrement())
-  id_user        Int
-  token          Int      @unique
-  usuario        tbl_user @relation(fields: [id_user], references: [id])
+  id           Int      @id @default(autoincrement())
+  id_user      Int
+  token        Int      @unique(map: "token")
+  data_criacao DateTime @db.DateTime(0)
+  usuario      tbl_user @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_recuperacao_senha_ibfk_1")
 
-  @@index([token])
+  @@index([id_user], map: "id_user")
+  @@index([token], map: "idx_token")
 }
 
+model tbl_comentario {
+  id                     Int                      @id @default(autoincrement())
+  conteudo               String                   @db.VarChar(500)
+  data_comentario        DateTime                 @db.DateTime(0)
+  id_publicacao          Int
+  id_user                Int
+  curtidas_count         Int?                     @default(0)
+  tbl_publicacao         tbl_publicacao           @relation(fields: [id_publicacao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_comentario_ibfk_1")
+  tbl_user               tbl_user                 @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_comentario_ibfk_2")
+  tbl_curtida_comentario tbl_curtida_comentario[]
+  tbl_notificacao        tbl_notificacao[]
+
+  @@index([id_publicacao], map: "id_publicacao")
+  @@index([id_user], map: "id_user")
+}
+
+model tbl_curtida {
+  id              Int               @id @default(autoincrement())
+  id_publicacao   Int
+  id_user         Int
+  tbl_publicacao  tbl_publicacao    @relation(fields: [id_publicacao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_curtida_ibfk_1")
+  tbl_user        tbl_user          @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_curtida_ibfk_2")
+  tbl_notificacao tbl_notificacao[]
+
+  @@unique([id_publicacao, id_user], map: "uk_curtida")
+  @@index([id_user], map: "id_user")
+}
+
+model tbl_curtida_comentario {
+  id              Int               @id @default(autoincrement())
+  id_comentario   Int
+  id_user         Int
+  tbl_comentario  tbl_comentario    @relation(fields: [id_comentario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_curtida_comentario_ibfk_1")
+  tbl_user        tbl_user          @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_curtida_comentario_ibfk_2")
+  tbl_notificacao tbl_notificacao[]
+
+  @@unique([id_comentario, id_user], map: "uk_curtida_comentario")
+  @@index([id_user], map: "id_user")
+}
+
+model tbl_exercicio {
+  id                   Int                    @id @default(autoincrement())
+  nome                 String                 @db.VarChar(45)
+  gif                  String                 @db.VarChar(255)
+  descricao            String                 @db.Text
+  grupo_muscular       String                 @db.VarChar(100)
+  tbl_exercicio_treino tbl_exercicio_treino[]
+  tbl_serie            tbl_serie[]
+}
+
+model tbl_exercicio_treino {
+  id            Int           @id @default(autoincrement())
+  id_treino     Int
+  id_exercicio  Int
+  id_serie      Int
+  tbl_treino    tbl_treino    @relation(fields: [id_treino], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_exercicio_treino_ibfk_1")
+  tbl_exercicio tbl_exercicio @relation(fields: [id_exercicio], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_exercicio_treino_ibfk_2")
+  tbl_serie     tbl_serie     @relation(fields: [id_serie], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_exercicio_treino_ibfk_3")
+
+  @@unique([id_treino, id_exercicio, id_serie], map: "uk_exercicio_treino")
+  @@index([id_exercicio], map: "id_exercicio")
+  @@index([id_serie], map: "id_serie")
+}
+
+model tbl_notificacao {
+  id                                                    Int                     @id @default(autoincrement())
+  id_usuario_destino                                    Int
+  id_usuario_origem                                     Int
+  id_publicacao                                         Int?
+  id_comentario                                         Int?
+  id_curtida                                            Int?
+  id_curtida_comentario                                 Int?
+  tipo_notificacao                                      String                  @db.VarChar(50)
+  data_criacao                                          DateTime                @db.DateTime(0)
+  is_lida                                               Boolean?                @default(false)
+  tbl_user_tbl_notificacao_id_usuario_destinoTotbl_user tbl_user                @relation("tbl_notificacao_id_usuario_destinoTotbl_user", fields: [id_usuario_destino], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_notificacao_ibfk_1")
+  tbl_user_tbl_notificacao_id_usuario_origemTotbl_user  tbl_user                @relation("tbl_notificacao_id_usuario_origemTotbl_user", fields: [id_usuario_origem], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_notificacao_ibfk_2")
+  tbl_publicacao                                        tbl_publicacao?         @relation(fields: [id_publicacao], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_notificacao_ibfk_3")
+  tbl_comentario                                        tbl_comentario?         @relation(fields: [id_comentario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_notificacao_ibfk_4")
+  tbl_curtida                                           tbl_curtida?            @relation(fields: [id_curtida], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_notificacao_ibfk_5")
+  tbl_curtida_comentario                                tbl_curtida_comentario? @relation(fields: [id_curtida_comentario], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_notificacao_ibfk_6")
+
+  @@index([id_comentario], map: "id_comentario")
+  @@index([id_curtida], map: "id_curtida")
+  @@index([id_curtida_comentario], map: "id_curtida_comentario")
+  @@index([id_publicacao], map: "id_publicacao")
+  @@index([id_usuario_destino], map: "id_usuario_destino")
+  @@index([id_usuario_origem], map: "id_usuario_origem")
+}
+
+model tbl_publicacao {
+  id                Int               @id @default(autoincrement())
+  imagem            String            @db.VarChar(255)
+  descricao         String?           @db.VarChar(300)
+  data_publicacao   DateTime?         @db.DateTime(0)
+  localizacao       String?           @db.VarChar(300)
+  curtidas_count    Int?              @default(0)
+  comentarios_count Int?              @default(0)
+  id_user           Int
+  tbl_comentario    tbl_comentario[]
+  tbl_curtida       tbl_curtida[]
+  tbl_notificacao   tbl_notificacao[]
+  tbl_user          tbl_user          @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_publicacao_ibfk_1")
+
+  @@index([id_user], map: "id_user")
+}
+
+model tbl_serie {
+  id                   Int                    @id @default(autoincrement())
+  id_exercicio         Int
+  nome                 String?                @db.VarChar(45)
+  peso                 Decimal                @db.Decimal(5, 2)
+  repeticoes           Int
+  tbl_exercicio_treino tbl_exercicio_treino[]
+  tbl_exercicio        tbl_exercicio          @relation(fields: [id_exercicio], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_serie_ibfk_1")
+
+  @@index([id_exercicio], map: "id_exercicio")
+}
+
+model tbl_treino {
+  id                   Int                    @id @default(autoincrement())
+  nome                 String                 @db.VarChar(45)
+  id_user              Int
+  tbl_exercicio_treino tbl_exercicio_treino[]
+  tbl_user             tbl_user               @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "tbl_treino_ibfk_1")
+
+  @@index([id_user], map: "id_user")
+}

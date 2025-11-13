@@ -33,11 +33,12 @@ const inserirExercicioTreinoSerie = async function(exercicioTreinoSerie, content
             }else{
 
                 let resultExercicioTreinoSerie = await exercicioTreinoSerieDAO.insertExercicioTreinoSerie(exercicioTreinoSerie)
+              
                 
                 if(!resultExercicioTreinoSerie.code){
                     return {
                         status_code: 200,
-                        message: "exercicio_treino criado com sucesso",
+                        message: "exercicio_trein_serie criado com sucesso",
                         exercicio_treino_serie: resultExercicioTreinoSerie
                     }
 
@@ -139,22 +140,18 @@ const excluirExercicioTreinoSerie = async function(id) {
 
         if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
 
-            let resultExercicioTreinoSerie = await buscarExercicioTreinoSerie(parseInt(id))
+            // Verificação direta por DAO para evitar falhas de hidratação em controllers relacionadas
+            const existente = await exercicioTreinoSerieDAO.selectByExercicioTreinoSerie(parseInt(id))
 
-            if(resultExercicioTreinoSerie.status_code == 200){
-
-                let result = await exercicioTreinoSerieDAO.deleteExercicioTreinoSerie(id)
-                
+            if (existente && Array.isArray(existente) && existente.length > 0){
+                const result = await exercicioTreinoSerieDAO.deleteExercicioTreinoSerie(parseInt(id))
                 if(result){
                     return MESSAGE.SUCCESS_DELETED_ITEM //200
                 }else{
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                 }
-
-            }else if (resultExercicioTreinoSerie.status_code == 404){
-                return MESSAGE.ERROR_NOT_FOUND //404
             }else{
-                return  MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
+                return MESSAGE.ERROR_NOT_FOUND //404
             }
 
     }else{
@@ -187,25 +184,25 @@ const listarExercicioTreinoSerie = async function () {
                 dadosExercicioTreinoSerie.itens = resultExercicioTreinoSerie.length
 
                 for(itemExercicioTreinoSerie of resultExercicioTreinoSerie){
-                        
-                        let dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreinoSerie.id_treino)
-                        itemExercicioTreinoSerie.treino = dadosTreino.treinos
-                       
-                                               
+
+                        try{
+                            const dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreinoSerie.id_treino)
+                            itemExercicioTreinoSerie.treino = (dadosTreino && dadosTreino.status_code === 200) ? (dadosTreino.treinos || []) : []
+                        }catch{ itemExercicioTreinoSerie.treino = [] }
                         delete itemExercicioTreinoSerie.id_treino
 
-                        let dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreinoSerie.id_exercicio)
-                        itemExercicioTreinoSerie.exercicio = dadosExercicio.exercicio
-            
-                        
+                        try{
+                            const dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreinoSerie.id_exercicio)
+                            itemExercicioTreinoSerie.exercicio = (dadosExercicio && dadosExercicio.status_code === 200) ? (dadosExercicio.exercicio || []) : []
+                        }catch{ itemExercicioTreinoSerie.exercicio = [] }
                         delete itemExercicioTreinoSerie.id_exercicio
 
-                        let dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreinoSerie.id_serie)
-                        itemExercicioTreinoSerie.serie = dadosSerie.serie
-
+                        try{
+                            const dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreinoSerie.id_serie)
+                            itemExercicioTreinoSerie.serie = (dadosSerie && dadosSerie.status_code === 200) ? (dadosSerie.serie || []) : []
+                        }catch{ itemExercicioTreinoSerie.serie = [] }
                         delete itemExercicioTreinoSerie.id_serie
 
-        
                         arrayExercicioTreinoSerie.push(itemExercicioTreinoSerie)         
                                             
                     }
@@ -254,28 +251,26 @@ const buscarExercicioTreinoSerie = async function (id) {
                         dadosExercicioTreinoSerie.itens = resultExercicioTreinoSerie.length
 
                         for(itemExercicioTreinoSerie of resultExercicioTreinoSerie){
-                        
-                        let dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreinoSerie.id_treino)
-                        itemExercicioTreinoSerie.treino = dadosTreino.treinos
-                       
-                                               
-                        delete itemExercicioTreinoSerie.id_treino
+                            try{
+                                const dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreinoSerie.id_treino)
+                                itemExercicioTreinoSerie.treino = (dadosTreino && dadosTreino.status_code === 200) ? (dadosTreino.treinos || []) : []
+                            }catch{ itemExercicioTreinoSerie.treino = [] }
+                            delete itemExercicioTreinoSerie.id_treino
 
-                        let dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreinoSerie.id_exercicio)
-                        itemExercicioTreinoSerie.exercicio = dadosExercicio.exercicio
-            
-                        
-                        delete itemExercicioTreinoSerie.id_exercicio
+                            try{
+                                const dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreinoSerie.id_exercicio)
+                                itemExercicioTreinoSerie.exercicio = (dadosExercicio && dadosExercicio.status_code === 200) ? (dadosExercicio.exercicio || []) : []
+                            }catch{ itemExercicioTreinoSerie.exercicio = [] }
+                            delete itemExercicioTreinoSerie.id_exercicio
 
-                        let dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreinoSerie.id_serie)
-                        itemExercicioTreinoSerie.serie = dadosSerie.serie
+                            try{
+                                const dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreinoSerie.id_serie)
+                                itemExercicioTreinoSerie.serie = (dadosSerie && dadosSerie.status_code === 200) ? (dadosSerie.serie || []) : []
+                            }catch{ itemExercicioTreinoSerie.serie = [] }
+                            delete itemExercicioTreinoSerie.id_serie
 
-                        delete itemExercicioTreinoSerie.id_serie
-
-        
-                        arrayExercicioTreinoSerie.push(itemExercicioTreinoSerie)         
-                                            
-                    }
+                            arrayExercicioTreinoSerie.push(itemExercicioTreinoSerie)
+                        }
                     dadosExercicioTreinoSerie.exercicio_treino_serie = arrayExercicioTreinoSerie
 
                     return dadosExercicioTreinoSerie
