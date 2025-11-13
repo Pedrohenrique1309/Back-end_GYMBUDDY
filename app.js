@@ -29,6 +29,7 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const port = process.env.PORT 
 
 
 //Import do controllerHub que centraliza todas as controllers
@@ -896,7 +897,7 @@ app.delete('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), async funct
 
 
 if (require.main === module) {
-    app.listen('8080', function(){
+    app.listen(port, function(){
         console.log('API GYTMBUDDY aguardando requisições...')
     })
 } else {
