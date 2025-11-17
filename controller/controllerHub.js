@@ -50,18 +50,23 @@ const loadControllerLazy = (name, controllerPath) => {
                 delete require.cache[fullPath]
             }
             
-            _controllersCache[name] = require(fullPath)
+            try {
+                _controllersCache[name] = require(fullPath)
+            } catch (requireError) {
+                console.error(`[controllerHub] Erro ao carregar controller '${name}' em '${fullPath}':`, requireError)
+                return null
+            }
             _controllersLoaded[name] = true
             
     
             
             return _controllersCache[name]
         } else {
-            
+            console.error(`[controllerHub] Arquivo de controller não encontrado: ${fullPath} (name: ${name})`)
             return null
         }
     } catch (error) {
-       
+        console.error(`[controllerHub] Exceção inesperada ao resolver controller '${name}' (${controllerPath}):`, error)
         return null
     }
 };

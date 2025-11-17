@@ -635,7 +635,7 @@ app.post('/v1/gymbuddy/exercicio', cors(), bodyParserJSON, async function(reques
     
     let dadosBody = request.body
 
-    let result = await controllerExercicio.inserirExercicio(dadosBody, contentType)
+    let result = await controllers.controllerExercicio.inserirExercicio(dadosBody, contentType)
 
     response.status(result.status_code)
     response.json(result)
@@ -650,7 +650,7 @@ app.put('/v1/gymbuddy/exercicio/:search_id', cors(), bodyParserJSON, async funct
 
     let search_id = request.params.search_id
 
-    let result = await controllerExercicio.atualizarExercicio(dadosBody, search_id, contentType)
+    let result = await controllers.controllerExercicio.atualizarExercicio(dadosBody, search_id, contentType)
 
     response.status(result.status_code)
     response.json(result)
@@ -660,7 +660,7 @@ app.put('/v1/gymbuddy/exercicio/:search_id', cors(), bodyParserJSON, async funct
 
 app.get('/v1/gymbuddy/exercicio', cors(), async function(request, response){
 
-    let result = await controllerExercicio.listarExercicio()
+    let result = await controllers.controllerExercicio.listarExercicio()
 
     response.status(result.status_code)
     response.json(result)
@@ -671,7 +671,7 @@ app.get('/v1/gymbuddy/exercicio/:search_id', cors(), async function(request, res
 
     let search_id = request.params.search_id
 
-    let result = await controllerExercicio.buscarExercicio(search_id)
+    let result = await controllers.controllerExercicio.buscarExercicio(search_id)
 
     response.status(result.status_code)
     response.json(result)
@@ -682,7 +682,7 @@ app.delete('/v1/gymbuddy/exercicio/:search_id', cors(), async function(request, 
 
     let search_id = request.params.search_id
 
-    let result = await controllerExercicio.excluirExercicio(search_id)
+    let result = await controllers.controllerExercicio.excluirExercicio(search_id)
 
     response.status(result.status_code)
     response.json(result)
