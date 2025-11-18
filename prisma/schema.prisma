@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider = "mysql"
   // CORREÇÃO DE SSL (APENAS PARA O BUILD TEMPORARIAMENTE)
-  url      = "mysql://pedro:pedro123@gymbuddytcc.mysql.database.azure.com:3306/db_gymbuddytcc?sslaccept=require" 
+  url      = "mysql://pedro:pedro123@gymbuddytcc.mysql.database.azure.com:3306/db_gymbuddytcc?sslmode=REQUIRED&sslcert=/home/site/wwwroot/DigiCertGlobalRootG2.crt.pem"
 }
 
 model tbl_user {
