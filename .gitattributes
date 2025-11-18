@@ -1,0 +1,3 @@
+*.node binary
+*.wasm binary
+prisma/generated/client/*.js text eol=lf
