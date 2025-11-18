@@ -147,7 +147,6 @@ const atualizarTreino = async function(treino, id, contentType) {
     
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 

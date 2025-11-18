@@ -79,7 +79,6 @@ const enviarEmail = async function(email) {
         }
 
     } catch (error) {
-        console.error('Erro:', error.message)
         return {
             status: 500,
             status_code: 500,
@@ -165,9 +164,7 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
 
         }
         
-    } catch (error) {
-        console.log(error);
-        
+    } catch (error) { 
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 }

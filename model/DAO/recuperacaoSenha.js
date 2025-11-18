@@ -52,7 +52,6 @@ const updateRecuperacaoSenha = async function(recuperacaoSenha){
             return false
         
     } catch (error) {
-        console.log(error)
         return false
     }
 }

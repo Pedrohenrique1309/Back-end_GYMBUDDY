@@ -162,6 +162,8 @@ app.get('/v1/gymbuddy/usuario/login/email/senha', cors(), async function(request
 
     let result = await controllerUsuario.logarUsuario(user)
 
+    
+    
     response.status(result.status_code)
     response.json(result)
 
@@ -248,9 +250,6 @@ app.post('/v1/gymbuddy/comentario', cors(), bodyParserJSON, async function(reque
     let contentType = request.headers['content-type']
     
     let dadosBody = request.body
-
-    console.log(dadosBody)
-
 
 
     let result = await controllerComentario.inserirComentario(dadosBody, contentType)

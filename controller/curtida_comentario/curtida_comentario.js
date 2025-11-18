@@ -61,7 +61,6 @@ const inserirCurtidaComentario = async function(curtidaComentario, contentType){
         }
         
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -140,7 +139,6 @@ const atualizarCurtidaComentario = async function(curtidaComentario, id, content
     
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -233,8 +231,7 @@ const listarCurtidaComentario = async function () {
         }
 
     }catch(error){
-        console.log(error);
-        
+
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }   
 
@@ -304,8 +301,7 @@ const buscarCurtidaComentario = async function (id) {
 
 
     }catch(error){
-        console.log(error);
-        
+
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
@@ -378,7 +374,6 @@ const buscarCurtidComentarioPeloUsuario = async function (curtidaComentario) {
 
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

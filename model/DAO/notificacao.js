@@ -49,7 +49,6 @@ const { PrismaClient } = require('../../prisma/prisma/generated/client')
          }
  
      }catch(error){
-        console.log(error);
          return error
      }
  

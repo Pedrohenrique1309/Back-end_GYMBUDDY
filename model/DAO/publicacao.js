@@ -54,7 +54,6 @@ const insertPublicacao = async function(publicacao){
           }
 
     }catch(error){
-        console.log(error);
         return error
     }
 
