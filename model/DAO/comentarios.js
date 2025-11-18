@@ -8,7 +8,7 @@
  //Quando precisar do retorno de dados usar prisma.$queryRawUnsafe(), se for apenas executar usar prisma.$executeRawUnsafe()
  
  //Import da biblioteca do prisma client para executar scripts no BD
-const { PrismaClient } = require('../../prisma/generated/client')
+const { PrismaClient } = require('../../prisma/prisma/generated/client')
  
  //Instancia da classe do prisma client, para gerar um objeto
  const prisma = new PrismaClient()

@@ -6,7 +6,7 @@
  ******************************************************************************************************/
 
 //import da biblioteca do prisma client para executar os scripts SQL
-const { PrismaClient } = require('../../prisma/generated/client')
+const { PrismaClient } = require('../../prisma/prisma/generated/client')
 const { updateComentario } = require('./comentarios')
 
 //Instancia (criar um objeto a ser utilizado) a biblioteca do prisma/client
