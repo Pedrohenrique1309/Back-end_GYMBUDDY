@@ -1,13 +1,12 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"] // CORREÇÃO DE BINÁRIO
-  output        = "./prisma/generated/client"        // CORREÇÃO DE CAMINHO
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  output        = "./prisma/generated/client"
 }
 
 datasource db {
   provider = "mysql"
-  // CORREÇÃO DE SSL (APENAS PARA O BUILD TEMPORARIAMENTE)
-  url      = "mysql://pedro:pedro123@gymbuddytcc.mysql.database.azure.com:3306/db_gymbuddytcc?sslmode=REQUIRED&sslcert=/home/site/wwwroot/DigiCertGlobalRootG2.crt.pem"
+  url      = env("DATABASE_URL")
 }
 
 model tbl_user {

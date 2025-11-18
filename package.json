@@ -23,7 +23,7 @@
   "scripts": {
     "prisma:generate": "prisma generate",
     "build": "npm run prisma:generate",
-    "test": "npm run prisma:generate && jest --passWithNoTests",
+    "test": "NODE_ENV=test npm run prisma:generate && jest --passWithNoTests",
     "start": "npm run prisma:generate && node index.js"
   },
   "repository": {
