@@ -17,7 +17,7 @@ const emailService = require('../../src/services/emailService')
 //import de comtrollers para fazer os relacionamentos
 const controllerUsuario = require('../usuario/controllerUsuario.js')
 
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('../../prisma/prisma/generated/client')
 
 // Inicializa o Prisma Client
 const prisma = new PrismaClient();
