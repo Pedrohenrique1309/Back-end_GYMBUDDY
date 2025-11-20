@@ -68,7 +68,7 @@ const inserirNotificacao = async function(notificacao, contentType){
         }
         
     }catch(error){
-        console.log(error);
+
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -113,7 +113,6 @@ const atualizarNotificacao = async function(notificacao, id, contentType) {
 
                         let resultNotificacao = await notificacaoDAO.updateNotificacao(notificacao)
 
-                        console.log(resultNotificacao);
                         
 
                         if(!resultNotificacao.code){
@@ -161,7 +160,6 @@ const atualizarNotificacao = async function(notificacao, id, contentType) {
         }
     
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -341,7 +339,7 @@ const buscarNotificacao = async function (id) {
                         }
             
                         dadosNotificacoes.notificacoes = arrayNotificacoes
-                                console.log(dadosNotificacoes);
+                        
                                 
                         return dadosNotificacoes
 
@@ -359,7 +357,6 @@ const buscarNotificacao = async function (id) {
 
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

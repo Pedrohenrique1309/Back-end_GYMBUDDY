@@ -331,7 +331,6 @@ const buscarSeriePeloExercicio = async function (id_exercicio) {
 
 
     }catch(error){
-        console.log(error);
         
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }

@@ -129,7 +129,6 @@ const atualizarPublicacao = async function(publicacao, id, contentType) {
     
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -295,7 +294,6 @@ const buscarPublicacaoPeloUsuario = async function (id_user) {
 
             let resultPublicacao = await publicacaoDAO.selectPublicacaoByUser(parseInt(id_user))
 
-            console.log(resultPublicacao);
 
             if(resultPublicacao !== String(resultPublicacao)){
                 

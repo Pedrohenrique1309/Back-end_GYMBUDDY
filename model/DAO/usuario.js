@@ -175,8 +175,6 @@ const loginUsuario = async function (usuario) {
 
         let result = await prisma.$queryRawUnsafe(sql)
 
-        console.log(sql, result)
-
         if(result)
             return result
         else 

@@ -41,7 +41,6 @@ const inserirUsuario = async function(usuario, contentType){
                 }else {
 
                     let resultUsuario = await usuarioDAO.insertUsuario(usuario)
-                    console.log(resultUsuario);
                     
 
                     if(!resultUsuario.code){
@@ -63,7 +62,7 @@ const inserirUsuario = async function(usuario, contentType){
         }
         
     }catch(error){
-        console.log(error);
+
         
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
@@ -94,7 +93,6 @@ const atualizarUsuario = async function(usuario, id, contentType) {
 
                 let resultUsuario = await usuarioDAO.updateUsuario(usuario)
 
-                console.log(resultUsuario);
                 
                 if(!resultUsuario.code){
                     
@@ -142,7 +140,6 @@ const atualizarUsuario = async function(usuario, id, contentType) {
     
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -160,7 +157,7 @@ const excluirUsuario = async function(id) {
             if(resultUsuario.status_code == 200){
 
                 let result = await usuarioDAO.deleteUsuario(id)
-                console.log(result);
+        
                 
                 if(result){
                     return MESSAGE.SUCCESS_DELETED_ITEM //200
@@ -171,7 +168,6 @@ const excluirUsuario = async function(id) {
             }else if (resultUsuario.status_code == 404){
                 return MESSAGE.ERROR_NOT_FOUND //404
             }else{
-                console.log(resultUsuario);
                 
                 return  MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
             }

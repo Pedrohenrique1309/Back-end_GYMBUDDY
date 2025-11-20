@@ -247,7 +247,6 @@ app.post('/v1/gymbuddy/comentario', cors(), bodyParserJSON, async function(reque
     
     let dadosBody = request.body
 
-    console.log(dadosBody)
 
 
 

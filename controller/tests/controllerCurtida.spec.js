@@ -24,8 +24,7 @@ describe("Teste de atualização de curtida", () => {
         };
 
         const resultado = await controllerCurtida.atualizarCurtida(dadosAtualizados, idCurtida, 'application/json');
-        console.log(resultado);
-    
+        
         expect(resultado).toBeTruthy();
         expect(resultado).toHaveProperty('status_code');
         expect([200]).toContain(resultado.status_code);
