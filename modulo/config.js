@@ -1,3 +1,4 @@
+
 /***********************************************************
  * Objetivo: Arquivo de configuração do projeto, onde teremos
  * mensagens padronizadas, variáveis e constantes para o projeto

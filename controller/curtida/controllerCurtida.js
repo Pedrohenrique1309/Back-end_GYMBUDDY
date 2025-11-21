@@ -40,7 +40,7 @@ const inserirCurtida = async function(curtida, contentType){
                     
                 
                     let resultCurtida = await   curtidaDAO.insertCurtida(curtida)
-                    console.log(resultCurtida);
+
                     
                     if(!resultCurtida.code && resultCurtida != false){
                         return {
@@ -60,7 +60,6 @@ const inserirCurtida = async function(curtida, contentType){
         }
         
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -138,7 +137,6 @@ const atualizarCurtida = async function(curtida, id, contentType) {
     
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -372,7 +370,6 @@ const buscarCurtidaPeloUsuario = async function (curtida) {
 
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

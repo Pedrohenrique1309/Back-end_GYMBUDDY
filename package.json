@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "@prisma/client": "^6.17.1",
+    "@prisma/client": "5.19.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/nodemailer": "^7.0.2",
@@ -17,13 +17,14 @@
     "mysql2": "^3.15.3",
     "nodemailer": "^7.0.10",
     "openai": "^4.67.1",
-    "prisma": "^6.17.1",
+    "prisma": "5.19.1",
     "supertest": "^6.3.3"
   },
   "scripts": {
-    "start": "node app.js",
-    "dev": "node app.js",
-    "test": "jest --passWithNoTests"
+    "prisma:generate": "prisma generate",
+    "build": "npm run prisma:generate",
+    "test": "NODE_ENV=test npm run prisma:generate && jest --passWithNoTests",
+    "start": "npm run prisma:generate && node index.js"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
   },
   "homepage": "https://github.com/Pedrohenrique1309/Back-end_GYMBUDDY#readme",
   "devDependencies": {
-    "jest": "^30.2.0"
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10"
   }
 }

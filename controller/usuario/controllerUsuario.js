@@ -43,7 +43,7 @@ const inserirUsuario = async function(usuario, contentType){
                     let resultUsuario = await usuarioDAO.insertUsuario(usuario)
                     
 
-                    if(!resultUsuario.code){
+                    if(resultUsuario && !resultUsuario.code){
                         return {
                             status_code: 200,
                             message: "usuário criado com sucesso",
@@ -63,7 +63,6 @@ const inserirUsuario = async function(usuario, contentType){
         
     }catch(error){
 
-        
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -157,7 +156,6 @@ const excluirUsuario = async function(id) {
             if(resultUsuario.status_code == 200){
 
                 let result = await usuarioDAO.deleteUsuario(id)
-        
                 
                 if(result){
                     return MESSAGE.SUCCESS_DELETED_ITEM //200
@@ -282,11 +280,11 @@ const logarUsuario = async function (user) {
 
             if(result.length > 0){
 
-                const message = MESSAGE.SUCCES_ACTIVITY
-
-                message.usuario = result
-
-                return message
+                return {
+                        status_code: 200,
+                        message: 'item logado com sucesso',
+                        item: result
+                    }
 
 
             }else

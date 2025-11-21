@@ -8,7 +8,8 @@
  //Quando precisar do retorno de dados usar prisma.$queryRawUnsafe(), se for apenas executar usar prisma.$executeRawUnsafe()
  
  //Import da biblioteca do prisma client para executar scripts no BD
- const {PrismaClient} = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
+
  
  //Instancia da classe do prisma client, para gerar um objeto
  const prisma = new PrismaClient()
@@ -17,6 +18,7 @@
  const insertComentario = async function(comentario){
     
      try{
+
  
          let sql = `insert into tbl_comentario(
                                                  conteudo,

@@ -6,7 +6,7 @@
  ******************************************************************************************************/
 
 //import da biblioteca do prisma client para executar os scripts SQL
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('@prisma/client');
 const { updateComentario } = require('./comentarios')
 
 //Instancia (criar um objeto a ser utilizado) a biblioteca do prisma/client
@@ -34,7 +34,6 @@ const insertCurtidaComentario = async function(curtidaComentario) {
         if(result){
             let sqlSelectId = `SELECT * FROM tbl_curtida_comentario WHERE id_user = '${curtidaComentario.id_user}' ORDER BY id DESC LIMIT 1`
             let criar = await prisma.$queryRawUnsafe(sqlSelectId)
-            console.log(criar);
             return criar[0]
         }else{
             return false

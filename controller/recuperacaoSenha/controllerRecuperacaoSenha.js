@@ -164,8 +164,8 @@ const buscarRecuperacaoSenhaPeloToken = async function(token){
 
         }
         
-    } catch (error) {
-        
+
+    } catch (error) { 
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 }

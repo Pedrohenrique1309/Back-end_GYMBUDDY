@@ -1,0 +1,7 @@
+*.node binary
+*.wasm binary
+*.so binary
+*.dylib binary
+prisma/generated/client/*.js text eol=lf
+prisma/generated/client/libquery_engine-*.node filter=lfs diff=lfs merge=lfs -text
+prisma/generated/client/libquery_engine-*.so filter=lfs diff=lfs merge=lfs -text

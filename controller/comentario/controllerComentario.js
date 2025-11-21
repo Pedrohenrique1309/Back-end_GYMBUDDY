@@ -52,7 +52,6 @@ const inserirComentario = async function(comentario, contentType){
         }
         
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -132,7 +131,6 @@ const atualizarComentario = async function(comentario, id, contentType) {
     
 
     }catch(error){
-        console.log(error);
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
