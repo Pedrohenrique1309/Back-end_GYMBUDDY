@@ -354,6 +354,55 @@ const buscarTreinoPeloUsuario = async function (id_user) {
 
 }
 
+//Função para buscar os treino de um usuário no Banco de Dados pelo Nome
+const buscarTreinoPeloNome = async function (nome) {
+
+    try{
+    
+        
+        if( nome  !== undefined || nome  !== ''|| nome  !== null ||nome.length <= 45){
+
+            let dadosTreinos= {}
+
+            let resultTreino = await treinoDAO.selectTreinoByNome(nome)
+            
+            
+            if(resultTreino !== String(resultTreino)){
+                
+                if(resultTreino != false || typeof(resultTreino) == 'object'){
+
+
+                    if(resultTreino.length > 0){
+
+                        //Cria um objeto Json para retornar a lista de Publicações
+                        dadosTreinos.status = true
+                        dadosTreinos.status_code = 200
+                        dadosTreinos.Itens = resultTreino.length
+                        dadosTreinos.treinos = resultTreino
+        
+                        return dadosTreinos//200
+                    }else{
+            
+                        return MESSAGE.ERROR_NOT_FOUND //404
+                    }
+        
+                }else{
+                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+            }else{
+                return MESSAGE.ERROR_CONTENT_TYPE//415
+            }
+            
+        }else{
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
+        }
+
+
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
+}
 
 
 module.exports = {
@@ -362,5 +411,6 @@ module.exports = {
     buscarTreino,
     listarTreino,
     buscarTreinoPeloUsuario,
-    excluirTreino
+    excluirTreino,
+    buscarTreinoPeloNome
 }

@@ -1014,6 +1014,20 @@ app.get('/v1/gymbuddy/treino/:search_id', cors(), async function(request, respon
 
 })
 
+app.get('/v1/gymbuddy/treino/nome/:nome', cors(), async function(request, response){
+
+    let nome = request.params.nome
+
+    let result = await controllerTreino.buscarTreinoPeloNome(nome)
+
+    result = safeResponse(result)
+
+  
+   response.status(result.status_code)
+    response.json(result)
+
+})
+
 app.delete('/v1/gymbuddy/treino/:search_id', cors(), async function(request, response){
 
     let search_id = request.params.search_id
