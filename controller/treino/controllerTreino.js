@@ -15,173 +15,173 @@ const treinoDAO = require('../../model/DAO/treino.js')
 const controllers = require('../controllerHub')
 
 //Função para inserir um novo treino no Banco de dados 
-const inserirTreino = async function(treino, contentType){
+const inserirTreino = async function (treino, contentType) {
 
-    try{
+    try {
 
-        if(contentType == 'application/json'){
+        if (contentType == 'application/json') {
 
 
-            if(
-                treino.nome            == undefined || treino.nome            == ''|| treino.nome            == null ||treino.nome.length            > 45 ||  
-                treino.id_user         == undefined || treino.id_user         == ''|| treino.id_user         == null ||treino.id_user                <= 0 || isNaN(treino.id_user) 
-            ){
+            if (
+                treino.nome == undefined || treino.nome == '' || treino.nome == null || treino.nome.length > 45 ||
+                treino.id_user == undefined || treino.id_user == '' || treino.id_user == null || treino.id_user <= 0 || isNaN(treino.id_user)
+            ) {
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
-            }else{
+            } else {
 
                 let resultTreino = await treinoDAO.insertTreino(treino)
 
-                
-                if(!resultTreino.code){
-                    
-                    if(treino.exercicio && Array.isArray(treino.exercicio) && treino.exercicio.length > 0){
-                        
-                        for(let itemExercicio of treino.exercicio){
-                                                    
-                                itemExercicio.id_treino = resultTreino.id
-                            
-                                let resultItemExercicio = await controllers.controllerExercicioTreinoSerie.inserirExercicioTreinoSerie(itemExercicio, contentType)
-                                
-                                
-                                if(!resultItemExercicio){
-                                    return MESSAGE.ERROR_CONTENT_TYPE
-                                }
+
+                if (!resultTreino.code) {
+
+                    if (treino.exercicio && Array.isArray(treino.exercicio) && treino.exercicio.length > 0) {
+
+                        for (let itemExercicio of treino.exercicio) {
+
+                            itemExercicio.id_treino = resultTreino.id
+
+                            let resultItemExercicio = await controllers.controllerExercicioTreino.inserirExercicioTreino(itemExercicio, contentType)
+
+
+                            if (!resultItemExercicio) {
+                                return MESSAGE.ERROR_CONTENT_TYPE
+                            }
 
 
                         }
                     }
-                    
+
                     return {
                         status_code: 200,
                         message: "treino criado com sucesso",
                         treino: resultTreino
-                        
+
                     }
 
-                }else{
+                } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL  //500
                 }
             }
 
-        }else{
+        } else {
             return MESSAGE.ERROR_CONTENT_TYPE // 415
         }
-        
-    }catch(error){
+
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
 }
 
 // //Função para atualizar um treino no banco de dados
-const atualizarTreino = async function(treino, id, contentType) {
-    
-    try{
-        
-        if(contentType == 'application/json'){
+const atualizarTreino = async function (treino, id, contentType) {
 
-            if(
-                id                     == undefined || id                     == ''|| id                     == null || isNaN(id)                         ||id                <= 0    ||
-                treino.nome            == undefined || treino.nome            == ''|| treino.nome            == null ||treino.nome.length            > 45 ||  
-                treino.id_user         == undefined || treino.id_user         == ''|| treino.id_user         == null ||treino.id_user                <= 0 || isNaN(treino.id_user) 
-            ){
+    try {
+
+        if (contentType == 'application/json') {
+
+            if (
+                id == undefined || id == '' || id == null || isNaN(id) || id <= 0 ||
+                treino.nome == undefined || treino.nome == '' || treino.nome == null || treino.nome.length > 45 ||
+                treino.id_user == undefined || treino.id_user == '' || treino.id_user == null || treino.id_user <= 0 || isNaN(treino.id_user)
+            ) {
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
             }
 
             treino.id = parseInt(id)
-            
+
             let buscarTreino = await treinoDAO.selectByTreino(treino.id)
 
-            if(buscarTreino){
+            if (buscarTreino) {
 
                 let resultTreino = await treinoDAO.updateTreino(treino)
 
 
-                if(resultTreino){
-                    
+                if (resultTreino) {
+
                     return {
                         status_code: 200,
                         message: 'item atualizado com sucesso',
                         item: resultTreino
                     }
-                
-                }else{  
-                   return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
-                }
 
-            }else{
-                
-            let resultTreino = await treinoDAO.selectByTreino(parseInt(id))
-
-            if(resultTreino.status_code == 200){
-                treino.id = id
-
-                let result = await treinoDAO.atualizarTreino(treino)
-
-
-                if(result){
-                    
-                    return MESSAGE.SUCCES_UPDATED_ITEM //201
-                
-                }else{           
+                } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+
+            } else {
+
+                let resultTreino = await treinoDAO.selectByTreino(parseInt(id))
+
+                if (resultTreino.status_code == 200) {
+                    treino.id = id
+
+                    let result = await treinoDAO.atualizarTreino(treino)
+
+
+                    if (result) {
+
+                        return MESSAGE.SUCCES_UPDATED_ITEM //201
+
+                    } else {
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+
+                    }
+
+                } else if (resultTreino.status_code == 404) {
+
+                    return MESSAGE.ERROR_NOT_FOUND
 
                 }
 
-            }else if(resultTreino.status_code == 404){
 
-                return MESSAGE.ERROR_NOT_FOUND
 
             }
-
-            
-
-        }
-    }else{
+        } else {
             return MESSAGE.ERROR_CONTENT_TYPE // 415
-     }
-    
+        }
 
-    }catch(error){
+
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
 }
 
 //Função para excluir um treino no Banco de Dados
-const excluirTreino = async function(id) {
-    
-    try{
+const excluirTreino = async function (id) {
 
-        if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
+    try {
+
+        if (id != '' && id != undefined && id != null && !isNaN(id) && id > 0) {
 
             let resultTreino = await buscarTreino(parseInt(id))
 
-            if(resultTreino.status_code == 200){
+            if (resultTreino.status_code == 200) {
 
                 let result = await treinoDAO.deleteTreino(id)
-                
-                if(result){
+
+                if (result) {
                     return MESSAGE.SUCCESS_DELETED_ITEM //200
-                }else{
+                } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                 }
 
-            }else if (resultTreino.status_code == 404){
+            } else if (resultTreino.status_code == 404) {
                 return MESSAGE.ERROR_NOT_FOUND //404
-            }else{
-                return  MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
+            } else {
+                return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
             }
 
-    }else{
-        return MESSAGE.ERROR_REQUIRED_FIELDS //400
-    }
+        } else {
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
+        }
 
-    }catch(error){
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
     }
 
@@ -189,8 +189,8 @@ const excluirTreino = async function(id) {
 
 //Função para listar todos os treinos salvos no Banco de Dados 
 const listarTreino = async function () {
-    
-    try{
+
+    try {
 
         let arrayTreinos = []
         let dadosTreinos = {}
@@ -198,109 +198,111 @@ const listarTreino = async function () {
         let resultTreino = await treinoDAO.selectAllTreino()
 
         
-        
-        if(resultTreino != false || typeof (resultTreino) == 'object'){
-        
-            if(resultTreino.length > 0 ){
-                
+
+        if (resultTreino != false && typeof (resultTreino) == 'object') {
+            
+            
+            if (resultTreino.length > 0) {
+
                 dadosTreinos.status = true
                 dadosTreinos.status_code = 200
                 dadosTreinos.itens = resultTreino.length
 
-                for(itemTreino of resultTreino){
+                for (itemTreino of resultTreino) {
 
-                        let dadosUsuario = await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
-                        itemTreino.user = dadosUsuario.usuario
-                       
-                        delete itemTreino.id_user
-
-                        let dadosExercicio = await controllers.controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
-                        itemTreino.exercicio = dadosExercicio.exercicio
-                    
+                    let dadosUsuario = await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
+                    itemTreino.user = dadosUsuario.usuario
+                    delete itemTreino.id_user
+    
+                    let dadosExercicio = await controllers.controllerExercicioTreino.buscarExercicioPeloTreino(itemTreino.id)
+                    itemTreino.exercicio = dadosExercicio.exercicio 
+                                 
                     
                     arrayTreinos.push(itemTreino)
                     
-                    
                 }
                 dadosTreinos.treinos = arrayTreinos
-                
+                   
+                    
                 return dadosTreinos //200
 
-            }else{
+            } else {
                 return MESSAGE.ERROR_NOT_FOUND // 404
             }
 
-        }else{
+        } else {
             return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
         }
 
-    }catch(error){
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
-    }   
+    }
 
 }
 
 //Função para buscar um treino no Banco de Dados pelo ID
 const buscarTreino = async function (id) {
-   
-    try{
 
-        if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
+    try {
 
-            
+        if (id != '' && id != undefined && id != null && !isNaN(id) && id > 0) {
+
+
             let arrayTreinos = []
             let dadosTreinos = {}
 
             let resultTreino = await treinoDAO.selectByTreino(parseInt(id))
 
-            if(resultTreino !== String(resultTreino)){
-                
-                if(resultTreino != false || typeof(resultTreino) == 'object'){
 
-                    if(resultTreino.length > 0){
+            if (resultTreino !== String(resultTreino)) {
+
+                if (resultTreino != false || typeof (resultTreino) == 'object') {
+
+                    if (resultTreino.length > 0) {
 
                         dadosTreinos.status = true
                         dadosTreinos.status_code = 200
                         dadosTreinos.itens = resultTreino.length
 
-                        for(itemTreino of resultTreino){
+                        for (itemTreino of resultTreino) {
 
-                                let dadosUsuario= await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
+                            let dadosUsuario = await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
+                            itemTreino.user = dadosUsuario.usuario
+        
                             
-                                itemTreino.user = dadosUsuario.usuario
-                            
-                                delete itemTreino.id_user
+                            delete itemTreino.id_user
 
-                                let dadosExercicio = await controllers.controllerExercicioTreinoSerie.buscarExercicioByTreino(itemTreino.id)
-                                itemTreino.exercicio = dadosExercicio.exercicio || []
+                            let dadosExercicio = await controllers.controllerExercicioTreino.buscarExercicioPeloTreino(itemTreino.id)
+                            itemTreino.exercicio = dadosExercicio.exercicio 
 
+                                        
                             
                             arrayTreinos.push(itemTreino)
-                            
                             
                         }
                         dadosTreinos.treinos = arrayTreinos
                         
+                            
                         return dadosTreinos //200
-                        
-                    }else{
-            
+
+                    } else {
+
                         return MESSAGE.ERROR_NOT_FOUND //404
                     }
-        
-                }else{
+
+                } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                 }
-            }else{
+            } else {
                 return MESSAGE.ERROR_CONTENT_TYPE//415
             }
-            
-        }else{
+
+        } else {
             return MESSAGE.ERROR_REQUIRED_FIELDS //400
         }
 
 
-    }catch(error){
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
@@ -309,46 +311,66 @@ const buscarTreino = async function (id) {
 //Função para buscar os treino de um usuário no Banco de Dados pelo ID
 const buscarTreinoPeloUsuario = async function (id_user) {
 
-    try{
+    try {
 
-        if(id_user != '' && id_user != undefined && id_user != null && !isNaN(id_user) && id_user > 0){
+        if (id_user != '' && id_user != undefined && id_user != null && !isNaN(id_user) && id_user > 0) {
 
-            let dadosTreinos= {}
+            let dadosTreinos = {}
+            let arrayTreinos = []
 
             let resultTreino = await treinoDAO.selectTreinoByUser(parseInt(id_user))
 
-            if(resultTreino !== String(resultTreino)){
-                
-                if(resultTreino != false || typeof(resultTreino) == 'object'){
+            if (resultTreino !== String(resultTreino)) {
+
+                if (resultTreino != false || typeof (resultTreino) == 'object') {
 
 
-                    if(resultTreino.length > 0){
+                    if (resultTreino.length > 0) {
 
                         //Cria um objeto Json para retornar a lista de Publicações
                         dadosTreinos.status = true
                         dadosTreinos.status_code = 200
                         dadosTreinos.Itens = resultTreino.length
-                        dadosTreinos.treinos = resultTreino
+
+                         for (itemTreino of resultTreino) {
+
+                            let dadosUsuario = await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
+                            itemTreino.user = dadosUsuario.usuario
         
-                        return dadosTreinos//200
-                    }else{
-            
+                            
+                            delete itemTreino.id_user
+
+                            let dadosExercicio = await controllers.controllerExercicioTreino.buscarExercicioPeloTreino(itemTreino.id)
+                            itemTreino.exercicio = dadosExercicio.exercicio 
+
+                                        
+                            
+                            arrayTreinos.push(itemTreino)
+                            
+                        }
+                        dadosTreinos.treinos = arrayTreinos
+                        
+                            
+                        return dadosTreinos //200
+                        
+                    } else {
+
                         return MESSAGE.ERROR_NOT_FOUND //404
                     }
-        
-                }else{
+
+                } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                 }
-            }else{
+            } else {
                 return MESSAGE.ERROR_CONTENT_TYPE//415
             }
-            
-        }else{
+
+        } else {
             return MESSAGE.ERROR_REQUIRED_FIELDS //400
         }
 
 
-    }catch(error){
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
@@ -357,48 +379,66 @@ const buscarTreinoPeloUsuario = async function (id_user) {
 //Função para buscar os treino de um usuário no Banco de Dados pelo Nome
 const buscarTreinoPeloNome = async function (nome) {
 
-    try{
-    
-        
-        if( nome  !== undefined || nome  !== ''|| nome  !== null ||nome.length <= 45){
+    try {
 
-            let dadosTreinos= {}
+
+        if (nome !== undefined || nome !== '' || nome !== null || nome.length <= 45) {
+
+            let dadosTreinos = {}
+            let arrayTreinos = []
 
             let resultTreino = await treinoDAO.selectTreinoByNome(nome)
-            
-            
-            if(resultTreino !== String(resultTreino)){
-                
-                if(resultTreino != false || typeof(resultTreino) == 'object'){
 
 
-                    if(resultTreino.length > 0){
+            if (resultTreino !== String(resultTreino)) {
+
+                if (resultTreino != false || typeof (resultTreino) == 'object') {
+
+
+                    if (resultTreino.length > 0) {
 
                         //Cria um objeto Json para retornar a lista de Publicações
                         dadosTreinos.status = true
                         dadosTreinos.status_code = 200
                         dadosTreinos.Itens = resultTreino.length
-                        dadosTreinos.treinos = resultTreino
-        
-                        return dadosTreinos//200
-                    }else{
-            
+
+                        for (itemTreino of resultTreino) {
+
+                            let dadosUsuario = await controllers.controllerUsuario.buscarUsuario(itemTreino.id_user)
+
+                            itemTreino.user = dadosUsuario.usuario
+
+                            delete itemTreino.id_user
+
+                            let dadosExercicio = await controllers.controllerExercicioTreino.buscarExercicioByTreino(itemTreino.id)
+                            itemTreino.exercicio = dadosExercicio.exercicio
+
+
+                            arrayTreinos.push(itemTreino)
+
+
+                        }
+                        dadosTreinos.treinos = arrayTreinos
+
+                        return dadosTreinos //200
+                    } else {
+
                         return MESSAGE.ERROR_NOT_FOUND //404
                     }
-        
-                }else{
+
+                } else {
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
                 }
-            }else{
+            } else {
                 return MESSAGE.ERROR_CONTENT_TYPE//415
             }
-            
-        }else{
+
+        } else {
             return MESSAGE.ERROR_REQUIRED_FIELDS //400
         }
 
 
-    }catch(error){
+    } catch (error) {
         return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 

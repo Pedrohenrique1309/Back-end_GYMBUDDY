@@ -60,7 +60,7 @@ const {
     controllerExercicio: _controllerExercicio,
     controllerTreino: _controllerTreino,
     controllerSerie: _controllerSerie,
-    controllerExercicioTreinoSerie: _controllerExercicioTreinoSerie,
+    controllerExercicioTreino: _controllerExercicioTreino,
     controllerView: _controllerView,
     controllerIA: _controllerIA
 } = controllers
@@ -76,7 +76,7 @@ const controllerRecuperacaoSenha = validateController(_controllerRecuperacaoSenh
 const controllerExercicio = validateController(_controllerExercicio, 'controllerExercicio')
 const controllerTreino = validateController(_controllerTreino, 'controllerTreino')
 const controllerSerie = validateController(_controllerSerie, 'controllerSerie')
-const controllerExercicioTreinoSerie = validateController(_controllerExercicioTreinoSerie, 'controllerExercicioTreinoSerie')
+const controllerExercicioTreino = validateController(_controllerExercicioTreino, 'controllerExercicioTreino')
 const controllerView = validateController(_controllerView, 'controllerView')
 const controllerIA = validateController(_controllerIA, 'controllerIA')
 
@@ -1018,7 +1018,7 @@ app.get('/v1/gymbuddy/treino/usuario/:search_id', cors(), async function(request
 
     let search_id = request.params.search_id
 
-    let result = await controllerTreino.buscarTreinoByUser(search_id)
+    let result = await controllerTreino.buscarTreinoPeloUsuario(search_id)
 
 
 
@@ -1162,14 +1162,14 @@ app.delete('/v1/gymbuddy/serie/:search_id', cors(), async function(request, resp
 })
 
 
-//************************************* EXERCICIO_TREINO_SERIE *******************************************//
-app.post('/v1/gymbuddy/exercicio_treino_serie', cors(), bodyParserJSON, async function(request, response){
+//************************************* EXERCICIO_TREINO *******************************************//
+app.post('/v1/gymbuddy/exercicio_treino', cors(), bodyParserJSON, async function(request, response){
 
     let contentType = request.headers['content-type']
     
     let dadosBody = request.body
 
-    let result = await controllerExercicioTreinoSerie.inserirExercicioTreinoSerie(dadosBody, contentType)
+    let result = await controllerExercicioTreino.inserirExercicioTreino(dadosBody, contentType)
 
 
 
@@ -1181,7 +1181,7 @@ app.post('/v1/gymbuddy/exercicio_treino_serie', cors(), bodyParserJSON, async fu
 
 })
 
-app.put('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), bodyParserJSON, async function(request, response){
+app.put('/v1/gymbuddy/exercicio_treino/:search_id', cors(), bodyParserJSON, async function(request, response){
 
     let contentType = request.headers['content-type']
  
@@ -1189,7 +1189,7 @@ app.put('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), bodyParserJSON
 
     let search_id = request.params.search_id
 
-    let result = await controllerExercicioTreinoSerie.atualizarExercicioTreinoSerie(dadosBody, search_id, contentType)
+    let result = await controllerExercicioTreino.atualizarExercicioTreino(dadosBody, search_id, contentType)
 
 
 
@@ -1202,9 +1202,9 @@ app.put('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), bodyParserJSON
 
 
 
-app.get('/v1/gymbuddy/exercicio_treino_serie', cors(), async function(request, response){
+app.get('/v1/gymbuddy/exercicio_treino', cors(), async function(request, response){
 
-    let result = await controllerExercicioTreinoSerie.listarExercicioTreinoSerie()
+    let result = await controllerExercicioTreino.listarExercicioTreino()
 
 
 
@@ -1216,11 +1216,11 @@ app.get('/v1/gymbuddy/exercicio_treino_serie', cors(), async function(request, r
 
 })
 
-app.get('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), async function(request, response){
+app.get('/v1/gymbuddy/exercicio_treino/:search_id', cors(), async function(request, response){
 
     let search_id = request.params.search_id
 
-    let result = await controllerExercicioTreinoSerie.buscarExercicioTreinoSerie(search_id)
+    let result = await controllerExercicioTreino.buscarExercicioTreino(search_id)
 
 
 
@@ -1232,11 +1232,11 @@ app.get('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), async function
 
 })
 
-app.get('/v1/gymbuddy/exercicio_treino_serie/exercicio/:id_treino', cors(), async function(request, response){
+app.get('/v1/gymbuddy/exercicio_treino/exercicio/:id_treino', cors(), async function(request, response){
 
     let id_treino = request.params.id_treino
 
-    let result = await controllerExercicioTreinoSerie.buscarExercicioByTreino(id_treino)
+    let result = await controllerExercicioTreino.buscarExercicioByTreino(id_treino)
 
 
 
@@ -1248,11 +1248,11 @@ app.get('/v1/gymbuddy/exercicio_treino_serie/exercicio/:id_treino', cors(), asyn
 
 })
 
-app.delete('/v1/gymbuddy/exercicio_treino_serie/:search_id', cors(), async function(request, response){
+app.delete('/v1/gymbuddy/exercicio_treino/:search_id', cors(), async function(request, response){
 
     let search_id = request.params.search_id
 
-    let result = await controllerExercicioTreinoSerie.excluirExercicioTreinoSerie(search_id)
+    let result = await controllerExercicioTreino.excluirExercicioTreino(search_id)
 
 
 

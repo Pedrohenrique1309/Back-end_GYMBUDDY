@@ -22,7 +22,7 @@ const controllerList = [
     { name: 'controllerTreino', path: './treino/controllerTreino.js' },
     { name: 'controllerExercicio', path: './exercicio/controllerExercicio.js' },
     { name: 'controllerSerie', path: './serie/controllerSerie.js' },
-    { name: 'controllerExercicioTreinoSerie', path: './exercicio_treino_serie/controllerExercicioTreinoSerie.js' },
+    { name: 'controllerExercicioTreino', path: './exercicio_treino/controllerExercicioTreino.js' },
     { name: 'controllerPublicacao', path: './publicacao/controllerPublicacao.js' },
     { name: 'controllerComentario', path: './comentario/controllerComentario.js' },
     { name: 'controllerCurtida', path: './curtida/controllerCurtida.js' },
