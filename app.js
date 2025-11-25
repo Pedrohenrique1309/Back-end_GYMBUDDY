@@ -1014,6 +1014,22 @@ app.get('/v1/gymbuddy/treino/:search_id', cors(), async function(request, respon
 
 })
 
+app.get('/v1/gymbuddy/treino/usuario/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerTreino.buscarTreinoByUser(search_id)
+
+
+
+    result = safeResponse(result)
+
+
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
 app.get('/v1/gymbuddy/treino/nome/:nome', cors(), async function(request, response){
 
     let nome = request.params.nome
