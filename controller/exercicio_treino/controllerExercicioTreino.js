@@ -15,26 +15,28 @@ const exercicioTreinoDAO = require('../../model/DAO/exercicio_treino.js')
 const controllers = require('../controllerHub.js')
 
 //Função para inserir um novo exercicio_treino_serie no Banco de dados 
+// Suporta dois formatos:
+// 1) Chamada direta do endpoint /v1/gymbuddy/exercicio_treino com id_treino, id_exercicio, id_serie
+// 2) Chamada interna da criação de treino com id_treino, id_exercicio e series[] (repeticoes/carga)
 const inserirExercicioTreino = async function(exercicioTreino, contentType){
 
     try{
 
         if(contentType == 'application/json'){
 
+            const temIdTreino   = exercicioTreino.id_treino    != undefined && exercicioTreino.id_treino    != '' && exercicioTreino.id_treino    != null && !isNaN(exercicioTreino.id_treino)    && exercicioTreino.id_treino    > 0
+            const temIdExercicio= exercicioTreino.id_exercicio != undefined && exercicioTreino.id_exercicio != '' && exercicioTreino.id_exercicio != null && !isNaN(exercicioTreino.id_exercicio) && exercicioTreino.id_exercicio > 0
+            const temIdSerie    = exercicioTreino.id_serie     != undefined && exercicioTreino.id_serie     != '' && exercicioTreino.id_serie     != null && !isNaN(exercicioTreino.id_serie)     && exercicioTreino.id_serie     > 0
 
-            if(
-                exercicioTreino.id_treino    == undefined || exercicioTreino.id_treino     == ''|| exercicioTreino.id_treino    == null ||isNaN(exercicioTreino.id_treino)    || exercicioTreino.id_treino    <= 0 ||
-                exercicioTreino.id_exercicio == undefined || exercicioTreino.id_exercicio  == ''|| exercicioTreino.id_exercicio == null ||isNaN(exercicioTreino.id_exercicio) || exercicioTreino.id_exercicio <= 0 ||
-                exercicioTreino.id_serie     == undefined || exercicioTreino.id_serie      == ''|| exercicioTreino.id_serie     == null ||isNaN(exercicioTreino.id_serie)     || exercicioTreino.id_serie     <= 0 
-            ){
-
+            if(!temIdTreino || !temIdExercicio){
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
+            }
 
-            }else{
+            // CASO 1: chamada direta com id_serie já informado
+            if(temIdSerie && !exercicioTreino.series){
 
                 let resultExercicioTreino = await exercicioTreinoDAO.insertExercicioTreino(exercicioTreino)
-              
-                
+
                 if(!resultExercicioTreino.code){
                     return {
                         status_code: 200,
@@ -46,6 +48,55 @@ const inserirExercicioTreino = async function(exercicioTreino, contentType){
                     return MESSAGE.ERROR_INTERNAL_SERVER_MODEL  //500
                 }
             }
+
+            // CASO 2: veio da criação de treino com array de series
+            const temSeriesArray = Array.isArray(exercicioTreino.series) && exercicioTreino.series.length > 0
+
+            if(temSeriesArray){
+
+                const createdRelations = []
+
+                for(const serie of exercicioTreino.series){
+
+                    // Monta objeto de série compatível com controllerSerie
+                    const novaSerie = {
+                        id_exercicio: exercicioTreino.id_exercicio,
+                        peso:         serie.carga || serie.peso || serie.weight || 0,
+                        repeticoes:   serie.repeticoes || serie.reps || 0
+                    }
+
+                    const resultSerie = await controllers.controllerSerie.inserirSerie(novaSerie, contentType)
+
+                    if(!resultSerie || resultSerie.status_code !== 200 || !resultSerie.publicacao || !resultSerie.publicacao.id){
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                    }
+
+                    const id_serie_criada = resultSerie.publicacao.id
+
+                    const relacao = {
+                        id_treino:    exercicioTreino.id_treino,
+                        id_exercicio: exercicioTreino.id_exercicio,
+                        id_serie:     id_serie_criada
+                    }
+
+                    const resultRelacao = await exercicioTreinoDAO.insertExercicioTreino(relacao)
+
+                    if(!resultRelacao || resultRelacao.code){
+                        return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                    }
+
+                    createdRelations.push(resultRelacao)
+                }
+
+                return {
+                    status_code: 200,
+                    message: "exercicio_trein_serie criado com sucesso",
+                    exercicio_treino_serie: createdRelations
+                }
+            }
+
+            // Se chegou aqui, faltam dados de série
+            return MESSAGE.ERROR_REQUIRED_FIELDS //400
 
         }else{
             return MESSAGE.ERROR_CONTENT_TYPE // 415
@@ -185,23 +236,16 @@ const listarExercicioTreino = async function () {
 
                 for(itemExercicioTreino of resultExercicioTreino){
 
-                     
                             const dadosTreino = await controllers.controllerTreino.buscarTreino(itemExercicioTreino.id_treino)
                             itemExercicioTreino.treino = (dadosTreino && dadosTreino.status_code === 200) ? (dadosTreino.treinos || []) : []
-                       
-                        delete itemExercicioTreino.id_treino
 
-                       
                             const dadosExercicio = await controllers.controllerExercicio.buscarExercicio(itemExercicioTreino.id_exercicio)
                             itemExercicioTreino.exercicio = (dadosExercicio && dadosExercicio.status_code === 200) ? (dadosExercicio.exercicio || []) : []
-                        
-                        delete itemExercicioTreino.id_exercicio
 
                         try{
                             const dadosSerie = await controllers.controllerSerie.buscarSerie(itemExercicioTreino.id_serie)
                             itemExercicioTreino.serie = (dadosSerie && dadosSerie.status_code === 200) ? (dadosSerie.serie || []) : []
                         }catch{ itemExercicioTreino.serie = [] }
-                        delete itemExercicioTreino.id_serie
 
                         arrayExercicioTreino.push(itemExercicioTreino)         
                                             
@@ -339,6 +383,9 @@ const buscarExercicioPeloTreino = async function (id_treino) {
 
 }
 
+const buscarExercicioByTreino = async function (id_treino) {
+    return await buscarExercicioPeloTreino(id_treino)
+}
 
 module.exports = {
     inserirExercicioTreino,
@@ -346,5 +393,6 @@ module.exports = {
     buscarExercicioTreino,
     listarExercicioTreino,
     excluirExercicioTreino,
-    buscarExercicioPeloTreino
+    buscarExercicioPeloTreino,
+    buscarExercicioByTreino
 }

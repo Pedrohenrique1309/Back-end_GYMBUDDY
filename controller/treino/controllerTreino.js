@@ -36,23 +36,6 @@ const inserirTreino = async function (treino, contentType) {
 
                 if (!resultTreino.code) {
 
-                    if (treino.exercicio && Array.isArray(treino.exercicio) && treino.exercicio.length > 0) {
-
-                        for (let itemExercicio of treino.exercicio) {
-
-                            itemExercicio.id_treino = resultTreino.id
-
-                            let resultItemExercicio = await controllers.controllerExercicioTreino.inserirExercicioTreino(itemExercicio, contentType)
-
-
-                            if (!resultItemExercicio) {
-                                return MESSAGE.ERROR_CONTENT_TYPE
-                            }
-
-
-                        }
-                    }
-
                     return {
                         status_code: 200,
                         message: "treino criado com sucesso",

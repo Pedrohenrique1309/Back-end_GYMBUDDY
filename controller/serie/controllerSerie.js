@@ -22,6 +22,11 @@ const inserirSerie = async function(serie, contentType){
 
         if(contentType == 'application/json'){
 
+            // Normalizar campo de peso: aceitar tanto "peso" quanto "carga" vindos do frontend
+            if ((serie.peso === undefined || serie.peso === '' || serie.peso === null) &&
+                (serie.carga !== undefined && serie.carga !== '' && serie.carga !== null)) {
+                serie.peso = serie.carga
+            }
 
             if(
                 serie.peso          == undefined || serie.peso          == ''|| serie.peso          == null || isNaN(serie.peso) ||
