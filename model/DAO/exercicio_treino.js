@@ -49,7 +49,8 @@ const updateExercicioTreino = async function(exercicioTreino){
     try{
 
         let sql = `update tbl_exercicio_treino set    id_treino      =  '${exercicioTreino.id_treino}',
-                                                            id_exercicio   =  '${exercicioTreino.id_exercicio}'
+                                                    id_exercicio   =  '${exercicioTreino.id_exercicio}',
+                                                    id_serie       =  '${exercicioTreino.id_serie}'
                                                 where id = ${exercicioTreino.id}`
 
         let result = await prisma.$executeRawUnsafe(sql)
