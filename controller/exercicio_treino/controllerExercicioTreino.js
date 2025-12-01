@@ -24,8 +24,7 @@ const inserirExercicioTreino = async function(exercicioTreino, contentType){
 
             if(
                 exercicioTreino.id_treino    == undefined || exercicioTreino.id_treino     == ''|| exercicioTreino.id_treino    == null ||isNaN(exercicioTreino.id_treino)    || exercicioTreino.id_treino    <= 0 ||
-                exercicioTreino.id_exercicio == undefined || exercicioTreino.id_exercicio  == ''|| exercicioTreino.id_exercicio == null ||isNaN(exercicioTreino.id_exercicio) || exercicioTreino.id_exercicio <= 0 ||
-                exercicioTreino.id_serie     == undefined || exercicioTreino.id_serie      == ''|| exercicioTreino.id_serie     == null ||isNaN(exercicioTreino.id_serie)     || exercicioTreino.id_serie     <= 0 
+                exercicioTreino.id_exercicio == undefined || exercicioTreino.id_exercicio  == ''|| exercicioTreino.id_exercicio == null ||isNaN(exercicioTreino.id_exercicio) || exercicioTreino.id_exercicio <= 0 
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
@@ -38,7 +37,7 @@ const inserirExercicioTreino = async function(exercicioTreino, contentType){
                 if(!resultExercicioTreino.code){
                     return {
                         status_code: 200,
-                        message: "exercicio_trein_serie criado com sucesso",
+                        message: "exercicio_treio criado com sucesso",
                         exercicio_treino_serie: resultExercicioTreino
                     }
 
@@ -67,8 +66,7 @@ const atualizarExercicioTreino = async function(exercicioTreino, id, contentType
             if(
                 id                                == undefined || id                                 == ''|| id                                == null ||isNaN(id)                                || id                                <= 0 ||
                 exercicioTreino.id_treino    == undefined || exercicioTreino.id_treino     == ''|| exercicioTreino.id_treino    == null ||isNaN(exercicioTreino.id_treino)    || exercicioTreino.id_treino    <= 0 ||
-                exercicioTreino.id_exercicio == undefined || exercicioTreino.id_exercicio  == ''|| exercicioTreino.id_exercicio == null ||isNaN(exercicioTreino.id_exercicio) || exercicioTreino.id_exercicio <= 0 ||
-                exercicioTreino.id_serie     == undefined || exercicioTreino.id_serie      == ''|| exercicioTreino.id_serie     == null ||isNaN(exercicioTreino.id_serie)     || exercicioTreino.id_serie     <= 0 
+                exercicioTreino.id_exercicio == undefined || exercicioTreino.id_exercicio  == ''|| exercicioTreino.id_exercicio == null ||isNaN(exercicioTreino.id_exercicio) || exercicioTreino.id_exercicio <= 0 
             ){
 
                 return MESSAGE.ERROR_REQUIRED_FIELDS //400
