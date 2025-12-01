@@ -1263,6 +1263,20 @@ app.delete('/v1/gymbuddy/exercicio_treino/:search_id', cors(), async function(re
     response.json(result)
 })
 
+app.delete('/v1/gymbuddy/exercicio_treino/exercicio/:search_id', cors(), async function(request, response){
+
+    let search_id = request.params.search_id
+
+    let result = await controllerExercicioTreino.excluirExercicioTreinoByExercicio(search_id)
+
+
+
+    result = safeResponse(result)
+
+
+    response.status(result.status_code)
+    response.json(result)
+})
 
 
 if (require.main === module) {

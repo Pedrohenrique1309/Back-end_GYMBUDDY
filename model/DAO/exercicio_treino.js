@@ -88,6 +88,27 @@ const deleteExercicioTreino = async function(id){
 
 }
 
+//Função para excluir no Banco de Dados um exercicio_treino existente 
+const deleteExercicioTreinoByExercicio = async function(id){
+
+    try{
+
+        let sql = `delete from tbl_exercicio_treino where id_exercicio = ${id}`
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        if(result){
+            return true
+        }else{
+            return false
+        }
+
+    }catch(error){
+        return error
+    }
+
+}
+
 //Função para retornar do Banco de Dados uma lista de exercicio_trein
 const selectAllExercicioTreino = async function(){
 
@@ -186,6 +207,7 @@ module.exports = {
     selectAllExercicioTreino,
     selectByExercicioTreino,
     selectExercicioByTreino,
-    selectExercicioTreinoByTreino
+    selectExercicioTreinoByTreino,
+    deleteExercicioTreinoByExercicio
 
 }

@@ -162,6 +162,32 @@ const excluirExercicioTreino = async function(id) {
 
 }
 
+//Função para excluir um exercicio_treino_serie no Banco de Dados
+const excluirExercicioTreinoByExercicio = async function(id) {
+    
+    try{
+
+        if(id != '' && id != undefined && id != null && !isNaN(id) && id > 0){
+
+          
+                const result = await exercicioTreinoDAO.deleteExercicioTreinoByExercicio(parseInt(id))
+                if(result){
+                    return MESSAGE.SUCCESS_DELETED_ITEM //200
+                }else{
+                    return MESSAGE.ERROR_INTERNAL_SERVER_MODEL //500
+                }
+            
+
+    }else{
+        return MESSAGE.ERROR_REQUIRED_FIELDS //400
+    }
+
+    }catch(error){
+        return MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500
+    }
+
+}
+
 //Função para listar todos os exercicio_treino_serie salvos no Banco de Dados 
 const listarExercicioTreino = async function () {
     
@@ -344,5 +370,6 @@ module.exports = {
     buscarExercicioTreino,
     listarExercicioTreino,
     excluirExercicioTreino,
-    buscarExercicioPeloTreino
+    buscarExercicioPeloTreino,
+    excluirExercicioTreinoByExercicio
 }
