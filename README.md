@@ -1,141 +1,281 @@
-**🏋️‍♂️ GYM BUDDY — Backend API**
+<h1 align="center">🏋️‍♂️ GYM BUDDY — Backend API</h1>
 
+<p align="center">
+API REST desenvolvida para o sistema <b>GYM BUDDY</b>, uma aplicação voltada para gerenciamento de usuários em ambiente de academia.
+</p>
 
-API REST desenvolvida para o sistema GYM BUDDY, uma aplicação voltada para gerenciamento de usuários em um ambiente de academia.
+<p align="center">
+Backend responsável por autenticação, regras de negócio, manipulação de dados e comunicação com banco de dados.
+</p>
 
-O backend é responsável por processar regras de negócio, autenticação de usuários, manipulação de dados e comunicação com o banco de dados, garantindo uma arquitetura organizada e escalável.
+<p align="center">
+Construído com <b>Node.js</b> seguindo o padrão <b>RESTful</b>.
+</p>
 
-O projeto foi construído utilizando Node.js e segue o padrão RESTful, permitindo integração eficiente com aplicações frontend.
+---
 
-**📌 Sobre o Projeto**
+<h2>📌 Sobre o Projeto</h2>
 
-O GYM BUDDY foi desenvolvido com o objetivo de aplicar conceitos fundamentais de desenvolvimento backend, incluindo:
+<p>
+O <b>GYM BUDDY</b> foi desenvolvido com o objetivo de aplicar conceitos fundamentais de desenvolvimento backend:
+</p>
 
-construção de APIs REST
+<ul>
+<li>Construção de APIs REST</li>
+<li>Integração com banco de dados relacional</li>
+<li>Organização de código em camadas</li>
+<li>Envio de e-mails automatizados</li>
+<li>Uso de ORM para manipulação de dados</li>
+</ul>
 
-integração com banco de dados relacional
+<p>
+Este backend fornece os serviços necessários para que o frontend da aplicação consiga gerenciar usuários e funcionalidades do sistema.
+</p>
 
-organização de código em camadas
+---
 
-envio de e-mails automatizados
+<h2>🚀 Tecnologias Utilizadas</h2>
 
-uso de ORM para gerenciamento de dados
+<p align="center">
+<img src="https://skillicons.dev/icons?i=nodejs,express,mysql,js" />
+</p>
 
-Este backend fornece os serviços necessários para que o frontend da aplicação consiga gerenciar usuários e funcionalidades relacionadas ao sistema.
+<table align="center">
+<tr>
+<th>Tecnologia</th>
+<th>Função</th>
+</tr>
 
-**🚀 Tecnologias Utilizadas**
+<tr>
+<td>Node.js</td>
+<td>Ambiente de execução do backend</td>
+</tr>
 
-Tecnologia	Função
-Node.js	Ambiente de execução do backend
-Express.js	Framework para criação da API
-MySQL	Banco de dados relacional
-Prisma ORM	Mapeamento e manipulação do banco
-Nodemailer	Envio de e-mails
-JavaScript	Linguagem principal do projeto
-**🏗️ Arquitetura do Projeto**
+<tr>
+<td>Express.js</td>
+<td>Framework para criação da API</td>
+</tr>
 
-A aplicação foi estruturada utilizando uma arquitetura modular, separando responsabilidades para facilitar manutenção e escalabilidade.
+<tr>
+<td>MySQL</td>
+<td>Banco de dados relacional</td>
+</tr>
 
+<tr>
+<td>Prisma ORM</td>
+<td>Mapeamento e manipulação do banco</td>
+</tr>
+
+<tr>
+<td>Nodemailer</td>
+<td>Envio de e-mails</td>
+</tr>
+
+<tr>
+<td>JavaScript</td>
+<td>Linguagem principal</td>
+</tr>
+
+</table>
+
+---
+
+<h2>🏗️ Arquitetura do Projeto</h2>
+
+<pre>
 Back-end_GYMBUDDY
 │
 ├── src
-│   ├── controllers      # Controladores das requisições
-│   ├── routes           # Definição das rotas da API
-│   ├── services         # Regras de negócio
-│   ├── middlewares      # Validações e interceptações
-│   └── app.js           # Inicialização da aplicação
+│   ├── controllers
+│   ├── routes
+│   ├── services
+│   ├── middlewares
+│   └── app.js
 │
 ├── prisma
-│   └── schema.prisma    # Estrutura do banco de dados
+│   └── schema.prisma
 │
 ├── package.json
 └── README.md
-**⚙️ Instalação e Configuração**
+</pre>
 
-1️⃣ Clonar o repositório
+---
+
+<h2>⚙️ Instalação e Configuração</h2>
+
+<h3>1️⃣ Clonar o repositório</h3>
+
+<pre>
 git clone https://github.com/Pedrohenrique1309/Back-end_GYMBUDDY.git
-2️⃣ Acessar a pasta do projeto
+</pre>
+
+<h3>2️⃣ Entrar na pasta</h3>
+
+<pre>
 cd Back-end_GYMBUDDY
-3️⃣ Instalar dependências
+</pre>
+
+<h3>3️⃣ Instalar dependências</h3>
+
+<pre>
 npm install
-4️⃣ Configurar variáveis de ambiente
+</pre>
 
-Crie um arquivo .env na raiz do projeto.
+<h3>4️⃣ Criar arquivo .env</h3>
 
-Exemplo:
-
+<pre>
 DATABASE_URL="mysql://usuario:senha@localhost:3306/gymbuddy"
 
 EMAIL_USER=seu_email@gmail.com
 EMAIL_PASS=sua_senha
-5️⃣ Executar as migrations
+</pre>
+
+<h3>5️⃣ Executar migrations</h3>
+
+<pre>
 npx prisma migrate dev
-6️⃣ Iniciar o servidor
+</pre>
+
+<h3>6️⃣ Iniciar servidor</h3>
+
+<pre>
 npm start
+</pre>
 
+<p>
 Servidor rodando em:
+</p>
 
+<pre>
 http://localhost:3000
-**📡 Endpoints da API**
+</pre>
 
-Usuários
-Método	Rota	Descrição
-POST	/usuarios	Criar novo usuário
-GET	/usuarios/login	Autenticar usuário
-PUT	/usuarios/:id	Atualizar dados do usuário
-DELETE	/usuarios/:id	Remover usuário
-**📧 Recuperação de Senha**
+---
 
-A API implementa um sistema de recuperação de senha via e-mail utilizando Nodemailer.
+<h2>📡 Endpoints da API</h2>
 
-Fluxo da funcionalidade:
+<table align="center">
 
-Usuário solicita recuperação de senha
+<tr>
+<th>Método</th>
+<th>Rota</th>
+<th>Descrição</th>
+</tr>
 
-Sistema gera um código de verificação
+<tr>
+<td>POST</td>
+<td>/usuarios</td>
+<td>Criar usuário</td>
+</tr>
 
-O código é enviado para o e-mail do usuário
+<tr>
+<td>GET</td>
+<td>/usuarios/login</td>
+<td>Autenticar usuário</td>
+</tr>
 
-Usuário utiliza o código para redefinir a senha
+<tr>
+<td>PUT</td>
+<td>/usuarios/:id</td>
+<td>Atualizar dados</td>
+</tr>
 
-**🧪 Exemplo de Requisição**
+<tr>
+<td>DELETE</td>
+<td>/usuarios/:id</td>
+<td>Remover usuário</td>
+</tr>
 
-Criar usuário
+</table>
+
+---
+
+<h2>📧 Recuperação de Senha</h2>
+
+<p>
+A API possui um sistema de recuperação de senha utilizando <b>Nodemailer</b>.
+</p>
+
+<p><b>Fluxo:</b></p>
+
+<ol>
+<li>Usuário solicita recuperação</li>
+<li>Sistema gera código de verificação</li>
+<li>Código é enviado por e-mail</li>
+<li>Usuário redefine a senha</li>
+</ol>
+
+---
+
+<h2>🧪 Exemplo de Requisição</h2>
+
+<h3>Criar usuário</h3>
+
+<pre>
 POST /usuarios
+</pre>
 
-Body da requisição:
-
+<pre>
 {
-  "nome": "Pedro",
-  "email": "pedro@email.com",
-  "senha": "123456"
+ "nome": "Pedro",
+ "email": "pedro@email.com",
+ "senha": "123456"
 }
-**🧠 Funcionalidades**
+</pre>
 
-✔ Cadastro de usuários
-✔ Login de usuários
-✔ Atualização de dados
-✔ Exclusão de conta
-✔ Recuperação de senha via e-mail
-✔ Integração com banco de dados
+---
 
-**🔗 Integração com Frontend**
+<h2>🧠 Funcionalidades</h2>
 
-Este backend foi desenvolvido para integração com o frontend do projeto GYM BUDDY.
+<ul>
+<li>Cadastro de usuários</li>
+<li>Login</li>
+<li>Atualização de dados</li>
+<li>Exclusão de conta</li>
+<li>Recuperação de senha via e-mail</li>
+<li>Integração com banco de dados</li>
+</ul>
 
+---
+
+<h2>🔗 Integração com Frontend</h2>
+
+<p>
 Frontend do projeto:
+</p>
+
+<p>
+<a href="https://github.com/Pedrohenrique1309/GYM_BUDDY">
 https://github.com/Pedrohenrique1309/GYM_BUDDY
+</a>
+</p>
 
-**👨‍💻 Autor**
+---
 
-Pedro Fernandes
+<h2>👨‍💻 Autor</h2>
 
-💻 GitHub
+<p>
+<b>Pedro Fernandes</b>
+</p>
+
+<p>
+💻 GitHub<br>
+<a href="https://github.com/Pedrohenrique1309">
 https://github.com/Pedrohenrique1309
+</a>
+</p>
 
-🔗 LinkedIn
+<p>
+💼 LinkedIn<br>
+<a href="https://www.linkedin.com/in/pedro-fernandes-954b20308/">
 https://www.linkedin.com/in/pedro-fernandes-954b20308/
+</a>
+</p>
 
-**📄 Licença**
+---
 
-Este projeto foi desenvolvido para fins acadêmicos e de aprendizado.
+<h2>📄 Licença</h2>
+
+<p>
+Projeto desenvolvido para fins acadêmicos e de aprendizado.
+</p>
